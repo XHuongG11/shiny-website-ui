@@ -1,0 +1,18 @@
+.user-form{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  .user-form > * {
+    flex: 1;
+  }
+  .form-row{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .form-row > *{
+    flex: 1; /* Đảm bảo các FormControl trong hàng lấp đầy không gian */
+  }
