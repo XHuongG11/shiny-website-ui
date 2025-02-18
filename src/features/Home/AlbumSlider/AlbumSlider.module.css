@@ -1,0 +1,85 @@
+.albumSlider {
+    display: flex;
+    position: relative;
+    width: 80%;
+    margin: 50px auto;
+    overflow: hidden;
+}
+
+.albumSlides {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.albumSlide {
+    min-width: 100%;
+    display: flex;
+    align-items: center;
+    background: #222;
+    color: white;
+    padding: 20px;
+}
+
+.img {
+    margin: 0 100px;
+    width: 20%;
+    border-radius: 10px;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.img:hover {
+    transform: scale(1.1);
+    opacity: 0.8;
+}
+
+.text {
+    margin-top: 20px;
+}
+
+.albumPrev, .albumNext {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.5);
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 10%;
+    font-size: 1.5rem;
+    transition: background 0.3s ease;
+}
+
+.albumPrev:hover, .albumNext:hover {
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.albumPrev { left: 10px; }
+.albumNext { right: 10px; }
+
+.btn {
+    background: transparent;
+    border: 2px solid white;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.btn:hover {
+    background: white;
+    color: black;
+}
+
+@media (max-width: 768px) {
+    .albumSlider {
+        width: 90%;
+    }
+
+    .albumPrev, .albumNext {
+        padding: 8px;
+        font-size: 1.2rem;
+    }
+}
