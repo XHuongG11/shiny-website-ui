@@ -53,22 +53,22 @@
         top: 25%;
     }
   }
-  .dropdown-menu{
+  .dropdownMenu{
     background-color: white;
     width: 20%;
     align-items: center;
   }
-  .dropdown-menu,
-  .dropdown-column {
+  .dropdownMenu,
+  .dropdownColumn {
     display: flex;
     flex-direction: column;
   }
-  .dropdown-column {
+  .dropdownColumn {
     position: relative;
     padding: 20px;
   }
   
-  .dropdown-column:nth-child(n+3)::before {
+  .dropdownColumn:nth-child(n+3)::before {
     content: "";
     position: absolute;
     top: 30px; /* Cách mép trên */
@@ -79,12 +79,12 @@
   }
   
   
-  .dropdown-column h4 {
+  .dropdownColumn h4 {
     font-size: 16px;
     font-weight: bold;
     margin-bottom: 8px;
   }
-  .dropdown-menu a {
+  .dropdownMenu a {
     margin-top: 25px;
     color: #333;
     text-decoration: none;
@@ -94,16 +94,16 @@
     gap: 5px
   }
   
-  .dropdown-menu a:hover {
+  .dropdownMenu a:hover {
     text-decoration: underline;
   }
-  .dropdown-column a {
+  .dropdownColumn a {
     color: #333;
     text-decoration: none;
     margin-bottom: 5px;
   }
   
-  .dropdown-column a:hover {
+  .dropdownColumn a:hover {
     text-decoration: underline;
   }
   
