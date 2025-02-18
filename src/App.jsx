@@ -12,8 +12,6 @@ function App() {
         <Route path='/checkouts/*' element={<MakeOrder />}></Route>
         <Route path='/login' element={<LoginRegister />}></Route>
         <Route path='/checkouts/thank-you' element={<CompleteOrder />}></Route>
-        {/* <Route path='/checkouts/thank-you' element={<CompleteOrder />}></Route> */}
-        <Route path='/checkouts/thank-you' element={<CompleteOrder />}></Route>
       </Routes>
 
       {/* Footer */}
