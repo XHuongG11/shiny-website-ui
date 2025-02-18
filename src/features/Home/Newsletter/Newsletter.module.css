@@ -1,0 +1,57 @@
+.newsletterContainer {
+    gap: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    margin: 0 300px;
+}
+
+.newsletterText {
+    flex: 1;
+    text-align: left;
+}
+
+.newsletterText h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.newsletterText p {
+    font-size: 14px;
+    color: #333;
+}
+
+.newsletterForm {
+    flex: 1.5;
+    display: flex;
+    border: 1px solid #000;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.newsletterForm input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    font-size: 14px;
+    outline: none;
+    margin: 0;
+    background-color: #fff;
+}
+
+.newsletterForm button {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+
+.newsletterForm button:hover {
+    background-color: #333;
+}

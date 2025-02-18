@@ -3,6 +3,7 @@ import './App.css';
 import LoginRegister from './features/LoginSignin';
 import MakeOrder from './features/MakeOrder';
 import CompleteOrder from './features/CompleteOrder';
+import Home from './features/Home/Home';
 function App() {
 
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path='/checkouts/*' element={<MakeOrder />}></Route>
         <Route path='/login' element={<LoginRegister />}></Route>
         <Route path='/checkouts/thank-you' element={<CompleteOrder />}></Route>
+        <Route path='/home' element={<Home/>}></Route>
       </Routes>
 
       {/* Footer */}
