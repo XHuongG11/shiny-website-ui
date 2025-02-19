@@ -1,12 +1,13 @@
 @import url("https://fonts.googleapis.com/css?family=Poppins");
 nav {
-    position: fixed;  /* Cố định trên đầu */
+    position: relative;  /* Cố định trên đầu */
     top: 0;
     left: 0;
     width: 100%;      /* Chiếm toàn bộ chiều ngang */
     background: white; /* Để không bị trong suốt */
     height: 10%;
     font-family: "Poppins", sans-serif;
+    margin-bottom: 1cm;
   }
 
 .on{

@@ -7,6 +7,7 @@ import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
 import { useState } from "react";
 import DropdownMenu from "./components/DropdownMenu";
 import styles from './Header.module.css';
+
 export default function Header() {
     const [isOpen, setIsOpen] = useState(false);
     const toggleDropdown = () => {

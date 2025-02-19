@@ -1,35 +1,7 @@
-/* Định dạng thanh menu chính */
-.menu {
-    display: flex;
-    justify-content: flex-start; /* Căn trái menu */
-    align-items: center;
-    background-color: transparent; /* Màu nền nhạt như trong hình */
-    padding: 0px 20px;
-    position: fixed; /* Giữ menu trên cùng */
-    top: 4cm;
-    left: 0;
-    gap: 10px;
-    width: 100%;
-    height: 60px; /* Đảm bảo chiều cao ổn định */
-    z-index: 1000; /* Đảm bảo menu hiển thị trên các phần khác */
-  }
-  
-  /* Định dạng các mục trong menu */
-  .menu a {
-    color: #333; /* Màu chữ đen */
-    text-decoration: none;
-    padding: 10px 10px;
-    transition: color 0.3s ease-in-out;
-  }
-  
-  .menu a:hover {
-    color: #666; /* Màu chữ xám khi hover */
-  }
-  
   /* Dropdown Styling */
   .dropdown {
     position: absolute;
-    top: 5.5cm; /* Điều chỉnh vị trí dropdown ngay dưới menu */
+    top: 5.2cm; /* Điều chỉnh vị trí dropdown ngay dưới menu */
     left: 2%;
     right: 2%;
     background: #F8FAFC;
@@ -38,6 +10,7 @@
     padding-right: 100px; /* Tạo khoảng cách bên phải */
     border-radius: 5px;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
   }
   @media (max-width: 768px) {
     .dropdown {

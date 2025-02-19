@@ -5,6 +5,7 @@ import MakeOrder from './features/MakeOrder';
 import CompleteOrder from './features/CompleteOrder';
 import Home from './features/Home/Home';
 import Header from "./components/Header/header";
+import Footer from "./components/Footer/footer";
 function App() {
 
   return (
@@ -17,7 +18,7 @@ function App() {
         <Route path='/home' element={<Home/>}></Route>
       </Routes>
 
-      {/* Footer */}
+      <Footer/>
     </div >
   )
 }
