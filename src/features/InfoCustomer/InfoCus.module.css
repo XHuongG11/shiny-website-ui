@@ -1,0 +1,6 @@
+.container {
+    display: flex;
+    justify-content: space-between; /* Đẩy hai phần tử sang hai bên */
+    align-items: flex-start; /* Căn theo chiều dọc */
+    gap: 20px; /* Tạo khoảng cách giữa hai phần */
+}

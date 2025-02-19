@@ -1,0 +1,80 @@
+/* Card chung */
+.card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+    flex: 1;
+  }
+  
+  /* Header của card */
+  .cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #787676;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .cardHeader h2 {
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .icon {
+    margin-right: 8px;
+    font-size: 18px;
+  }
+/* Nút chỉnh sửa, xem tất cả */
+.editbtn, .view-all-btn {
+    color: #e91e63;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    text-decoration: underline;
+  }
+  
+  /* Body của card */
+  .cardBody {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* Ô nhập liệu */
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .inputGroup label {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #1b1a1a;
+  }
+  
+  .inputBox {
+    display: flex;
+    align-items: center;
+    background: #f5f5f5;
+    padding: 0px; /* Giảm padding để thu nhỏ */
+    border-radius: 5px;
+    font-size: 14px; /* Giảm font size nếu cần */
+  }
+
+  .inputBox svg{
+    margin-left: 20px;
+  }
+  
+  .inputBox input {
+    border: none;
+    background: none;
+    flex: 1;
+    outline: none;
+    padding-left: 5px;
+  }
+    

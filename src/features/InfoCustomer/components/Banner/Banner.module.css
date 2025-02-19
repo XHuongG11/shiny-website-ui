@@ -1,0 +1,82 @@
+
+.nen{
+    padding-top: 20px;
+}
+
+.menu{
+    padding-left: 30px;
+}
+.banner {
+    position: relative;
+    width: 100%;
+    /* max-width: 800px;  */
+  }
+  
+  .image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  .textOverlay {
+    position: absolute;
+    top: 20%; /* Điều chỉnh vị trí chữ trên hình */
+    left: 5%; /* Căn lề trái */
+    color: white; /* Chữ màu trắng */
+    font-weight: bold;
+   
+  }
+  
+  .textOverlay h2 {
+    font-size: 36px;
+    margin: 0;
+  }
+  
+  .textOverlay p {
+    font-size: 26px;
+    font-style: italic;
+    margin-top: 270px;
+    margin-left: 50vw; /* Điều chỉnh theo tỉ lệ màn hình */
+    transition: margin-left 0.3s ease; /* Hiệu ứng mượt */
+    color: rgb(72, 69, 69);
+  }
+  .imgContainer {
+    width: 100%; /* Độ rộng của container bằng toàn bộ trang */
+    max-width: 1400px; /* Đặt giới hạn tối đa nếu cần */
+    margin: auto; /* Căn giữa */
+  }
+  
+  .imgContainer img {
+    width: 100%;
+    height: auto;
+    display: block; /* Tránh khoảng trắng thừa bên dưới ảnh */
+  }
+  @media (max-width: 1350px) {
+    .textOverlay p{
+        margin-top: 220px;
+        margin-left: 600px;
+    }
+    }
+    @media (max-width: 1200px) {
+      .textOverlay p{
+          margin-top: 150px;
+          margin-left: 400px;
+      }
+      }
+    @media (max-width: 1000px) {
+        .textOverlay p{
+            margin-top: 100px;
+            margin-left: 250px;
+            font-size: 21px;
+        }
+}
+    @media (max-width: 768px) {
+      .textOverlay h2 {
+        font-size: 30px;
+      }
+        .textOverlay p{
+            margin-top: 0px;
+            margin-left: 0px;
+            font-size: 20px;
+        }
+    }
