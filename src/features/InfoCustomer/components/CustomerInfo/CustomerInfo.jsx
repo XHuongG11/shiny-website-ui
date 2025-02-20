@@ -1,5 +1,6 @@
 import styles from './CustomerInfo.module.css';
 import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt} from "react-icons/fa";
+import { GiQueenCrown } from "react-icons/gi";
 
 // Hàm render ô nhập liệu
 const renderInput = (label, icon) => (
@@ -14,7 +15,7 @@ const CustomerInfo = () => {
     return (
         <div className={styles.card}>
             <div className={styles.cardHeader}>
-                <h2><span className={styles.icon}>👑</span> THÔNG TIN KHÁCH HÀNG</h2>
+                <h2> <GiQueenCrown/> THÔNG TIN KHÁCH HÀNG</h2> 
                 <button className={styles.editbtn}>Chỉnh sửa</button>
             </div>
             <div className={styles.cardBody}>

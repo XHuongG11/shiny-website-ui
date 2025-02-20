@@ -1,0 +1,24 @@
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 5px;
+    padding: 10px;
+    border: 1.2px dashed #9e9d9d;
+}
+.editbtn, .viewallBtn {
+    color: #e91e63;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    text-decoration: underline;
+  }
+.button{
+    border: 0px;
+    background: #fff;
+    font-size: 65px;
+}
+
+

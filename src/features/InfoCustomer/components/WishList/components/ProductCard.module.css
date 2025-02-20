@@ -1,0 +1,82 @@
+.card {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 2px;
+    padding: 10px;
+    border: 1.2px solid #9e9d9d;
+    height:118px;
+
+}
+.imgContainer {
+    width: 20%; /* Độ rộng của container bằng toàn bộ trang */
+    margin: auto; /* Căn giữa */
+    padding: 10px;
+  }
+  
+  .imgContainer img {
+    width: 100%;
+    height: auto;
+    display: block; /* Tránh khoảng trắng thừa bên dưới ảnh */
+  }
+.details {
+    flex-grow: 1;
+    gap: 0px;
+    margin-left: 10px; /* Giảm khoảng cách giữa ảnh và nội dung */
+}
+
+.description {
+    font-size: 14px;  /* Giảm font chữ để gọn hơn */
+    color: rgb(101, 98, 98);
+    margin-top: -10px;
+}
+h3{
+    font-weight: normal;
+    font-size: 18px;
+}
+
+.price {
+    margin-top: -20px;
+    font-weight: bold;
+    color: red;
+    font-size: 18px;
+}
+
+.deleteButton {
+    background: #fbe8e8;
+    border: none;
+    padding: 10px;  /* Giảm padding để nhỏ gọn */
+    border-radius: 5px; /* Làm bo góc nhẹ hơn */
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin-right: 10px;
+    font-size: 19px;
+}
+
+.deleteButton:hover {
+    background: #ffcccc;
+}
+
+/* Loại bỏ đổ bóng nếu có */
+.card, .details, .description, .price {
+    text-shadow: none;
+}
+@media (max-width: 768px) {
+    h3{
+        font-size: 10px;
+        font-weight: normal;
+    }
+    .price {
+        font-size: 10px;
+    }
+    .deleteButton {
+        margin-right: 0px;
+        font-size: 10px;
+    }
+    .price {
+        margin-top: -30px;
+    }
+    .description {
+        font-size: 6px;  /* Giảm font chữ để gọn hơn */
+    }
+  }

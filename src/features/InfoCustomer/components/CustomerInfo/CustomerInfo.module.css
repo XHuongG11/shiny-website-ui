@@ -1,10 +1,13 @@
 /* Card chung */
 .card {
     background: #fff;
-    border-radius: 10px;
+    border-radius: 0px;
     padding: 20px;
+    padding-left: 40px;
+    padding-right: 40px;
+    border-radius: 2px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border: 1px solid #ddd;
+    border: 2px solid #a7a5a5;
     flex: 1; /* Chiếm toàn bộ không gian có thể */
   }
   
@@ -14,20 +17,24 @@
     justify-content: space-between;
     align-items: center;
     border-bottom: 2px solid #787676;
-    padding-bottom: 20px;
+    padding-bottom: 10px;
     margin-bottom: 20px;
   }
   
   .cardHeader h2 {
-    font-size: 16px;
+    font-size: 18px;
     display: flex;
     align-items: center;
   }
+  .cardHeader svg {
+    margin-right: 15px;
+    font-size: 25px;
+  }
   
-  .icon {
+  /* .icon {
     margin-right: 8px;
     font-size: 18px;
-  }
+  } */
 /* Nút chỉnh sửa, xem tất cả */
 .editbtn, .view-all-btn {
     color: #e91e63;
@@ -42,7 +49,7 @@
   .cardBody {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0px;
   }
 
   /* Ô nhập liệu */
@@ -64,6 +71,7 @@
     padding: 0px; /* Giảm padding để thu nhỏ */
     border-radius: 5px;
     font-size: 14px; /* Giảm font size nếu cần */
+    margin: 0px 0px 20px 20px;
   }
 
   .inputBox svg{
