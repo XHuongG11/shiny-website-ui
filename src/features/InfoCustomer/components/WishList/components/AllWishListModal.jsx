@@ -18,6 +18,9 @@ const AllWishListModal = ({ isOpen, onClose }) => { //cái này hong phải lỗ
         <div className={styles.cardBody}>
               <ProductCard/>
               <ProductCard/>
+              <ProductCard/>
+              <ProductCard/>
+              <ProductCard/>
             </div>
       </div>
     </div>

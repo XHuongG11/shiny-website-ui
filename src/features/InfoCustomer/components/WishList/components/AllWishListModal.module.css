@@ -47,4 +47,23 @@
     gap: 30px;
     padding-top: 15px;
     padding-bottom: 15px;
+    
+    /* Giới hạn chiều cao và cho phép cuộn */
+    max-height: 500px; /* Điều chỉnh chiều cao theo ý bạn */
+    overflow-y: auto;
+    padding-right: 10px; /* Tránh nội dung bị che bởi thanh cuộn */
+  }
+  
+  /* Tùy chỉnh thanh cuộn cho đẹp hơn */
+  .cardBody::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .cardBody::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+  }
+  
+  .cardBody::-webkit-scrollbar-thumb:hover {
+    background: #999;
   }

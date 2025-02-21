@@ -11,11 +11,14 @@ const AllAddressModal = ({ isOpen, onClose }) => { //cái này hong phải lỗi
     <div className={styles.modalOverlay}>
       <div className={styles.modalContent}>
         <div className={styles.modalHeader}>
-            <h2>SẢN PHẨM THEO DÕI</h2>
+            <h2>DANH SÁCH ĐỊA CHỈ</h2>
             <button className={styles.closeBtn} onClick={onClose}><HiMiniXMark/></button>
         </div>
         <hr />
         <div className={styles.cardBody}>
+              <AddressCard/>
+              <AddressCard/>
+              <AddressCard/>
               <AddressCard/>
               <AddressCard/>
             </div>
