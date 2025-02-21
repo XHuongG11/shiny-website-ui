@@ -3,7 +3,7 @@
     align-items: center;
     background: #fff;
     border-radius: 2px;
-    padding: 10px;
+    padding: 15px;
     border: 1.2px solid #9e9d9d;
     height:118px;
 
@@ -51,8 +51,10 @@ h3{
     transition: background 0.3s ease;
     margin-right: 10px;
     font-size: 19px;
-}
+    width: 45px; /* Đảm bảo nút không phình to */
+    height: 45px;
 
+}
 .deleteButton:hover {
     background: #ffcccc;
 }
@@ -80,3 +82,5 @@ h3{
         font-size: 6px;  /* Giảm font chữ để gọn hơn */
     }
   }
+
+

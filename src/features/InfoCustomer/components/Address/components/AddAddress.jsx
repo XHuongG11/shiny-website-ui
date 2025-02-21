@@ -1,3 +1,5 @@
+// này là cái khung có dấu cộng với thêm địa chỉ
+
 import styles from "./AddAddress.module.css"; // Import CSS
 import { IoIosAddCircle } from "react-icons/io";
 import { useState } from "react";
@@ -12,7 +14,8 @@ const AddressCard = () => {
         </button>
         <AddressModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
 
-      <button className={styles.viewallBtn}>Thêm địa chỉ</button>
+      <button className={styles.viewallBtn}  onClick={() => setIsModalOpen(true)}>Thêm địa chỉ</button>
+      <AddressModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 };

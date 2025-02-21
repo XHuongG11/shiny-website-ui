@@ -59,6 +59,8 @@
     margin-bottom: -10px;
     margin-right: -10px;
     font-size: medium;
+    width: 40px; /* Đảm bảo nút không phình to */
+    height: 40px;
 }
 .editButton:hover {
     background: #ffcccc;

@@ -1,16 +1,16 @@
 //đây là cửa sổ nhỏ để người dùng điền thông tin thêm địa chỉ
 
-import styles from "./AddressModal.module.css"; // Import CSS cho modal
+import styles from "./EditAddressModal.module.css"; // Import CSS cho modal
 import { HiMiniXMark } from "react-icons/hi2";
 
-const AddressModal = ({ isOpen, onClose }) => { //cái này hong phải lỗi đâu nha do nó phải truyền từ cái kia qua á
+const EditAddressModal = ({ isOpen, onClose }) => { //cái này hong phải lỗi đâu nha do nó phải truyền từ cái kia qua á
       
   if (!isOpen) return null; // Nếu không mở thì ẩn modal
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modalContent}>
         <div className={styles.modalHeader}>
-            <h2>THÊM ĐỊA CHỈ</h2>
+            <h2>CHỈNH SỬA ĐỊA CHỈ</h2>
             <button className={styles.closeBtn} onClick={onClose}><HiMiniXMark/></button>
         </div>
         <hr />
@@ -28,10 +28,10 @@ const AddressModal = ({ isOpen, onClose }) => { //cái này hong phải lỗi đ
           <input className={styles.text} type="text" placeholder="Nhập số nhà, địa chỉ" />
         </div>
 
-        <button className={styles.submitBtn}>Hoàn thành</button>
+        <button className={styles.submitBtn}>Lưu</button>
       </div>
     </div>
   );
 };
 
-export default AddressModal;
+export default EditAddressModal;

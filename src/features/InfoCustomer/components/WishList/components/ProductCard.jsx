@@ -13,9 +13,7 @@ const ProductCard = () => {
         <p className={styles.description}>Bạc / One size</p>
         <p className={styles.price}>2,990,000₫</p>
       </div>
-
-      <button className={styles.deleteButton}><FaTrashCan/>
-      </button>
+      <button className={styles.deleteButton}><FaTrashCan/></button>
     </div>
   );
 };
