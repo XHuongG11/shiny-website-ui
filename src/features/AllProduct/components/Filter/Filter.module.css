@@ -1,0 +1,52 @@
+.filter__box h4 {
+    font-size: 23px;
+    font-weight: bold;
+    color: var(--text-color);
+    margin-bottom: 15px;
+    padding-top: 15px;
+    border-top: 2px solid var(--gray-color);
+}
+
+.filter__box ul {
+    list-style: none;
+    padding-left: 5px;
+}
+.filter__box li {
+    margin-top: 20px; 
+    display: flex;
+    align-items: center;
+}
+
+.filter__box input[type="checkbox"] {
+    margin-right: 20px; 
+    margin-left: 8px;
+    cursor: pointer;
+    transform: scale(2);
+    width: 18px;
+    height: 18px;
+}
+
+.filterSize{
+    display: flex;
+    flex-wrap: wrap;
+}
+.filterSizeNumber{
+    background-color: white;
+    font-weight: bold;
+    padding: 8px 23px;
+    cursor: pointer; 
+    margin: 6px 8px;
+    border: 2px solid var(--gray-color);
+}
+
+.filterMaterial{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.productMaterial{
+    width: 30px;  
+    height: 30px;
+    border-radius: 50%;
+}
