@@ -1,0 +1,20 @@
+:root {
+    --gray-color: #D9D9D9;
+    --text-color-gray: #464a50;
+    --text-color-light: #75797e;
+    --background-catagory-color: #F1F2F6;
+    --white-background-color: #FFFFFF;
+    --text-color-bold: #282826;
+    --font-family:'Plus Jakarta Sans', sans-serif;
+}
+body {
+    width: 100%;
+    /* max-width: 1440px; */
+    min-height: 100vh; 
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-family);
+    background-color: var(--background-color);
+    color: var(--text-color); 
+}

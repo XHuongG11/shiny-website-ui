@@ -8,6 +8,7 @@ import InfoCustomer from './features/InfoCustomer/InfoCus';
 import Header from "./components/Header/header";
 import Footer from "./components/Footer/footer";
 import AllProduct from './features/AllProduct/AllProduct';
+import ProductDetail from './features/ProductDetail/ProductDetail';
 
 function App() {
 
@@ -21,6 +22,7 @@ function App() {
         <Route path='/home' element={<Home/>}></Route>
         <Route path='/allproduct' element={<AllProduct/>}></Route>
         <Route path='/infocus' element={<InfoCustomer/>}></Route>
+        <Route path='/productdetail' element={<ProductDetail/>}></Route>
       </Routes>
 
       <Footer/>
