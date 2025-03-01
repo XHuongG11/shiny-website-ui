@@ -3,7 +3,7 @@
     align-items: center;
     background: #fff;
     border-radius: 2px;
-    padding: 15px;
+    padding: 10px;
     border: 1.2px solid #9e9d9d;
     height:118px;
 
@@ -11,7 +11,7 @@
 .imgContainer {
     width: 20%; /* Độ rộng của container bằng toàn bộ trang */
     margin: auto; /* Căn giữa */
-    padding: 10px;
+    /* padding: 10px; */
   }
   
   .imgContainer img {
@@ -26,20 +26,21 @@
 }
 
 .description {
-    font-size: 14px;  /* Giảm font chữ để gọn hơn */
+    font-size: 13px;  /* Giảm font chữ để gọn hơn */
     color: rgb(101, 98, 98);
     margin-top: -10px;
 }
 h3{
-    font-weight: normal;
-    font-size: 18px;
+    font-weight: bold;
+    font-size: 14px;
+
 }
 
 .price {
     margin-top: -20px;
     font-weight: bold;
     color: red;
-    font-size: 18px;
+    font-size: 14px;
 }
 
 .deleteButton {

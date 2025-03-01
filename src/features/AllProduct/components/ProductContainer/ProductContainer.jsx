@@ -1,4 +1,4 @@
-import Product from './Product';
+import ProductCard from '../../../../components/ProductCard/ProductCard';
 import styles from './Product.module.css';
 
 const ProductContainer = () => {
@@ -7,9 +7,9 @@ const ProductContainer = () => {
             imageSrc: "/image/allproduct/imageProduct.png",
             favouriteSrc: "/image/allproduct/ic-heart.png",
             colors: [
-            "/image/allproduct/silver-color.png",
-            "/image/allproduct/gold-color.png",
-            "/image/allproduct/rose-gold-color.png",
+                "/image/allproduct/silver-color.png",
+                "/image/allproduct/gold-color.png",
+                "/image/allproduct/rose-gold-color.png",
             ],
             discount: "-20% BLACK FRIDAY",
             name: "Pulsera Moments Cadena de Serpiente con cierre de Corazón",
@@ -22,7 +22,7 @@ const ProductContainer = () => {
     return (
         <div className={styles.productContainer}>
             {products.map((product, index) => (
-                <Product key={index} {...product} />
+                <ProductCard key={index} {...product} />
             ))}
         </div>
     );

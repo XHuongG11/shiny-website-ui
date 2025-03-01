@@ -20,11 +20,11 @@ function InputField({ control, name, label, disabled, height, width }) {
 }
 
 InputField.propTypes = {
-    control: PropTypes.object,  
+    control: PropTypes.object,
     name: PropTypes.string.isRequired,
     label: PropTypes.string,
     disabled: PropTypes.bool,
     height: PropTypes.string,
     width: PropTypes.string,
-  };
+};
 export default InputField;

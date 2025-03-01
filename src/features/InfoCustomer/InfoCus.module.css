@@ -1,3 +1,6 @@
+/* .infoCus{
+    padding-top: 30px;
+} */
 .container {
     display: flex;
     justify-content: space-around; /* Căn chỉnh đều hai phần tử */

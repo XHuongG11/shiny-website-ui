@@ -11,7 +11,7 @@
     justify-content: flex-start;
     gap: 40px;
     flex-wrap: wrap; 
-    padding:0px 30px 30px 30px;
+    /* padding:0px 30px 30px 30px; */
 }
 .catagory__item {
     text-align: center;
@@ -37,6 +37,6 @@
 
 .catagory__itemName {
     margin-top: 10px;
-    font-size: 16px;
+    font-size: 14px;
     color: var(--text-color);
 }

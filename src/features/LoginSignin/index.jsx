@@ -1,16 +1,27 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './styles.module.css'; // Importing the CSS module
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFacebookF, faGoogle, faLinkedinIn } from "@fortawesome/free-brands-svg-icons";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 LoginRegister.propTypes = {};
 
 function LoginRegister() {
     const [isRightPanelActive, setIsRightPanelActive] = useState(false);
+    const [shouldRedirect, setShouldRedirect] = useState(false);
 
     const handleRegisterClick = () => setIsRightPanelActive(true);
     const handleLoginClick = () => setIsRightPanelActive(false);
+
+    // handle chuyển trang
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (shouldRedirect) {
+            navigate("/home");
+        }
+    }, [navigate, shouldRedirect])
+
+    const handleFormLoginSubmit = () => setShouldRedirect(true);
 
     return (
         <div className={styles.body}>
@@ -56,7 +67,7 @@ function LoginRegister() {
                                 <Link href="#">Forgot password?</Link>
                             </div>
                         </div>
-                        <button className={styles.button} type="submit">Login</button>
+                        <button className={styles.button} type="submit" onClick={handleFormLoginSubmit}>Login</button>
                         <span>or use your account</span>
                         <div className={styles['social-container']}>
                             <Link to="#" className={styles.social}>

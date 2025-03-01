@@ -68,7 +68,7 @@ function MakeOrder() {
     const formRef = useRef(null);
 
     return (
-        <Grid2 container spacing={3} sx={{ justifyContent: "center", backgroundColor: ' #f9f9f9' }} >
+        <Grid2 container spacing={3} sx={{ justifyContent: "center", backgroundColor: ' #f9f9f9', marginTop: "30px", marginBottom: "30px" }} >
             <Grid2 size={{ sx: 11, sm: 5 }}>
                 <div className="payment-info">
                     <div className="user-header">
