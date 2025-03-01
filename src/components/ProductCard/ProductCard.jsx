@@ -3,9 +3,9 @@ import icHeart from '/image/allproduct/ic-heart.png';
 import silverColor from '/image/allproduct/silver-color.png';
 import goldColor from '/image/allproduct/gold-color.png';
 import roseGoldColor from '/image/allproduct/rose-gold-color.png';
-import styles from './Product.module.css';
+import styles from './ProductCard.module.css';
 
-const Product = () => {
+const ProductCard = () => {
     return (
         <div className={styles.product}>
             <img className={styles.productImage} src={imageProduct} alt="product image" />
@@ -25,4 +25,4 @@ const Product = () => {
     );
 };
 
-export default Product;
+export default ProductCard;

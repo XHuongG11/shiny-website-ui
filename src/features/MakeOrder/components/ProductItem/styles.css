@@ -38,7 +38,7 @@
 }
 
 .type-product {
-    font-size: 14px;
+    font-size: 13px;
     color: #888;
 }
 
@@ -50,13 +50,13 @@
 }
 
 .old-cost {
-    font-size: 14px;
+    font-size: 13px;
     color: #999;
     text-decoration: line-through;
 }
 
 .current-cost {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: bold;
     color: #000;
 }
