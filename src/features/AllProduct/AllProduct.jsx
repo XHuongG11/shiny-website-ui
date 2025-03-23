@@ -6,8 +6,20 @@ import MoreProduct from './components/MoreProduct/MoreProduct';
 import styles from './AllProduct.module.css';
 import { Grid2 } from '@mui/material';
 import Breadcrumb from '../../components/Breadcrumb/breadcrum';
+import { useEffect } from "react";
+import productApi from "../../api/productApi";
 
 const AllProduct = () => {
+
+    const fetchProducts = async () => {
+        const data = await productApi.getAllProducts({ params: { page: 1, size: 1 } });
+        console.log(data.data);
+    }
+
+    useEffect(() => {
+        fetchProducts();
+    }, []);
+
     return (
         <Grid2 container rowSpacing={2} sx={{ alignItems: "center", justifyContent: "center" }} direction="column">
             <Grid2 size={12}>
