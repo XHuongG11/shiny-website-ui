@@ -19,7 +19,7 @@ function App() {
         <Route path='/checkouts/*' element={<MakeOrder />}></Route>
         <Route path='/login' element={<LoginRegister />}></Route>
         <Route path='/checkouts/thank-you' element={<CompleteOrder />}></Route>
-        <Route path='/home' element={<Home />}></Route>
+        <Route path='/' element={<Home />}></Route>
         <Route path='/allproduct' element={<AllProduct />}></Route>
         <Route path='/infocus' element={<InfoCustomer />}></Route>
         <Route path='/productdetail' element={<ProductDetail />}></Route>

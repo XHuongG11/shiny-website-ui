@@ -7,7 +7,7 @@ Breadcrumb.propTypes = {
 function Breadcrumb({ currentPage }) {
     return (
         <nav className={styles.breadcrumb}>
-            <a href="index.html">Home</a> &gt; <span>{currentPage}</span>
+            <a href="/">Home</a> &gt; <span>{currentPage}</span>
         </nav>
     );
 }

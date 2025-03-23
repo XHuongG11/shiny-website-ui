@@ -62,7 +62,7 @@ function MakeOrder() {
     // function handle chuyển trang khi người dùng hoàn tất thanh toán
     function handleFormSubmit(value) {
         console.log(value);
-        setShouldRedirect(true);
+        setShouldRedirect(false);
     }
 
     const formRef = useRef(null);
