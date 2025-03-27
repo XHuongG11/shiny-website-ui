@@ -1,16 +1,52 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './styles.module.css'; // Importing the CSS module
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFacebookF, faGoogle, faLinkedinIn } from "@fortawesome/free-brands-svg-icons";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { login } from './authSlice';
+import { unwrapResult } from '@reduxjs/toolkit';
+
 
 LoginRegister.propTypes = {};
 
 function LoginRegister() {
+    const dispatch = useDispatch();
+
     const [isRightPanelActive, setIsRightPanelActive] = useState(false);
+    const [shouldRedirect, setShouldRedirect] = useState(false);
+    const [emailLogin, setEmailLogin] = useState();
+    const [passwordLogin, setPasswordLogin] = useState();
 
     const handleRegisterClick = () => setIsRightPanelActive(true);
     const handleLoginClick = () => setIsRightPanelActive(false);
+
+    // handle chuyển trang
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (shouldRedirect) {
+            navigate("/");
+        }
+    }, [navigate, shouldRedirect])
+
+    const handleFormLoginSubmit = async () => {
+        try {
+            const data = {
+                email: emailLogin,
+                password: passwordLogin,
+
+            }
+            const action = await dispatch(login(data))
+            const user = unwrapResult(action)
+
+            console.log(user);
+            setShouldRedirect(true);
+        } catch (error) {
+            // handle error here
+            console.log(error);
+        }
+
+    };
 
     return (
         <div className={styles.body}>
@@ -45,8 +81,8 @@ function LoginRegister() {
                 <div className={`${styles['form-container']} ${styles['login-container']}`}>
                     <form className={styles.form}>
                         <h1>Login here.</h1>
-                        <input type="email" placeholder="Email" />
-                        <input type="password" placeholder="Password" />
+                        <input type="email" placeholder="Email" onChange={(event) => setEmailLogin(event.target.value)} />
+                        <input type="password" placeholder="Password" onChange={(event) => setPasswordLogin(event.target.value)} />
                         <div className={styles.content}>
                             <div className={styles.checkbox}>
                                 <input type="checkbox" id="checkbox" />
@@ -56,7 +92,7 @@ function LoginRegister() {
                                 <Link href="#">Forgot password?</Link>
                             </div>
                         </div>
-                        <button className={styles.button} type="submit">Login</button>
+                        <button className={styles.button} type="button" onClick={handleFormLoginSubmit}>Login</button>
                         <span>or use your account</span>
                         <div className={styles['social-container']}>
                             <Link to="#" className={styles.social}>

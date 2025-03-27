@@ -1,7 +1,7 @@
 
-.nen{
+/* .nen{
     padding-top: 20px;
-}
+} */
 
 .menu{
     padding-left: 30px;
@@ -10,7 +10,7 @@
     position: relative;
     width: 100%;
     /* max-width: 800px;  */
-  }
+}
   
   .image {
     width: 100%;
@@ -20,7 +20,7 @@
   
   .textOverlay {
     position: absolute;
-    top: 20%; /* Điều chỉnh vị trí chữ trên hình */
+    top: 15%; /* Điều chỉnh vị trí chữ trên hình */
     left: 5%; /* Căn lề trái */
     color: white; /* Chữ màu trắng */
     font-weight: bold;
@@ -42,7 +42,6 @@
   }
   .imgContainer {
     width: 100%; /* Độ rộng của container bằng toàn bộ trang */
-    max-width: 1400px; /* Đặt giới hạn tối đa nếu cần */
     margin: auto; /* Căn giữa */
   }
   

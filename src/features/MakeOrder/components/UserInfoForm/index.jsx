@@ -6,8 +6,13 @@ import * as yup from 'yup';
 import InputField from '../../../../components/InputField';
 import './styles.css';
 import PropTypes from "prop-types";
+import useAddress from '../../../../assets/hook/address';
+
+
 
 const UserInfoForm = forwardRef(({ addresses, onSubmit }, ref) => {
+    const { provinces, districts, wards, handleProvinceChange, handleDistrictChange } = useAddress();
+
 
     const [selectedAddress, setSelectedAddress] = useState(""); // Lưu địa chỉ được chọn
     // các event cho các Select Option
@@ -21,8 +26,8 @@ const UserInfoForm = forwardRef(({ addresses, onSubmit }, ref) => {
         phoneNumber: yup.string().required("Please enter value."),
         houseNumber: yup.string().required("Please enter value."),
         city: yup.string().required("Please select a city."),
-        district: yup.string().required("Please select a district."),
-        ward: yup.string().required("Please select a ward."),
+        district: yup.string().required("Please enter value."),
+        ward: yup.string().required("Please enter value."),
     });
     const { handleSubmit, control, formState: { errors } } = useForm({
         defaultValues: {
@@ -91,10 +96,16 @@ const UserInfoForm = forwardRef(({ addresses, onSubmit }, ref) => {
                             <Select {...field}
                                 label="Tỉnh / thành *"
                                 labelId="tinh-thanh"
-                                sx={{ height: 47 }}>
-                                <MenuItem key='1' value='1'>Quảng Ngãi</MenuItem>
-                                <MenuItem key='2' value='2'>Hồ Chí Minh</MenuItem>
-                                <MenuItem key='3' value='3'>Đà Nẵng</MenuItem>
+                                value={provinces.some(d => d.name === field.value) ? field.value : ""}
+                                sx={{ height: 47 }}
+                                onChange={(event) => {
+                                    field.onChange(event.target.value);
+                                    handleProvinceChange(event);
+                                }}>
+                                {provinces.map(province => (
+                                    <MenuItem key={province.code} value={province.name}>{province.name}</MenuItem>
+                                ))}
+
                             </Select>
                         )} />
                     <FormHelperText>{errors.city?.message}</FormHelperText>
@@ -109,10 +120,15 @@ const UserInfoForm = forwardRef(({ addresses, onSubmit }, ref) => {
                             <Select {...field}
                                 label="Quận / huyện *"
                                 labelId="quan-huyen"
+                                value={districts.some(d => d.name === field.value) ? field.value : ""}
+                                onChange={(event) => {
+                                    field.onChange(event.target.value);
+                                    handleDistrictChange(event);
+                                }}
                                 sx={{ height: 47 }}>
-                                <MenuItem key='1' value='1'>Quảng Ngãi</MenuItem>
-                                <MenuItem key='2' value='2'>Hồ Chí Minh</MenuItem>
-                                <MenuItem key='3' value='3'>Đà Nẵng</MenuItem>
+                                {districts.map(district => (
+                                    <MenuItem key={district.code} value={district.name}>{district.name}</MenuItem>
+                                ))}
                             </Select>
                         )} />
                     <FormHelperText>{errors.district?.message}</FormHelperText>
@@ -126,10 +142,12 @@ const UserInfoForm = forwardRef(({ addresses, onSubmit }, ref) => {
                             <Select {...field}
                                 label="Phường / xã *"
                                 labelId="phuong-xa"
+                                value={wards.some(d => d.name === field.value) ? field.value : ""}
+                                onChange={(event) => field.onChange(event.target.value)}
                                 sx={{ height: 47 }}>
-                                <MenuItem key='1' value='1'>Quảng Ngãi</MenuItem>
-                                <MenuItem key='2' value='2'>Hồ Chí Minh</MenuItem>
-                                <MenuItem key='3' value='3'>Đà Nẵng</MenuItem>
+                                {wards.map(ward => (
+                                    <MenuItem key={ward.code} value={ward.name}>{ward.name}</MenuItem>
+                                ))}
                             </Select>
                         )} />
                     <FormHelperText>{errors.ward?.message}</FormHelperText>

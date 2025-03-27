@@ -1,5 +1,5 @@
 .filter__box h4 {
-    font-size: 23px;
+    font-size: 16px;
     font-weight: bold;
     color: var(--text-color);
     margin-bottom: 15px;
@@ -15,13 +15,14 @@
     margin-top: 20px; 
     display: flex;
     align-items: center;
+    font-size: 14px;
 }
 
 .filter__box input[type="checkbox"] {
     margin-right: 20px; 
     margin-left: 8px;
     cursor: pointer;
-    transform: scale(2);
+    transform: scale(1);
     width: 18px;
     height: 18px;
 }

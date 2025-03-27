@@ -7,7 +7,7 @@ nav {
     background: white; /* Để không bị trong suốt */
     height: 10%;
     font-family: "Poppins", sans-serif;
-    margin-bottom: 0.7cm;
+    /* margin-bottom: 0.7cm; */
   }
 
 .on{
@@ -27,7 +27,7 @@ nav {
 }
 .duongke{
     background-color: black;
-    height: 8px;
+    height: 2px;
 }
 .below{
     padding: 0px 15px;
