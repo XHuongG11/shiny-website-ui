@@ -15,8 +15,7 @@ const AllProduct = () => {
     const fetchProducts = async () => {
         const data = await productApi.getAllProducts({ params: { page: 2 } });
         console.log(data.data.data.content);
-    }
-
+        
         try {
             const response = await productApi.getAllProducts({ params: { page: 1, size: 10 } });
             setProductList(response.data);

@@ -5,26 +5,9 @@ import goldColor from '/image/allproduct/gold-color.png';
 import roseGoldColor from '/image/allproduct/rose-gold-color.png';
 import styles from './ProductCard.module.css';
 import PropTypes from "prop-types";
-
-// const ProductCard = () => {
-//     return (
-//         <div className={styles.product}>
-//             <img className={styles.productImage} src={imageProduct} alt="product image" />
-//             <img className={styles.productFavourite} src={icHeart} alt="favourite product" />
-//             <div className={styles.productColor}>
-//                 <img src={silverColor} alt="silver color" />
-//                 <img src={goldColor} alt="gold color" />
-//                 <img src={roseGoldColor} alt="rose gold color" />
-//             </div>
-//             <p className={styles.productDiscount}>-20% BLACK FRIDAY</p>
-//             <p className={styles.productName}>Pulsera Moments Cadena de Serpiente con cierre de Corazón</p>
-//             <div className={styles.productPrice}>
-//                 <p className={styles.productPriceDiscounted}>47,20 €</p>
-//                 <p className={styles.productPriceOriginal}>59,00 €</p>
-//             </div>
-//         </div>
-//     );
-// };
+const formatPrice = (price) => {
+    return new Intl.NumberFormat("vi-VN").format(price) + "đ";
+};
 const ProductCard = ({ imageSrc, discount, name, discountedPrice, originalPrice }) => {
     return (
         <div className={styles.product}>
@@ -49,8 +32,11 @@ const ProductCard = ({ imageSrc, discount, name, discountedPrice, originalPrice 
 
             {/* Giá sản phẩm */}
             <div className={styles.productPrice}>
-                <p className={styles.productPriceDiscounted}>{discountedPrice}</p>
-                {originalPrice && <p className={styles.productPriceOriginal}>{originalPrice}</p>}
+                {/* Nếu discountedPrice khác originalPrice mới hiển thị */}
+                {discountedPrice !== originalPrice && (
+                    <p className={styles.productPriceOriginal}>{formatPrice(originalPrice)}</p>      
+                )}
+                <p className={styles.productPriceDiscounted}>{formatPrice(discountedPrice)}</p>
             </div>
         </div>
     );
