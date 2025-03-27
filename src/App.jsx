@@ -23,6 +23,7 @@ function App() {
         <Route path='/allproduct' element={<AllProduct />}></Route>
         <Route path='/infocus' element={<InfoCustomer />}></Route>
         <Route path='/productdetail' element={<ProductDetail />}></Route>
+        <Route path="/product/:id" element={<ProductDetail />} />
         <Route path='/cart' element={<Cart />}></Route>
       </Routes>
 

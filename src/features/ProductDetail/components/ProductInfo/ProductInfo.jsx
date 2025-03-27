@@ -1,7 +1,12 @@
 import { useState } from "react";
 import styles from "./ProductInfo.module.css";
+import PropTypes from "prop-types";
 
-function ProductInfo() {
+const formatPrice = (price) => {
+  return new Intl.NumberFormat("vi-VN").format(price) + "₫";
+};
+
+function ProductInfo({product}) {
   const [openDropdown, setOpenDropdown] = useState(null);
 
   const toggleDropdown = (index) => {
@@ -13,16 +18,17 @@ function ProductInfo() {
       <div className={styles.infoProductImage}>
         <img
           className={styles.productImageMain}
-          src="/image/productdetail/product1.png"
+          src={product.images[0]?.url}
           alt="Ảnh sản phẩm"
         />
       </div>
       <div className={styles.infoProductContentContainer}>
         <div className={styles.infoProductContent}>
-          <label className={styles.nameProduct}>LOEV Diamond Band</label>
+          <label className={styles.nameProduct}>{product.title}</label>
           <div className={styles.price}>
-            <label className={styles.priceCurrent}>200.540.000₫</label>
-            <label className={styles.basePrice}>224.554.000₫</label>
+          <label className={styles.priceCurrent}>{formatPrice(product.productSizes[0].discountPrice)}</label>
+          {product.productSizes[0].discountPrice !== product.productSizes[0].price && (
+          <label className={styles.basePrice}>{formatPrice(product.productSizes[0].price)}</label>)}
           </div>
           <label>Chọn kích thước: </label>
           <div className={styles.sizeProduct}>
@@ -115,5 +121,20 @@ function ProductInfo() {
     </div>
   );
 }
-
+ProductInfo.propTypes = {
+  product: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    images: PropTypes.arrayOf(
+      PropTypes.shape({
+        url: PropTypes.string.isRequired,
+      })
+    ).isRequired,
+    productSizes: PropTypes.arrayOf(
+      PropTypes.shape({
+        discountPrice: PropTypes.number.isRequired,
+        price: PropTypes.number.isRequired,
+      })
+    ).isRequired,
+  }).isRequired,
+};
 export default ProductInfo;

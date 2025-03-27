@@ -13,11 +13,8 @@ const AllProduct = () => {
     const [productList, setProductList] = useState([]);
     const [loading, setLoading] = useState(true);
     const fetchProducts = async () => {
-        const data = await productApi.getAllProducts({ params: { page: 2 } });
-        console.log(data.data.data.content);
-        
         try {
-            const response = await productApi.getAllProducts({ params: { page: 1, size: 10 } });
+            const response = await productApi.getAllProducts({ params: { page: 1, size: 21 } });
             setProductList(response.data);
         } catch (error) {
             console.error("Error fetching products:", error);
