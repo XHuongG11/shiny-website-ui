@@ -1,29 +1,30 @@
-import Product from '../Product/Product';
-import styles from './Product.module.css';
-
-const products = [
-    {
-        imageSrc: "/image/allproduct/imageProduct.png",
-        favouriteSrc: "/image/allproduct/ic-heart.png",
-        colors: [
-        "/image/allproduct/silver-color.png",
-        "/image/allproduct/gold-color.png",
-        "/image/allproduct/rose-gold-color.png",
-        ],
-        discount: "-20% BLACK FRIDAY",
-        name: "Pulsera Moments Cadena de Serpiente con cierre de Corazón",
-        discountedPrice: "47,20 €",
-        originalPrice: "59,00 €",
-    },
-    // Thêm các sản phẩm khác vào đây
-];
+import { useState, useEffect } from "react";
+import ProductContainer from "../ProductContainer/ProductContainer";
+import productApi from "../../../../api/productApi";
+import styles from "./Product.module.css";
 
 const ProductList = () => {
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await productApi.getAllProducts({ params: { _page: 1, _limit: 10 } });
+                setProducts(response.data?.data?.content || []);
+            } catch (error) {
+                console.error("Lỗi khi lấy danh sách sản phẩm:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProducts();
+    }, []);
+
     return (
         <div className={styles.productContainer}>
-            {products.map((product, index) => (
-                <Product key={index} {...product} />
-            ))}
+            {loading ? <p>Đang tải sản phẩm...</p> : <ProductContainer products={products} />}
             <button className={styles.productShowmore}>Xem thêm</button>
         </div>
     );

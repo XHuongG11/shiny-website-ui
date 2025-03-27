@@ -1,31 +1,43 @@
-import ProductCard from '../../../../components/ProductCard/ProductCard';
-import styles from './Product.module.css';
+import PropTypes from "prop-types";
+import ProductCard from "../../../../components/ProductCard/ProductCard";
+import styles from "./Product.module.css";
 
-const ProductContainer = () => {
-    const productTemplate = [
-        {
-            imageSrc: "/image/allproduct/imageProduct.png",
-            favouriteSrc: "/image/allproduct/ic-heart.png",
-            colors: [
-                "/image/allproduct/silver-color.png",
-                "/image/allproduct/gold-color.png",
-                "/image/allproduct/rose-gold-color.png",
-            ],
-            discount: "-20% BLACK FRIDAY",
-            name: "Pulsera Moments Cadena de Serpiente con cierre de Corazón",
-            discountedPrice: "47,20 €",
-            originalPrice: "59,00 €",
-        },
-        // Thêm các sản phẩm khác
-    ];
-    const products = Array(9).fill(productTemplate);
+const ProductContainer = ({ products }) => {
+    console.log("Fetch product:", products); // Kiểm tra dữ liệu đầu vào
+
+    // Đảm bảo products.data.content tồn tại và là một mảng
+    const productList = Array.isArray(products?.data?.content) ? products.data.content : [];
+
+    console.log("Fetch product list successfully:", productList);
+
     return (
         <div className={styles.productContainer}>
-            {products.map((product, index) => (
-                <ProductCard key={index} {...product} />
-            ))}
+            {productList.length > 0 ? (
+                productList.map((product) => (
+                    <ProductCard key={product.id} name={product.title} />
+                ))
+            ) : (
+                <p>Không có sản phẩm nào.</p>
+            )}
         </div>
     );
 };
+
+
+ProductContainer.propTypes = {
+    products: PropTypes.shape({
+        data: PropTypes.shape({
+            content: PropTypes.arrayOf(
+                PropTypes.shape({
+                    id: PropTypes.number.isRequired,
+                    title: PropTypes.string.isRequired, 
+                    description: PropTypes.string,
+                    price: PropTypes.number,
+                })
+            ).isRequired, 
+        }).isRequired, 
+    }).isRequired, 
+};
+
 
 export default ProductContainer;
