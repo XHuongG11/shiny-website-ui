@@ -4,7 +4,7 @@ import styles from "./Product.module.css";
 
 const ProductContainer = ({ products }) => {
     const productList = Array.isArray(products?.data?.content) ? products.data.content : [];
-    console.log("Fetch product list successfully:", productList);
+    console.log("ProductContainer product list successfully:", productList);
     return (
         <div className={styles.productContainer}>
             {productList.length > 0 ? (

@@ -15,7 +15,8 @@ const AllProduct = () => {
     const fetchProducts = async () => {
         try {
             const response = await productApi.getAllProducts({ params: { page: 1, size: 21 } });
-            setProductList(response.data);
+            console.log("Dữ liệu API trả về:", response.data); // Log dữ liệu API
+            setProductList(response);
         } catch (error) {
             console.error("Error fetching products:", error);
         } finally {
@@ -47,7 +48,6 @@ const AllProduct = () => {
                     {loading ? (
                         <p>Đang tải sản phẩm...</p>
                     ) : (
-                        
                         <ProductContainer products={productList} />
                     )}
                     <button className={styles.productShowmore}>Xem thêm</button>
