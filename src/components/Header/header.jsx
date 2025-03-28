@@ -9,7 +9,7 @@ import DropdownMenu from "./components/DropdownMenu";
 import styles from './Header.module.css';
 import { Menu, MenuItem } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from "../../features/LoginSignin/authSlice"
+import { logout } from "../../redux/authSlice"
 import { useNavigate } from 'react-router-dom';
 
 export default function Header() {
@@ -29,6 +29,7 @@ export default function Header() {
   };
   const handleLogout = () => {
     dispatch(logout());
+    navigate("/");
     setAnchorEl(null);
   }
 
@@ -39,7 +40,10 @@ export default function Header() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
+  const handleProfileClick = () => {
+    navigate("/infocus");
+    setAnchorEl(null);
+  }
   return (
     <nav>
       <div className={styles.on}>
@@ -78,7 +82,7 @@ export default function Header() {
             {Object.keys(userInfo).length === 0
               ? [<MenuItem key="login" onClick={handleLogin}>Login</MenuItem>]
               : [
-                <MenuItem key="profile" onClick={handleClose}>Profile</MenuItem>,
+                <MenuItem key="profile" onClick={handleProfileClick}>Profile</MenuItem>,
                 <MenuItem key="logout" onClick={handleLogout}>Logout</MenuItem>
               ]
             }

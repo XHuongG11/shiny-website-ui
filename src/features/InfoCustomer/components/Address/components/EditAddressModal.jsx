@@ -2,19 +2,19 @@
 
 import styles from "./EditAddressModal.module.css"; // Import CSS cho modal
 import { HiMiniXMark } from "react-icons/hi2";
+import propTypes from "prop-types";
 
-const EditAddressModal = ({ isOpen, onClose }) => { //cái này hong phải lỗi đâu nha do nó phải truyền từ cái kia qua á
-      
-  if (!isOpen) return null; // Nếu không mở thì ẩn modal
+const EditAddressModal = ({ onClose }) => { //cái này hong phải lỗi đâu nha do nó phải truyền từ cái kia qua á
+
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modalContent}>
         <div className={styles.modalHeader}>
-            <h2>CHỈNH SỬA ĐỊA CHỈ</h2>
-            <button className={styles.closeBtn} onClick={onClose}><HiMiniXMark/></button>
+          <h2>CHỈNH SỬA ĐỊA CHỈ</h2>
+          <button className={styles.closeBtn} onClick={onClose}><HiMiniXMark /></button>
         </div>
         <hr />
-        
+
         <h3 style={{ fontWeight: "bold" }}>Thông tin người nhận</h3>
         <input className={styles.text} type="text" placeholder="Tên người nhận" />
         <input className={styles.text} type="text" placeholder="Số điện thoại" />
@@ -33,5 +33,7 @@ const EditAddressModal = ({ isOpen, onClose }) => { //cái này hong phải lỗ
     </div>
   );
 };
-
+EditAddressModal.propTypes = {
+  onClose: propTypes.func,
+}
 export default EditAddressModal;

@@ -1,5 +1,7 @@
 import styles from './Banner.module.css';
-const Banner = () => {
+import propTypes from 'prop-types';
+
+const Banner = ({ fullName = "" }) => {
   return (
 
     <div className={styles.banner}>
@@ -9,7 +11,7 @@ const Banner = () => {
           <img src='./image/infocustomer/info.png'></img>
         </div>
         <div className={styles.textOverlay}>
-          <h2>Chào mừng, Nguyễn Lê Mỹ Hoàng</h2>
+          <h2>Chào mừng, {fullName}</h2>
           <p>Như những ngôi sao trên bầu trời đêm<br /> <br />
             trang sức làm bạn tỏa sáng giữa đám đông</p>
 
@@ -18,4 +20,7 @@ const Banner = () => {
     </div >
   );
 };
+Banner.propTypes = {
+  fullName: propTypes.string,
+}
 export default Banner;  

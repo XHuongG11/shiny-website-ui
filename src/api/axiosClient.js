@@ -1,35 +1,57 @@
-import axios from 'axios';
-import StorageKeys from "../containts/storage-key"
+import axios from "axios";
+import StorageKeys from "../containts/storage-key";
 
 const axiosClient = axios.create({
-    baseURL: 'http://localhost:8080/api/v1/',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-})
+  baseURL: "http://localhost:8080/api/v1/",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
-const instance = axios.create();
-instance.interceptors.request.use(function (config) {
-    const token = localStorage.getItem(StorageKeys.TOKEN)
+axiosClient.interceptors.request.use(
+  function (config) {
+    const token = localStorage.getItem(StorageKeys.TOKEN);
     if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
-}, function (error) {
+  },
+  function (error) {
     // Do something with request error
     return Promise.reject(error);
-});
+  }
+);
 
 // Add a response interceptor
-instance.interceptors.response.use(function (response) {
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
-    return response.data.data;
-}, function (error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
+axiosClient.interceptors.response.use(
+  function (response) {
+    return response.data;
+  },
+  function (error) {
+    if (error.response) {
+      switch (error.response.status) {
+        case 401:
+          if (error.response.data.code === "0") {
+            alert("Phiên đăng nhập hết hạn, vui lòng đăng nhập lại.");
+            localStorage.removeItem(StorageKeys.TOKEN);
+            localStorage.removeItem(StorageKeys.USER);
+            window.location.href = "/login";
+          }
+          break;
+        case 403:
+          // window.location.href = `/error/${error.response.status}`;
+          break;
+        case 500:
+          // window.location.href = `/error/${error.response.status}`;
+          break;
+        default:
+          window.location.href = `/error/${error.response.status}`;
+      }
+    } else {
+      alert("Không thể kết nối đến máy chủ. Vui lòng kiểm tra mạng.");
+    }
     return Promise.reject(error);
-});
-
+  }
+);
 
 export default axiosClient;

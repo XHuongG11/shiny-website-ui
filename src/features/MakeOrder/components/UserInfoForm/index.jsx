@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FormControl, FormHelperText, InputLabel, MenuItem, Select } from '@mui/material';
-import { forwardRef, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import InputField from '../../../../components/InputField';
@@ -11,7 +11,7 @@ import useAddress from '../../../../assets/hook/address';
 
 
 const UserInfoForm = forwardRef(({ addresses, onSubmit }, ref) => {
-    const { provinces, districts, wards, handleProvinceChange, handleDistrictChange } = useAddress();
+    const { provinces, districts, wards, handleProvinceChange, handleDistrictChange, fetchProvinces } = useAddress();
 
 
     const [selectedAddress, setSelectedAddress] = useState(""); // Lưu địa chỉ được chọn
@@ -48,6 +48,10 @@ const UserInfoForm = forwardRef(({ addresses, onSubmit }, ref) => {
             onSubmit(values);
         }
     };
+
+    useEffect(() => {
+        fetchProvinces();
+    }, []);
 
     return (
         <form ref={ref} className="user-form" onSubmit={handleSubmit(onSubmitHandler)}>
@@ -100,7 +104,7 @@ const UserInfoForm = forwardRef(({ addresses, onSubmit }, ref) => {
                                 sx={{ height: 47 }}
                                 onChange={(event) => {
                                     field.onChange(event.target.value);
-                                    handleProvinceChange(event);
+                                    handleProvinceChange(event.target.value);
                                 }}>
                                 {provinces.map(province => (
                                     <MenuItem key={province.code} value={province.name}>{province.name}</MenuItem>
@@ -123,7 +127,7 @@ const UserInfoForm = forwardRef(({ addresses, onSubmit }, ref) => {
                                 value={districts.some(d => d.name === field.value) ? field.value : ""}
                                 onChange={(event) => {
                                     field.onChange(event.target.value);
-                                    handleDistrictChange(event);
+                                    handleDistrictChange(event.target.value);
                                 }}
                                 sx={{ height: 47 }}>
                                 {districts.map(district => (

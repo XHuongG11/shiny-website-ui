@@ -1,25 +1,37 @@
 //này là cái khung hiện địa chỉ mặc định
 
-import styles from "./AddressCard.module.css"; // Import CSS
-import { SlNote } from "react-icons/sl";
+import propTypes from "prop-types";
 import { useState } from "react";
-import EditAddressModal from "./EditAddressModal";
+import { SlNote } from "react-icons/sl";
+import styles from "./AddressCard.module.css"; // Import CSS
+import AddressModal from "./AddressModal";
 
-const AddressCard = () => {
+const AddressCard = ({ address, onUpdate }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <div className={styles.card}>
-        {<span className={styles.defaultLabel}>Mặc định</span>}
+      {address?.default ? <span className={styles.defaultLabel}>Mặc định</span> : null}
       <div className={styles.info}>
-        <strong >Nguyễn Lê Mỹ Hoàng - 0944296007</strong>
-        <p>71 Tôn Đức Thắng, Long Thới, Long Thành Trung, Hòa Thành, Tây Ninh</p>
-      </div>     
+        {address ?
+          <>
+            < strong > {address.recipientName} - {address.recipientPhone}</strong>
+            <p>{address.address}, {address.village}, {address.district}, {address.province}</p>
+          </>
+          : <p>Không có dữ liệu địa chỉ</p>}
+      </div >
       <button className={styles.editButton} onClick={() => setIsModalOpen(true)}>
-        <SlNote/>
+        <SlNote />
       </button>
-      <EditAddressModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-    </div>
+      {
+        isModalOpen ?
+          <AddressModal onClose={() => setIsModalOpen(false)} action="EDIT" address={address} onUpdate={onUpdate} /> : null
+      }
+    </div >
   );
 };
-
+AddressCard.propTypes = {
+  address: propTypes.object,
+  onUpdate: propTypes.func,
+}
 export default AddressCard;
