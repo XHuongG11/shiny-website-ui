@@ -181,25 +181,41 @@
 .favoriteBtn {
     background: none;
     border: none;
-    font-size: 1em;
+    font-size: 1.22em;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 10px; 
+    font-weight: bold;
     text-decoration: underline;
     margin: 10px;
 }
 /* Hover */
 .favoriteBtn:hover {         
-    color: rgb(87, 23, 23); /* Đổi màu chữ */
+    color: rgb(152, 19, 19); /* Đổi màu chữ */
     transform: translateY(-3px); /* Nổi lên nhẹ */
     
 }
 
-.favoriteBtn img {
-    width: 20px;
-    height: 20px;
-}
+.icon {
+    width: 30px;
+    height: 30px;
+    background-image: url('/image/productdetail/ic-heart.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    transition: background-image 0.3s ease;
+  }
+  
+  .favoriteBtn:hover .icon {
+    background-image: url('/image/productdetail/heart.png');
+  }
+  .favoriteBtn.added {
+    color: rgb(152, 19, 19); /* Màu chữ đỏ khi đã thêm vào */
+    text-decoration: none;
+  }
+  .favoriteBtn.added .icon {
+    background-image: url('/image/productdetail/heart.png'); /* Icon khi đã thêm vào */
+  }
 .dropdownContainer{
     margin: 12px 0px 0px 36px;
     display: flex;

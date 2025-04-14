@@ -16,7 +16,7 @@ const Address = ({ addresses, onUpdate }) => {
         {isModalOpen ? <AllAddressModal onClose={() => setIsModalOpen(false)} addresses={addresses} onUpdate={onUpdate} /> : null}
       </div>
       <div className={styles.cardBody}>
-        <AddressCard address={defaultAddress} onUpdate={onUpdate} />
+        <AddressCard address={defaultAddress} onUpdate={onUpdate} />      
         <AddAddress onUpdate={onUpdate} />
       </div>
     </div>

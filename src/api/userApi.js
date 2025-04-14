@@ -34,5 +34,18 @@ const userApi = {
     const url = `/users/add-customer`;
     return axiosClient.post(url, data);
   },
+  addWishList(data) {
+    const url = `/wishlist/add`;
+    return axiosClient.post(url,data);
+  },
+  getWishList({ params = {} }) {
+      const url = `/wishlist/customer`;
+      return axiosClient.get(url, { params });
+  },
+  removeWishList(id) {
+      const url = `/wishlist/delete/${id}`;
+      return axiosClient.delete(url);
+  },
+
 };
 export default userApi;

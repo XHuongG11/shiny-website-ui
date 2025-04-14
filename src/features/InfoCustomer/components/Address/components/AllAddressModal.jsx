@@ -13,7 +13,7 @@ const AllAddressModal = ({ onClose, addresses, onUpdate }) => { //cái này hong
           <h2>DANH SÁCH ĐỊA CHỈ</h2>
           <button className={styles.closeBtn} onClick={onClose}><HiMiniXMark /></button>
         </div>
-        <hr />
+        <hr/>
         <div className={styles.cardBody}>
           {addresses.map((address) => (
             <AddressCard key={address.id} address={address} onUpdate={onUpdate} />))}
