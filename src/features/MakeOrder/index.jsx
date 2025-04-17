@@ -13,6 +13,26 @@ MakeOrder.propTypes = {
 };
 
 function MakeOrder() {
+    // State to store checkout items
+    const [checkoutItems, setCheckoutItems] = useState([]);
+    
+    // Load checkout items from localStorage when component mounts
+    useEffect(() => {
+        const storedItems = localStorage.getItem('checkoutItems');
+        if (storedItems) {
+            setCheckoutItems(JSON.parse(storedItems));
+        }
+    }, []);
+
+    // Calculate totals based on checkout items
+    const subtotal = checkoutItems.reduce((total, item) => {
+        const price = item.productSize?.price || item.product?.price || 0;
+        return total + price * (item.quantity || 1);
+    }, 0);
+    
+    const discount = 1000000; // This could be dynamic based on applied discounts
+    const shippingFee = 40000;
+    const total = subtotal - discount + shippingFee;
 
     // danh sách địa chỉ của khách hàng
     const addresses = [
@@ -62,7 +82,9 @@ function MakeOrder() {
     // function handle chuyển trang khi người dùng hoàn tất thanh toán
     function handleFormSubmit(value) {
         console.log(value);
-        setShouldRedirect(false);
+        // Also pass the selected items in the form submission
+        console.log("Checkout items:", checkoutItems);
+        setShouldRedirect(true); // Changed to true to enable redirection
     }
 
     const formRef = useRef(null);
@@ -100,9 +122,23 @@ function MakeOrder() {
             <Grid2 size={{ xs: 11, sm: 4 }}>
                 <div className="checkout-info">
                     <div className="list-checkout">
-                        {/* Danh sách các sản phẩm */}
-                        <ProductItem />
-                        <ProductItem />
+                        {/* Danh sách các sản phẩm từ giỏ hàng */}
+                        {checkoutItems.length > 0 ? (
+                            checkoutItems.map((item, index) => (
+                                <ProductItem 
+                                    key={item.id || index}
+                                    product={item.product}
+                                    quantity={item.quantity || 1}
+                                    productSize={item.productSize}
+                                />
+                            ))
+                        ) : (
+                            <>
+                                <ProductItem />
+                                <ProductItem />
+                            </>
+                        )}
+                        
                         <div className="discount-container">
                             <FormControl>
                                 <TextField
@@ -118,25 +154,24 @@ function MakeOrder() {
                         </div>
                         <div className="estimate">
                             <span className="text">Tạm tính</span>
-                            <span className="value">7,160,000đ</span>
+                            <span className="value">{subtotal.toLocaleString()}đ</span>
                         </div>
                         <div className="reduce">
                             <span className="text">Giảm giá</span>
-                            <span className="value">1,000,000đ</span>
+                            <span className="value">{discount.toLocaleString()}đ</span>
                         </div>
                         <div className="delivery-cost">
                             <span className="text">Phí vận chuyển</span>
-                            <span className="value">40,000đ</span>
+                            <span className="value">{shippingFee.toLocaleString()}đ</span>
                         </div>
                         <div className="line"></div>
                         <div className="overall">
                             <span className="text total">Tổng cộng</span>
-                            <span className="value total">6,200,000đ</span>
+                            <span className="value total">{total.toLocaleString()}đ</span>
                         </div>
                     </div>
                 </div >
             </Grid2>
-
         </Grid2>
     );
 }

@@ -1,12 +1,12 @@
-import ListProduct from './ListProduct/listProduct';
-import ViewProduct from './ViewProduct/viewProduct';
+import CartItemlist from './ListProduct/listProduct';
+// import ViewProduct from './ViewProduct/viewProduct';
 import './cart.module.css';
 const Cart = () => {
 
     return (
         <div>
-            <ListProduct />
-            <ViewProduct />
+            <CartItemlist />
+            {/* <ViewProduct /> */}
         </div>
     );
 };
