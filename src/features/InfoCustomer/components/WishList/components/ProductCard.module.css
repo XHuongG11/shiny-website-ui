@@ -6,6 +6,7 @@
     padding: 10px;
     border: 1.2px solid #9e9d9d;
     height:118px;
+    padding-bottom: 0px;
 
 }
 .imgContainer {
@@ -32,7 +33,7 @@
 }
 h3{
     font-weight: bold;
-    font-size: 14px;
+    font-size: 16px;
 
 }
 
@@ -40,7 +41,7 @@ h3{
     margin-top: -20px;
     font-weight: bold;
     color: red;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .deleteButton {

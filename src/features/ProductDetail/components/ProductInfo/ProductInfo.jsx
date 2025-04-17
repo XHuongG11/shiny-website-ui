@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect  } from "react";
 import styles from "./ProductInfo.module.css";
 import PropTypes from "prop-types";
+import userApi from "../../../../api/userApi";
 
 const formatPrice = (price) => {
   return new Intl.NumberFormat("vi-VN").format(price) + "₫";
@@ -8,9 +9,66 @@ const formatPrice = (price) => {
 
 function ProductInfo({product}) {
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [isInWishlist, setIsInWishlist] = useState(false); // State để kiểm tra sản phẩm có trong wishlist không
+
+  // Lấy danh sách wishlist từ API
+  useEffect(() => {
+    console.log("Giá trị của product:", product);
+    if (!product || !product.id) {
+      console.error("Product không hợp lệ hoặc không có id.");
+      return;
+    }
+
+    const fetchWishlist = async () => {
+      try {
+        const response = await userApi.getWishList({ params: { page: 1, size: 100 } }); 
+        console.log("Danh sách wishlist: ", response.data.content);
+        const exists = response.data.content.some((item) => item.product.id === product.id);
+        setIsInWishlist(exists);
+      } catch (error) {
+        console.error("Lỗi khi lấy danh sách wishlist:", error);
+      }
+    };
+
+    fetchWishlist();
+  }, [product]);
 
   const toggleDropdown = (index) => {
     setOpenDropdown(openDropdown === index ? null : index);
+  };
+
+  const handleToggleWishlist = () => {
+    if (isInWishlist) {
+      // Nếu sản phẩm đã có trong danh sách yêu thích, xóa nó
+      userApi
+      .removeWishList(product.id)
+      .then(() => {
+        console.log("Xóa thành công sản phẩm khỏi danh sách yêu thích");
+        alert("Sản phẩm đã được xóa khỏi danh mục yêu thích!");
+        setIsInWishlist(false);
+      })
+      .catch((error) => {
+        console.error("Lỗi khi xóa sản phẩm khỏi danh mục yêu thích:", error.response?.data || error.message);
+        alert(error.response?.data?.message || "Không thể xóa sản phẩm khỏi danh mục yêu thích. Vui lòng thử lại.");
+      });
+    } else {
+      // Nếu sản phẩm chưa có trong danh sách yêu thích, thêm nó
+      const request = {
+        product: product, // Gửi toàn bộ đối tượng product
+      };
+  
+      userApi
+        .addWishList(request)
+        .then((response) => {
+          console.log("Thêm thành công:", response.data);
+          alert("Sản phẩm đã được thêm vào danh mục theo dõi!");
+          setIsInWishlist(true); // Cập nhật trạng thái
+        })
+        .catch((error) => {
+          console.error("Thêm thất bại:", error);
+          alert("Không thể thêm sản phẩm vào danh mục theo dõi. Vui lòng thử lại.");
+        });
+    }
   };
 
   return (
@@ -55,9 +113,10 @@ function ProductInfo({product}) {
           <label className={styles.stockQuantity}>Chỉ còn 1 sản phẩm</label>
           <button className={styles.btnAddToCart}>Thêm vào giỏ hàng</button>
           <button className={styles.btnBuyNow}>Mua ngay</button>
-          <button className={styles.favoriteBtn}>
-            <img src="/image/productdetail/ic-heart.png" alt="Yêu thích" />
-            Thêm vào yêu thích
+          <button className={`${styles.favoriteBtn} ${isInWishlist ? styles.added : ""}`} onClick={handleToggleWishlist}>
+            <span className={styles.icon}>
+            </span>
+            {isInWishlist ? "Đã thêm vào danh mục yêu thích" : "Lưu vào danh mục theo dõi"}
           </button>
 
           {/* Dropdown Section */}
@@ -123,6 +182,7 @@ function ProductInfo({product}) {
 }
 ProductInfo.propTypes = {
   product: PropTypes.shape({
+    id: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired,
     images: PropTypes.arrayOf(
       PropTypes.shape({

@@ -8,11 +8,13 @@ import Address from "./components/Address/Address";
 import Banner from "./components/Banner/Banner";
 import CustomerInfo from "./components/CustomerInfo/CustomerInfo";
 import WishList from "./components/WishList/WishList";
+import SubscribedBanner from "./components/Subscribed/Subscribed";
 
 const InfoCustomer = () => {
   const infocus = useSelector((state) => state.user.current);
 
   const [addresses, setAddresses] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
   const fetchAddress = async () => {
     try {
       const addressResponse = await userApi.getAddresses();
@@ -22,9 +24,19 @@ const InfoCustomer = () => {
       console.log("Lỗi lấy dữ liệu: ", error);
     }
   };
+  const fetchWishlist = async () => {
+    try {
+      const wishlistResponse = await userApi.getWishList({ params: { page: 1, size: 10 } }); // Gọi API để lấy danh sách wishlist
+      console.log("Danh sách wishlist: ", wishlistResponse.data.content); // Log danh sách wishlist
+      setWishlist(wishlistResponse.data.content); // Lưu danh sách wishlist vào state
+    } catch (error) {
+      console.log("Lỗi lấy wishlist: ", error);
+    }
+  };
 
   useEffect(() => {
     fetchAddress();
+    fetchWishlist();
   }, []);
 
   const updateAddresses = (newAddress) => {
@@ -47,11 +59,20 @@ const InfoCustomer = () => {
       return newAddresses;
     });
   };
+  const RemoveWishlist = async (id) => {
+    try {
+      await userApi.removeWishList(id); // Gọi API để xóa sản phẩm khỏi wishlist
+      setWishlist((prevWishlist) => prevWishlist.filter((item) => item.id !== id)); // Cập nhật state
+    } catch (error) {
+      console.error("Lỗi khi xóa sản phẩm khỏi wishlist:", error);
+    }
+  };
 
   return (
     <div className={styles.infoCus}>
       <Banner fullName={infocus?.fullName} />
       <Breadcrumb currentPage="Thông tin tài khoản" />
+      <SubscribedBanner/>
       {/* <div className={styles.container}> */}
       <Grid2
         container
@@ -70,7 +91,7 @@ const InfoCustomer = () => {
           spacing={3}
         >
           <Grid2 size={12}>
-            <WishList />
+            <WishList wishlist={wishlist} onRemove={RemoveWishlist}/>
           </Grid2>
           <Grid2 size={12}>
             <Address addresses={addresses} onUpdate={updateAddresses} />

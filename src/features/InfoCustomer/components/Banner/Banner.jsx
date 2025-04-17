@@ -14,7 +14,6 @@ const Banner = ({ fullName = "" }) => {
           <h2>Chào mừng, {fullName}</h2>
           <p>Như những ngôi sao trên bầu trời đêm<br /> <br />
             trang sức làm bạn tỏa sáng giữa đám đông</p>
-
         </div>
       </div>
     </div >

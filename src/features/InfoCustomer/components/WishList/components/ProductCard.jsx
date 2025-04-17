@@ -1,21 +1,27 @@
 import styles from "./ProductCard.module.css";
 import { FaTrashCan } from "react-icons/fa6";
+import propTypes from "prop-types";
 
-const ProductCard = () => {
+const ProductCard = ({product, onRemove}) => {
+
 
   return (
     <div className={styles.card}>
       <div className={styles.imgContainer}>
-        <img src='./image/infocustomer/SP01.png' className={styles.image} />
+        <img src={product.images[0]?.url} className={styles.image} />
       </div>
       <div className={styles.details}>
-        <h3>Charm Pandora Khinh Khí Cầu Murano Đỏ</h3>
-        <p className={styles.description}>Bạc / One size</p>
-        <p className={styles.price}>2,990,000₫</p>
+        <h3>{product.title}</h3>
+        <p className={styles.description}>{product.material || "Không xác định"} / {product.productSizes[0]?.size}</p>
+        <p className={styles.price}>{new Intl.NumberFormat("vi-VN").format(product.productSizes[0].discountPrice || 0)}₫</p>
       </div>
-      <button className={styles.deleteButton}><FaTrashCan /></button>
+      <button className={styles.deleteButton} onClick={onRemove}><FaTrashCan /></button>
     </div>
   );
 };
+ProductCard.propTypes = {
+  product: propTypes.object,
+  onRemove: propTypes.func.isRequired,
+}
 
 export default ProductCard;
