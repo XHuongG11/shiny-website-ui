@@ -18,8 +18,8 @@ const ProductCard = ({ product}) => {
 
     return (
         <div className={styles.product} onClick={handleClick} style={{ cursor: "pointer" }}>
-            {/* Ảnh sản phẩm
-            <img className={styles.productImage} src={product.images[0].url} alt="product image" /> */}
+            {/* Ảnh sản phẩm */}
+            <img className={styles.productImage} src={product.images[0].url} alt="product image" />
 
             {/* Biểu tượng yêu thích */}
             <img className={styles.productFavourite} src={icHeart} alt="favourite product" />
@@ -32,23 +32,23 @@ const ProductCard = ({ product}) => {
             </div>
 
             {/* Giảm giá */}
-            {/* {product.productSizes[0].discountRate > 0 && (
+            {product.productSizes[0].discountRate > 0 && (
                 <p className={styles.productDiscount}>
                     -{product.productSizes[0].discountRate}% BLACK FRIDAY
                 </p>
-            )} */}
+            )}
 
             {/* Tên sản phẩm */}
-            {/* <p className={styles.productName}>{product.title}</p> */}
+            <p className={styles.productName}>{product.title}</p>
 
             {/* Giá sản phẩm */}
-            {/* <div className={styles.productPrice}>
+            <div className={styles.productPrice}>
                 {/* Nếu discountedPrice khác originalPrice mới hiển thị */}
-                {/* {product.productSizes[0].discountPrice !== product.productSizes[0].price && (
+                 {product.productSizes[0].discountPrice !== product.productSizes[0].price && (
                     <p className={styles.productPriceOriginal}>{formatPrice(product.productSizes[0].price)}</p>      
                 )}
                 <p className={styles.productPriceDiscounted}>{formatPrice(product.productSizes[0].discountPrice)}</p>
-            </div> */}
+            </div>
         </div>
     );
 };
