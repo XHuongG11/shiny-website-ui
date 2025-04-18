@@ -16,7 +16,7 @@ import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { HiMiniXMark } from "react-icons/hi2";
 import * as yup from "yup";
-import useAddress from "../../../../../assets/hook/address";
+import useAddress from "../../../../../utils/hooks/address";
 import InputField from "../../../../../components/InputField";
 import styles from "./AddressModal.module.css"; // Import CSS cho modal
 import userApi from "../../../../../api/userApi";

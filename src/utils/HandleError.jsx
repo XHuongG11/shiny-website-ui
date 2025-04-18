@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
-import Error404 from "../error/404.png";
-import Error500 from "../error/500.png";
-import Error403 from "../error/403.png";
+import Error404 from "/image/error/404.png?url";
+import Error500 from "/image/error/500.png?url";
+import Error403 from "/image/error/403.png?url";
 import { useParams } from "react-router-dom";
 
 function HandleError() {

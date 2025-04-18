@@ -6,6 +6,7 @@ const productApi = {
         const url = `/products/all`;
         return axiosClient.get(url, { params });
     },
+
 };
 export default productApi;
 

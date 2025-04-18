@@ -1,5 +1,5 @@
 import axios from "axios";
-import StorageKeys from "../containts/storage-key";
+import StorageKeys from "../constants/storage-key";
 
 const axiosClient = axios.create({
   baseURL: "http://localhost:8080/api/v1/",
@@ -39,10 +39,13 @@ axiosClient.interceptors.response.use(
           }
           break;
         case 403:
-          // window.location.href = `/error/${error.response.status}`;
+          window.location.href = `/error/${error.response.status}`;
+          break;
+        case 404:
+          window.location.href = `/error/${error.response.status}`;
           break;
         case 500:
-          // window.location.href = `/error/${error.response.status}`;
+          window.location.href = `/error/${error.response.status}`;
           break;
         default:
           window.location.href = `/error/${error.response.status}`;

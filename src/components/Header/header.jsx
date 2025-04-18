@@ -1,21 +1,21 @@
-import MenuOpenRoundedIcon from '@mui/icons-material/MenuOpenRounded';
-import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded';
-import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
-import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
-import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
+import MenuOpenRoundedIcon from "@mui/icons-material/MenuOpenRounded";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
+import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
+import PermIdentityOutlinedIcon from "@mui/icons-material/PermIdentityOutlined";
+import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import React, { useState } from "react";
 import DropdownMenu from "./components/DropdownMenu";
-import styles from './Header.module.css';
-import { Menu, MenuItem } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
-import { logout } from "../../redux/authSlice"
-import { useNavigate } from 'react-router-dom';
+import styles from "./Header.module.css";
+import { Menu, MenuItem } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../store/authSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const userInfo = useSelector(state => state.user.current);
+  const userInfo = useSelector((state) => state.user.current);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -31,7 +31,7 @@ export default function Header() {
     dispatch(logout());
     navigate("/");
     setAnchorEl(null);
-  }
+  };
 
   const handleLogin = () => {
     navigate("/login");
@@ -43,12 +43,12 @@ export default function Header() {
   const handleProfileClick = () => {
     navigate("/infocus");
     setAnchorEl(null);
-  }
+  };
   return (
     <nav>
       <div className={styles.on}>
         <div className={styles.logo}>
-          <img src='./src/assets/img/logo.jpg' height="90" width="150"></img>
+          <img src="../image/logo/logo.jpg" height="90" width="150"></img>
         </div>
         <div className={styles.navIcons}>
           <SearchRoundedIcon fontSize="large" />
@@ -59,12 +59,20 @@ export default function Header() {
       <div className={styles.below}>
         <div className={styles.items}>
           <div onClick={toggleDropdown}>
-            <a className={styles.link} href="#">Products</a>
+            <a className={styles.link} href="#">
+              Products
+            </a>
             {isOpen && <DropdownMenu />} {/* Hiển thị menu khi hover */}
           </div>
-          <a className={styles.link} href="#">Collections</a>
-          <a className={styles.link} href="#">Gift ideas</a>
-          <a className={styles.link} href="#">Contact Us</a>
+          <a className={styles.link} href="#">
+            Collections
+          </a>
+          <a className={styles.link} href="#">
+            Gift ideas
+          </a>
+          <a className={styles.link} href="#">
+            Contact Us
+          </a>
         </div>
         <div className={styles.icons}>
           <FavoriteBorderRoundedIcon />
@@ -76,21 +84,28 @@ export default function Header() {
             open={open}
             onClose={handleClose}
             MenuListProps={{
-              'aria-labelledby': 'basic-button',
+              "aria-labelledby": "basic-button",
             }}
           >
             {Object.keys(userInfo).length === 0
-              ? [<MenuItem key="login" onClick={handleLogin}>Login</MenuItem>]
+              ? [
+                  <MenuItem key="login" onClick={handleLogin}>
+                    Login
+                  </MenuItem>,
+                ]
               : [
-                <MenuItem key="profile" onClick={handleProfileClick}>Profile</MenuItem>,
-                <MenuItem key="logout" onClick={handleLogout}>Logout</MenuItem>
-              ]
-            }
+                  <MenuItem key="profile" onClick={handleProfileClick}>
+                    Profile
+                  </MenuItem>,
+                  <MenuItem key="logout" onClick={handleLogout}>
+                    Logout
+                  </MenuItem>,
+                ]}
           </Menu>
 
           <ShoppingBagOutlinedIcon />
         </div>
       </div>
-    </nav >
+    </nav>
   );
 }
