@@ -7,16 +7,22 @@ import PaymentMethod from './components/PaymentMethod';
 import ProductItem from './components/ProductItem';
 import UserInfoForm from './components/UserInfoForm';
 import './styles.css';
-
-MakeOrder.propTypes = {
-
-};
+import paymentApi from '../../api/paymentApi';
+import orderApi from '../../api/orderApi';
+import customerAddressApi from '../../api/customerAddressApi';
 
 function MakeOrder() {
-    // State to store checkout items
     const [checkoutItems, setCheckoutItems] = useState([]);
-    
-    // Load checkout items from localStorage when component mounts
+    const [addresses, setAddresses] = useState([]);
+    const [shouldRedirect, setShouldRedirect] = useState(false);
+    const [paymentMethod, setPaymentMethod] = useState('COD');
+    const [momoQrUrl, setMomoQrUrl] = useState(null);
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [orderId, setOrderId] = useState(null);
+
+    const navigate = useNavigate();
+    const formRef = useRef(null);
+
     useEffect(() => {
         const storedItems = localStorage.getItem('checkoutItems');
         if (storedItems) {
@@ -24,74 +30,127 @@ function MakeOrder() {
         }
     }, []);
 
-    // Calculate totals based on checkout items
+    useEffect(() => {
+        if (shouldRedirect) {
+            navigate(`/checkouts/thank-you?id=${orderId}`);
+        }
+    }, [shouldRedirect, navigate, orderId]);
+
+    useEffect(() => {
+        async function fetchAddresses() {
+            try {
+                const res = await customerAddressApi.getCustomerAddresses();
+                setAddresses(res.data.data.content || []);
+            } catch (e) {
+                setAddresses([]);
+            }
+        }
+        fetchAddresses();
+    }, []);
+
     const subtotal = checkoutItems.reduce((total, item) => {
         const price = item.productSize?.price || item.product?.price || 0;
         return total + price * (item.quantity || 1);
     }, 0);
-    
-    const discount = 1000000; // This could be dynamic based on applied discounts
+
+    const discount = 1000000;
     const shippingFee = 40000;
     const total = subtotal - discount + shippingFee;
 
-    // danh sách địa chỉ của khách hàng
-    const addresses = [
-        { id: 1, houseNumber: "123", ward: "Phường Dịch Vọng Hậu", district: "Quận Cầu Giấy", city: "Hà Nội", },
-        {
-            id: 2,
-            houseNumber: "456",
-            ward: "Phường Hòa Cường Bắc",
-            district: "Quận Hải Châu",
-            city: "Đà Nẵng",
-        },
-        {
-            id: 3,
-            houseNumber: "789",
-            ward: "Phường Bến Nghé",
-            district: "Quận 1",
-            city: "TP. Hồ Chí Minh",
-        },
-        {
-            id: 4,
-            houseNumber: "12",
-            ward: "Phường Vĩnh Ninh",
-            district: "TP. Huế",
-            city: "Thừa Thiên Huế",
-        },
-        {
-            id: 5,
-            houseNumber: "34",
-            ward: "Phường Tân Lập",
-            district: "TP. Nha Trang",
-            city: "Khánh Hòa",
-        },
-    ];
+    const handlePaymentMethodChange = (method) => {
+        setPaymentMethod(method);
+        setMomoQrUrl(null);
+    };
 
-    // Các useState
-    const [shouldRedirect, setShouldRedirect] = useState(false); // Điều kiện để chuyển hướng
-
-    // navigate handle chuyển trang
-    const navigate = useNavigate();
-    useEffect(() => {
-        if (shouldRedirect) {
-            navigate("/checkouts/thank-you");
-        }
-    }, [shouldRedirect, navigate]);
-
-
-    // function handle chuyển trang khi người dùng hoàn tất thanh toán
-    function handleFormSubmit(value) {
-        console.log(value);
-        // Also pass the selected items in the form submission
-        console.log("Checkout items:", checkoutItems);
-        setShouldRedirect(true); // Changed to true to enable redirection
+    function validateCheckoutItems(items) {
+        if (!items || items.length === 0) return false;
+        return items.every(item => item.productSize?.id && item.quantity > 0);
     }
 
-    const formRef = useRef(null);
+    function prepareCartItems(items) {
+        return items.map(item => ({
+            productSize: { id: item.productSize.id },
+            quantity: item.quantity || 1
+        }));
+    }
+
+    async function resolveShippingAddress(value) {
+        if (value.addressId) {
+            const address = addresses.find(addr => String(addr.id) === String(value.addressId));
+            if (address) return address;
+            throw new Error('Địa chỉ đã chọn không tồn tại');
+        }
+        const addressData = {
+            recipientName: value.userName,
+            recipientPhone: value.phoneNumber,
+            address: value.houseNumber,
+            village: value.ward,
+            district: value.district,
+            province: value.city,
+        };
+        const res = await customerAddressApi.addAddress(addressData);
+        let newAddress = res?.data?.data || res?.data;
+        if (Array.isArray(newAddress)) newAddress = newAddress[0];
+        if (newAddress?.content) newAddress = newAddress.content;
+        if (!newAddress?.id) throw new Error('Không nhận được ID địa chỉ từ server');
+        return newAddress;
+    }
+
+    async function handleFormSubmit(value) {
+        setIsProcessing(true);
+        try {
+            if (!validateCheckoutItems(checkoutItems)) {
+                alert('Giỏ hàng không hợp lệ');
+                setIsProcessing(false);
+                return;
+            }
+
+            const shippingAddress = await resolveShippingAddress(value);
+
+            const orderRequest = {
+                shippingAddress: { id: shippingAddress.id },
+                shippingMethod: "STANDARD",
+                paymentMethod,
+                cartItems: prepareCartItems(checkoutItems),
+                totalProductPrice: subtotal,
+                shippingFee,
+                totalPrice: total,
+                voucherCodes: [],
+                freeShipDiscount: 0,
+                promotionDiscount: discount,
+                note: value.note || "",
+            };
+
+            const orderResponse = await orderApi.placeOrder(orderRequest);
+            console.log(">> orderResponse full:", orderResponse);
+
+            const newOrderId = orderResponse?.data?.id;
+            console.log(">> newOrderId:", newOrderId);
+
+            if (!newOrderId) throw new Error('Không nhận được ID đơn hàng');
+            setOrderId(newOrderId);
+
+            if (paymentMethod === 'MOMO') {
+                const { data } = await paymentApi.createMomoPayment({
+                    orderId: newOrderId,
+                    amount: total,
+                    description: `Thanh toán đơn hàng #${newOrderId}`
+                });
+                if (!data?.data) throw new Error('Không nhận được liên kết thanh toán');
+                setMomoQrUrl(data.data);
+            } else {
+                setShouldRedirect(true);
+            }
+        } catch (error) {
+            alert(`Đã xảy ra lỗi: ${error.message}`);
+        } finally {
+            setIsProcessing(false);
+        }
+    }
 
     return (
-        <Grid2 container spacing={3} sx={{ justifyContent: "center", backgroundColor: ' #f9f9f9', marginTop: "30px", marginBottom: "30px" }} >
-            <Grid2 size={{ sx: 11, sm: 5 }}>
+        <Grid2 container spacing={3} sx={{ justifyContent: "center", backgroundColor: '#f9f9f9', mt: 4, mb: 4 }}>
+            <Grid2 xs={11} sm={5}>
                 <div className="payment-info">
                     <div className="user-header">
                         <img src="https://icons.veryicon.com/png/o/miscellaneous/standard/avatar-15.png" alt="User Avatar" className="user-avatar" />
@@ -100,32 +159,34 @@ function MakeOrder() {
                             <Link href="#" className="logout">Đăng xuất</Link>
                         </div>
                     </div>
-
                     <UserInfoForm addresses={addresses} onSubmit={handleFormSubmit} ref={formRef} />
                     <DeliveryMethod />
-                    <PaymentMethod />
-
+                    <PaymentMethod onChange={handlePaymentMethodChange} />
+                    {momoQrUrl && (
+                        <div style={{ textAlign: 'center', margin: '20px 0' }}>
+                            <h3>Quét mã QR MoMo để thanh toán</h3>
+                            <img src={momoQrUrl} alt="Momo QR" style={{ maxWidth: 250 }} />
+                        </div>
+                    )}
                     <div className="payment-button">
                         <Link href="/cart" className="back-to-cart"> &lt; Giỏ Hàng</Link>
-                        <Button title='Hoàn Tất Đơn Hàng' onClick={() => {
-                            if (formRef.current) {
-                                // trigger sự kiện submit
-                                formRef.current.dispatchEvent(
-                                    new Event('submit', { bubbles: true, cancelable: true })
-                                );
-                            }
-                        }} />
+                        {!momoQrUrl && (
+                            <Button title='Hoàn Tất Đơn Hàng' disabled={isProcessing} onClick={() => {
+                                if (formRef.current) {
+                                    formRef.current.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+                                }
+                            }} />
+                        )}
                     </div>
-                </div >
+                </div>
             </Grid2>
 
-            <Grid2 size={{ xs: 11, sm: 4 }}>
+            <Grid2 xs={11} sm={4}>
                 <div className="checkout-info">
                     <div className="list-checkout">
-                        {/* Danh sách các sản phẩm từ giỏ hàng */}
                         {checkoutItems.length > 0 ? (
                             checkoutItems.map((item, index) => (
-                                <ProductItem 
+                                <ProductItem
                                     key={item.id || index}
                                     product={item.product}
                                     quantity={item.quantity || 1}
@@ -138,7 +199,7 @@ function MakeOrder() {
                                 <ProductItem />
                             </>
                         )}
-                        
+
                         <div className="discount-container">
                             <FormControl>
                                 <TextField
@@ -150,8 +211,8 @@ function MakeOrder() {
                             </FormControl>
                             <Button title='Sử dụng' />
                         </div>
-                        <div className="line">
-                        </div>
+
+                        <div className="line"></div>
                         <div className="estimate">
                             <span className="text">Tạm tính</span>
                             <span className="value">{subtotal.toLocaleString()}đ</span>
@@ -170,7 +231,7 @@ function MakeOrder() {
                             <span className="value total">{total.toLocaleString()}đ</span>
                         </div>
                     </div>
-                </div >
+                </div>
             </Grid2>
         </Grid2>
     );

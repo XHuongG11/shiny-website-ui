@@ -1,3 +1,4 @@
+// File 1: src/api/axiosClient.js
 import axios from "axios";
 import StorageKeys from "../containts/storage-key";
 
@@ -17,12 +18,10 @@ axiosClient.interceptors.request.use(
     return config;
   },
   function (error) {
-    // Do something with request error
     return Promise.reject(error);
   }
 );
 
-// Add a response interceptor
 axiosClient.interceptors.response.use(
   function (response) {
     return response.data;
@@ -39,10 +38,7 @@ axiosClient.interceptors.response.use(
           }
           break;
         case 403:
-          // window.location.href = `/error/${error.response.status}`;
-          break;
-        case 500:
-          // window.location.href = `/error/${error.response.status}`;
+          window.location.href = `/error/403`;
           break;
         default:
           window.location.href = `/error/${error.response.status}`;

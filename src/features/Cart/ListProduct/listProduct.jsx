@@ -4,6 +4,7 @@ import { Grid2 } from "@mui/material";
 import Breadcrumb from "../../../components/Breadcrumb/breadcrum";
 import cartApi from "../../../api/cartApi"; // Import API for fetching products
 import { useNavigate } from 'react-router-dom';
+import orderApi from "../../../api/orderApi";
 
 
 const CartItemlist = () => {
@@ -134,10 +135,12 @@ const CartItemlist = () => {
     const handleCheckout = () => {
         // Filter only the selected items
         const selectedProducts = cartItems.filter(item => selectedItems.includes(item.id));
-        
-        // Store the selected products in localStorage to access them on the checkout page
+    
+        if (selectedProducts.length === 0) return;
+    
+        // Save selected products to localStorage
         localStorage.setItem('checkoutItems', JSON.stringify(selectedProducts));
-        
+    
         // Navigate to checkout page
         navigate('/checkouts');
     };
