@@ -15,7 +15,7 @@ function MakeOrder() {
     const [checkoutItems, setCheckoutItems] = useState([]);
     const [addresses, setAddresses] = useState([]);
     const [shouldRedirect, setShouldRedirect] = useState(false);
-    const [paymentMethod, setPaymentMethod] = useState('COD');  // State lưu phương thức thanh toán
+    const [paymentMethod, setPaymentMethod] = useState('MOMO');  // State lưu phương thức thanh toán
     const [momoQrUrl, setMomoQrUrl] = useState(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const [orderId, setOrderId] = useState(null);
@@ -132,27 +132,27 @@ function MakeOrder() {
 
             if (paymentMethod === 'MOMO') {
                 try {
-                  const orderId = typeof newOrderId === 'object' ? newOrderId.id : Number(newOrderId);
-                  console.log('OrderID (fixed):', orderId, 'Type:', typeof orderId);
-              
-                  const { data } = await paymentApi.createMomoPayment(orderId);
-              
-                  console.log('📦 Full API Response:', JSON.stringify(data, null, 2));
-                  console.log('🔗 Payment URL:', data);
-                  console.log('📏 Type of data:', typeof data);
-              
-                  if (!data || typeof data !== 'string' || !data.startsWith('http')) {
-                    throw new Error("Không nhận được liên kết thanh toán hợp lệ");
-                  }
-              
-                  window.location.href = data;
+                    const orderId = typeof newOrderId === 'object' ? newOrderId.id : Number(newOrderId);
+                    console.log('OrderID (fixed):', orderId, 'Type:', typeof orderId);
+
+                    const { data } = await paymentApi.createMomoPayment(orderId);
+
+                    console.log('📦 Full API Response:', JSON.stringify(data, null, 2));
+                    console.log('🔗 Payment URL:', data);
+                    console.log('📏 Type of data:', typeof data);
+
+                    if (!data || typeof data !== 'string' || !data.startsWith('http')) {
+                        throw new Error("Không nhận được liên kết thanh toán hợp lệ");
+                    }
+
+                    window.location.href = data;
                 } catch (error) {
-                  console.error("Lỗi thanh toán MoMo:", error);
-                  alert("Lỗi thanh toán: " + error.message);
+                    console.error("Lỗi thanh toán MoMo:", error);
+                    alert("Lỗi thanh toán: " + error.message);
                 }
-              }
-              
-               else if (paymentMethod === 'COD') {
+            }
+
+            else if (paymentMethod === 'COD') {
                 try {
                     console.log("Updating order status:", { orderId: newOrderId, status: 'SHIPPING' });
                     await orderApi.updateOrderStatus(newOrderId, 'SHIPPING');
