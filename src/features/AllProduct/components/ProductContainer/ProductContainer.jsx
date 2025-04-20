@@ -4,7 +4,6 @@ import styles from "./Product.module.css";
 
 const ProductContainer = ({ products }) => {
     const productList = Array.isArray(products) ? products : [];
-
     console.log("ProductContainer product list successfully:", productList);
     return (
         <div className={styles.productContainer}>

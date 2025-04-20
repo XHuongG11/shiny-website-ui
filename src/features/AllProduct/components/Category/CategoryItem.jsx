@@ -1,9 +1,9 @@
 import styles from './Category.module.css';
 import PropTypes from 'prop-types';
 
-const CategoryItem = ({ imageSrc, name }) => {
+const CategoryItem = ({ imageSrc, name, onClick }) => {
     return (
-        <div className={styles.catagory__item}>
+        <div className={styles.catagory__item}  onClick={onClick}>
             <div className={styles.catagory__itemImage}>
                 <img src={imageSrc} alt={name} />
             </div>
@@ -15,6 +15,7 @@ const CategoryItem = ({ imageSrc, name }) => {
 CategoryItem.propTypes = {
     imageSrc: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
+    onClick: PropTypes.func,
 };
 
 export default CategoryItem;

@@ -1,8 +1,5 @@
 // import imageProduct from '/image/allproduct/imageProduct.png';
 import icHeart from '/image/allproduct/ic-heart.png';
-import silverColor from '/image/allproduct/silver-color.png';
-import goldColor from '/image/allproduct/gold-color.png';
-import roseGoldColor from '/image/allproduct/rose-gold-color.png';
 import styles from './ProductCard.module.css';
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";

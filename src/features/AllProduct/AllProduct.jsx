@@ -10,16 +10,22 @@ import { useEffect, useState } from "react";
 import productApi from "../../api/productApi";
 
 const AllProduct = () => {
+    const [selectedCategoryId, setSelectedCategoryId] = useState(null);
     const [productList, setProductList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const pageSize = 21;
 
-    const fetchProducts = async (currentPage) => {
+    const fetchProducts = async (currentPage, categoryId = null) => {
         setLoading(true);
         try {
-            const response = await productApi.getAllProducts({ params: { page: currentPage, size: pageSize } });
+            const params = { page: currentPage, size: pageSize };
+            if (categoryId) {
+                params.categoryId = categoryId;
+            }
+
+            const response = await productApi.getAllProducts({ params });
             console.log("Dữ liệu API trả về:", response.data);
             setProductList(prev => [...prev, ...response.data.content]);
             setTotalPages(response.data.totalPages);
@@ -33,7 +39,11 @@ const AllProduct = () => {
     useEffect(() => {
         fetchProducts(page);
     }, [page]);
-
+    const handleCategorySelect = (categoryId) => {
+        console.log("Đã chọn category có ID:", categoryId);
+        setSelectedCategoryId(categoryId);
+       
+    };
     const handleShowMore = () => {
         if (page < totalPages) {
             setPage(prev => prev + 1);
@@ -54,11 +64,12 @@ const AllProduct = () => {
                 </p>
             </Grid2>
             <Grid2 size={11}>
-                <Category />
+                <Category onCategorySelect={handleCategorySelect} />
             </Grid2>
             <Grid2 container size={11}>
                 <Grid2 size={{ xs: 12, md: 3 }}>
                     <FilterContainer 
+                        selectedCategoryId={selectedCategoryId} 
                         products={productList}
                     />
                 </Grid2>
