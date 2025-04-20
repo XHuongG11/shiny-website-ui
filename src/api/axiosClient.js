@@ -1,6 +1,6 @@
 // File 1: src/api/axiosClient.js
 import axios from "axios";
-import StorageKeys from "../containts/storage-key";
+import StorageKeys from "../constants/storage-key";
 
 const axiosClient = axios.create({
   baseURL: "http://localhost:8080/api/v1/",
