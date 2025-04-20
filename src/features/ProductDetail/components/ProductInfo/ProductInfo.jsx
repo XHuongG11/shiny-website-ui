@@ -30,7 +30,7 @@ function ProductInfo({product}) {
 
   // Lấy thông tin người dùng từ Redux store
   const user = useSelector((state) => state.user.current);
-  const isLoggedIn = !user; // Kiểm tra người dùng đã đăng nhập hay chưa
+  const isLoggedIn = !!(user && user.email); // Kiểm tra người dùng đã đăng nhập hay chưa
   const navigate = useNavigate(); // Hook để điều hướng
   // Lấy danh sách wishlist từ API nếu người dùng đã đăng nhập
   useEffect(() => {

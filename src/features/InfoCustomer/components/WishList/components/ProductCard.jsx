@@ -12,7 +12,8 @@ const ProductCard = ({product, onRemove}) => {
       </div>
       <div className={styles.details}>
         <h3>{product.title}</h3>
-        <p className={styles.description}>{product.material || "Không xác định"} / {product.productSizes[0]?.size}</p>
+        <p className={styles.description}>{product.material || "Không xác định"} /  
+         {product.productSizes.map((sizeObj) => (sizeObj.size === "No size" ? "One size" : sizeObj.size)).join(", ")}</p>
         <p className={styles.price}>{new Intl.NumberFormat("vi-VN").format(product.productSizes[0].discountPrice || 0)}₫</p>
       </div>
       <button className={styles.deleteButton} onClick={onRemove}><FaTrashCan /></button>
