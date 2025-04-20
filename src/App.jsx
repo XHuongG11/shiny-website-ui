@@ -11,6 +11,8 @@ import AllProduct from "./features/AllProduct/AllProduct";
 import ProductDetail from "./features/ProductDetail/ProductDetail";
 import Cart from "./features/Cart/Cart";
 import HandleError from "./utils/HandleError";
+import ReviewProduct from "./features/Review/ReviewProduct";
+import ThankYou from "./features/Review/components/ThankYou";
 function App() {
   return (
     <div className="App">
@@ -25,6 +27,8 @@ function App() {
         <Route path="/productdetail" element={<ProductDetail />}></Route>
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />}></Route>
+        <Route path="/review/:id" element={<ReviewProduct />} />
+        <Route path="/thankyou-review" element={<ThankYou />} />
         <Route path="/error/:statusCode" element={<HandleError />}></Route>
         <Route path="*" element={<Navigate to="/error/404" replace />} />
       </Routes>
