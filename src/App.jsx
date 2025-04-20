@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import LoginRegister from "./features/LoginSignin";
 import MakeOrder from "./features/MakeOrder";
@@ -10,7 +10,7 @@ import Footer from "./components/Footer/footer";
 import AllProduct from "./features/AllProduct/AllProduct";
 import ProductDetail from "./features/ProductDetail/ProductDetail";
 import Cart from "./features/Cart/Cart";
-import HandleError from "./assets/img/error/HandleError";
+import HandleError from "./utils/HandleError";
 function App() {
   return (
     <div className="App">
@@ -26,6 +26,7 @@ function App() {
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />}></Route>
         <Route path="/error/:statusCode" element={<HandleError />}></Route>
+        <Route path="*" element={<Navigate to="/error/404" replace />} />
       </Routes>
       <Footer />
     </div>

@@ -1,5 +1,12 @@
-import styles from './Footer.module.css';
-import { FaLinkedin ,FaTwitter, FaFacebook, FaGithub, FaAngellist , FaDribbble  } from "react-icons/fa";
+import styles from "./Footer.module.css";
+import {
+  FaLinkedin,
+  FaTwitter,
+  FaFacebook,
+  FaGithub,
+  FaAngellist,
+  FaDribbble,
+} from "react-icons/fa";
 
 export default function Footer() {
   return (
@@ -7,18 +14,35 @@ export default function Footer() {
       <div className={styles.footerContainer}>
         {/* Logo và mô tả */}
         <div className={styles.footerD}>
-        <img src='./src/assets/img/logo.jpg' height="90" width="150"></img>
+          <img
+            src="../image/logo/logo.jpg"
+            height="90"
+            width="150"
+          ></img>
           <p className={styles.footerDescription}>
-            This growth plan will help you reach your resolutions and achieve the goals you have been striving towards.
+            This growth plan will help you reach your resolutions and achieve
+            the goals you have been striving towards.
           </p>
           {/* Social Icons */}
           <div className={styles.footerSocial}>
-            <a href="#"><FaTwitter/></a>
-            <a href="#"><FaLinkedin/></a>
-            <a href="#"><FaFacebook/></a>
-            <a href="#"><FaGithub/></a>
-            <a href="#"><FaAngellist/></a>
-            <a href="#"><FaDribbble /></a>
+            <a href="#">
+              <FaTwitter />
+            </a>
+            <a href="#">
+              <FaLinkedin />
+            </a>
+            <a href="#">
+              <FaFacebook />
+            </a>
+            <a href="#">
+              <FaGithub />
+            </a>
+            <a href="#">
+              <FaAngellist />
+            </a>
+            <a href="#">
+              <FaDribbble />
+            </a>
           </div>
         </div>
 

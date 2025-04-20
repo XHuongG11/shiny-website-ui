@@ -8,7 +8,7 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { login } from "../../redux/authSlice";
+import { login } from "../../store/authSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import Notification from "../../components/Alert";
 import { useForm } from "react-hook-form";
