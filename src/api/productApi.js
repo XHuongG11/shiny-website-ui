@@ -7,7 +7,7 @@ const productApi = {
   },
 
   getProductsByCategory(categoryId, page = 1, size = 1) {
-    const url = `/category/${categoryId}`;
+    const url = `/products/category/${categoryId}`;
     return axiosClient.get(url, {
       params: { page, size },
     });
