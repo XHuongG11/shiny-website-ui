@@ -94,6 +94,12 @@
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2); /* Bóng rõ hơn */
 }
 
+.sizeProduct button.selected {
+    background-color: var(--gray-color); /* Màu nền khi chọn */
+    
+    box-shadow: 2px 2px 8px rgba(120, 120, 120, 0.5); /* Bóng nhẹ hơn khi chọn */
+  }
+
 .colorProduct{
     display: flex;
     flex-wrap: wrap;
