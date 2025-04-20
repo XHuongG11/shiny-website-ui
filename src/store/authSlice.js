@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import userApi from "../api/userApi";
-import StorageKeys from "../containts/storage-key";
+import StorageKeys from "../constants/storage-key";
 
 export const login = createAsyncThunk("user/login", async (payload) => {
   // goi api

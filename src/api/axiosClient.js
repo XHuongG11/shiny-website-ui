@@ -1,6 +1,6 @@
 // File 1: src/api/axiosClient.js
 import axios from "axios";
-import StorageKeys from "../containts/storage-key";
+import StorageKeys from "../constants/storage-key";
 
 const axiosClient = axios.create({
   baseURL: "http://localhost:8080/api/v1/",
@@ -40,6 +40,9 @@ axiosClient.interceptors.response.use(
         case 403:
           window.location.href = `/error/${error.response.status}`;
           break;
+        // case 404:
+        //   window.location.href = `/error/${error.response.status}`;
+        //   break;
         case 500:
           window.location.href = `/error/${error.response.status}`;
           break;

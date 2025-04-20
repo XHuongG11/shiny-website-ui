@@ -16,7 +16,7 @@ import { HiMiniXMark } from "react-icons/hi2";
 import InputField from "../../../../../components/InputField";
 import styles from "./EditInfoModal.module.css"; // Import CSS cho modal
 import { useDispatch } from "react-redux";
-import { update } from "../../../../../redux/authSlice";
+import { update } from "../../../../../store/authSlice";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 
