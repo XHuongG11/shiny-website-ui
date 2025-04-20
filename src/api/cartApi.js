@@ -1,41 +1,85 @@
 import axiosClient from './axiosClient';
 
-const cartApi = {
-  // Lấy tất cả sản phẩm trong giỏ hàng của người dùng
-  getCartItems: () => {
-    return axiosClient.get('/cart');
+const CartApi = {
+  /**
+   * Lấy thông tin giỏ hàng của người dùng hiện tại
+   * @returns {Promise<CartResponse>} Thông tin giỏ hàng
+   */
+  getMyCart: ({ params = {} }) => {
+    const url = '/carts/my-cart';
+    return axiosClient.get(url ,{ params });
   },
-  
-  // Thêm sản phẩm vào giỏ hàng
-  addToCart: (productData) => {
-    return axiosClient.post('/cart', productData);
+
+  /**
+   * Thêm một sản phẩm vào giỏ hàng
+   * @param {number} productSizeId - ID của size sản phẩm
+   * @param {number} quantity - Số lượng sản phẩm cần thêm
+   * @returns {Promise<ApiResponse>} Kết quả thêm sản phẩm
+   */
+  addItemToCart: (productSizeId, quantity) => {
+    const url = '/carts/add';
+    return axiosClient.post(url, null, {
+      params: {
+        productSizeId,
+        quantity
+      }
+    });
   },
-  
-  // Cập nhật số lượng sản phẩm trong giỏ hàng
-  updateCartItem: (productId, quantity) => {
-    return axiosClient.put(`/cart/${productId}`, { quantity });
+
+  /**
+   * Xóa một sản phẩm khỏi giỏ hàng
+   * @param {number} productSizeId - ID của size sản phẩm cần xóa
+   * @returns {Promise<ApiResponse>} Kết quả xóa sản phẩm
+   */
+  removeItemFromCart: (productSizeId) => {
+    const url = '/carts/remove';
+    return axiosClient.delete(url, {
+      params: {
+        productSizeId
+      }
+    });
   },
-  
-  // Xóa sản phẩm khỏi giỏ hàng
-  removeFromCart: (productId) => {
-    return axiosClient.delete(`/cart/${productId}`);
+
+  /**
+   * Cập nhật số lượng sản phẩm trong giỏ hàng
+   * @param {number} productSizeId - ID của size sản phẩm
+   * @param {number} quantity - Số lượng mới
+   * @returns {Promise<ApiResponse>} Kết quả cập nhật số lượng
+   */
+  updateItemQuantity: (productSizeId, quantity) => {
+    const url = '/carts/update';
+    return axiosClient.put(url, null, {
+      params: {
+        productSizeId,
+        quantity
+      }
+    });
   },
-  
-  // Lấy tổng số lượng sản phẩm trong giỏ hàng
-  getCartCount: () => {
-    return axiosClient.get('/cart/count');
+
+  /**
+   * Thay đổi size của sản phẩm trong giỏ hàng
+   * @param {number} oldProductSize - ID của size sản phẩm hiện tại
+   * @param {number} newProductSize - ID của size sản phẩm mới
+   * @returns {Promise<ApiResponse>} Kết quả thay đổi size
+   */
+  changeSize: (oldProductSize, newProductSize) => {
+    const url = '/carts/change-size';
+    return axiosClient.put(url, null, {
+      params: {
+        oldProductSize,
+        newProductSize
+      }
+    });
   },
-  
-  // Save cart to local storage for offline use
-  saveCartToLocalStorage: (cartItems) => {
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
-  },
-  
-  // Get cart from local storage when offline
-  getCartFromLocalStorage: () => {
-    const cartItems = localStorage.getItem('cartItems');
-    return cartItems ? JSON.parse(cartItems) : [];
+
+  /**
+   * Xóa toàn bộ giỏ hàng
+   * @returns {Promise<ApiResponse>} Kết quả xóa giỏ hàng
+   */
+  clearMyCart: () => {
+    const url = '/carts/clear';
+    return axiosClient.delete(url);
   }
 };
 
-export default cartApi;
+export default CartApi;

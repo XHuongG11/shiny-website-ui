@@ -6,7 +6,7 @@ export default function DropdownMenu() {
   return (
     <div className={styles.dropdown}>
       <div className={styles.dropdownMenu}>
-        <a href="#" style={{ fontWeight: "bold" }}>Products <ChevronRightRoundedIcon/></a>
+        <a href="/allproduct" style={{ fontWeight: "bold" }}>Products <ChevronRightRoundedIcon/></a>
         <a href="#">Collections <ChevronRightRoundedIcon/></a>
         <a href="#">Gift ideas <ChevronRightRoundedIcon/></a>
       </div>
