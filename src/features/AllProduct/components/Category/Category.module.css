@@ -35,8 +35,21 @@
     object-fit: cover;
 }
 
-.catagory__itemName {
-    margin-top: 10px;
-    font-size: 14px;
-    color: var(--text-color);
-}
+.catagory__item {
+    text-align: center;
+    width: 140px;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.15s ease;
+  }
+  
+  .catagory__item:active {
+    transform: scale(0.96);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Hover thêm cho mượt mà hơn */
+  .catagory__item:hover .catagory__itemImage {
+    background-color: #e2e4ea; /* hoặc một màu nền sáng hơn để nổi bật */
+    transition: background-color 0.2s ease;
+  }

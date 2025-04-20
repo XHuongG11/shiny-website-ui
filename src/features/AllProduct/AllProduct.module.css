@@ -1,5 +1,4 @@
-
-.productShowmore{
+.productShowmore {
     background-color: var(--white-background-color);
     padding: 15px 30px;
     margin: auto;
@@ -7,7 +6,21 @@
     font-weight: bold;
     border: 1px solid var(--text-color);
     display: block;
-    margin: 20 auto;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.productShowmore:hover {
+    background-color: var(--text-color);
+    color: var(--white-background-color);
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.productShowmore:active {
+    transform: scale(0.98);
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .headBreadcrumb{

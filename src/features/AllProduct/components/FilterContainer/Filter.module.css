@@ -34,16 +34,24 @@
 .filterSizeNumber{
     background-color: white;
     font-weight: bold;
-    padding: 8px 23px;
+    width: 80px;
+    padding-top: 8px;
+    padding-bottom: 8px;
     cursor: pointer; 
     margin: 6px 8px;
     border: 2px solid var(--gray-color);
 }
 
+
 .filterMaterial{
     display: flex;
     align-items: center;
     gap: 12px;
+    width: 100%;
+    border-radius: 8px;
+    padding: 0px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.05s ease;
 }
 
 .productMaterial{
@@ -51,3 +59,23 @@
     height: 30px;
     border-radius: 50%;
 }
+.filterSizeNumber.selected {
+    font-weight: bold;
+    background-color: var(--gray-color);
+}
+.filterMaterial:active {
+    background-color: var(--gray-color);
+    transform: scale(0.97);
+    transition: transform 0.05s ease, background-color 0.1s ease;
+    border-radius: 8px;
+  }
+  .filterSizeNumber:hover {
+    background-color: var(--background-catagory-color);
+    transform: scale(1.02);
+    transition: transform 0.1s ease, background-color 0.2s ease;
+  }
+  
+  .filterMaterial:hover {
+    transform: scale(1.01);
+    transition: transform 0.1s ease, background-color 0.2s ease;
+  }

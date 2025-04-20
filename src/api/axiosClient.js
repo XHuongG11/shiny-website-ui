@@ -38,7 +38,10 @@ axiosClient.interceptors.response.use(
           }
           break;
         case 403:
-          window.location.href = `/error/403`;
+          window.location.href = `/error/${error.response.status}`;
+          break;
+        case 500:
+          window.location.href = `/error/${error.response.status}`;
           break;
         default:
           window.location.href = `/error/${error.response.status}`;
