@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import FilterBox from "./FilterBox";
 import styles from "./Filter.module.css";
 import PropTypes from "prop-types";
-import categoryApi from "../../../../api/categoryApi"; // Cập nhật path nếu khác
+import categoryApi from "../../../../api/categoryApi";
 
-const CategoryFilter = ({ selectedCategoryId }) => {
+const CategoryFilter = ({ selectedCategoryId, onCategoryChange }) => {
   const [categories, setCategories] = useState([]);
-
+  const [selectedCategories, setSelectedCategories] = useState([])
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -26,11 +26,24 @@ const CategoryFilter = ({ selectedCategoryId }) => {
     fetchCategories();
   }, [selectedCategoryId]);
 
+  const handleCategoryClick = (id) => {
+    if(selectedCategories.includes(id)){
+      setSelectedCategories(selectedCategories.filter(i => i !== id))
+    }
+    else{
+      setSelectedCategories(prev => [...prev, id])
+    }
+
+  }
+
+  useEffect(()=>{
+    onCategoryChange(selectedCategories)
+  }, [selectedCategories])
   return (
     <FilterBox title="Loại sản phẩm">
       {categories.map((cat) => (
-        <li key={cat.id}>
-          <input type="checkbox" className={styles.checkboxSmall} />
+        <li key={cat.id}> 
+          <input type="checkbox" className={styles.checkboxSmall} onClick={() => handleCategoryClick(cat.id)} />
           {cat.name}
         </li>
       ))}
@@ -40,6 +53,7 @@ const CategoryFilter = ({ selectedCategoryId }) => {
 
 CategoryFilter.propTypes = {
   selectedCategoryId: PropTypes.number.isRequired,
+  onCategoryChange: PropTypes.func
 };
 
 export default CategoryFilter;

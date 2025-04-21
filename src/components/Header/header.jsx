@@ -18,6 +18,7 @@ export default function Header() {
   const userInfo = useSelector((state) => state.user.current);
 
   const [isOpen, setIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("")
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -44,6 +45,18 @@ export default function Header() {
     navigate("/infocus");
     setAnchorEl(null);
   };
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      // Chuyển hướng đến trang tìm kiếm với query
+
+      navigate(`/allproduct?query=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      handleSearch();
+    }
+  };
   return (
     <nav>
       <div className={styles.on}>
@@ -51,7 +64,15 @@ export default function Header() {
           <img src="../image/logo/logo.jpg" height="90" width="150"></img>
         </div>
         <div className={styles.navIcons}>
-          <SearchRoundedIcon fontSize="large" />
+          <input
+            type="text"
+            placeholder="Search products..."
+            className={styles.searchInput} // Thêm class để style
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)} // Cập nhật state khi nhập
+            onKeyPress={handleKeyPress} // Xử lý khi nhấn Enter
+          />
+          <SearchRoundedIcon fontSize="large" onClick={handleSearch} />
           <MenuOpenRoundedIcon fontSize="large" />
         </div>
       </div>

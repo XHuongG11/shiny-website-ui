@@ -1,4 +1,5 @@
 import axiosClient from "./axiosClient";
+import qs from 'qs';
 
 const productApi = {
   getAllProducts({ params = {} }) {
@@ -11,6 +12,14 @@ const productApi = {
     return axiosClient.get(url, {
       params: { page, size },
     });
+  },
+
+  searchAndFilterProducts({ params = {} }) {
+    const url = `/products/search-and-filter`;
+    return axiosClient.get(url, {
+        params,
+        paramsSerializer: (params) => qs.stringify(params, { arrayFormat: 'repeat' }),
+      });
   },
 };
 
