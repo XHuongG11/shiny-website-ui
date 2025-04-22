@@ -16,7 +16,7 @@ const ProductCard = ({ product}) => {
     return (
         <div className={styles.product} onClick={handleClick} style={{ cursor: "pointer" }}>
             {/* Ảnh sản phẩm */}
-            <img className={styles.productImage} src={product.images[0].url} alt="product image" />
+            <img className={styles.productImage} src={product?.images[0]?.url} alt="product image" />
             {/* Biểu tượng yêu thích */}
             <img className={styles.productFavourite} src={icHeart} alt="favourite product" />
             {/* Giảm giá */}

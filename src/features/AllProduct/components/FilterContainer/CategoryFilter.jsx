@@ -42,7 +42,7 @@ const CategoryFilter = ({ selectedCategoryId, onCategoryChange }) => {
   return (
     <FilterBox title="Loại sản phẩm">
       {categories.map((cat) => (
-        <li key={cat.id}> 
+        <li key={cat.id} className={styles.li}> 
           <input type="checkbox" className={styles.checkboxSmall} onClick={() => handleCategoryClick(cat.id)} />
           {cat.name}
         </li>

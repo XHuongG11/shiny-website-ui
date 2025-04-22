@@ -22,7 +22,7 @@ const PriceFilter = ({ minPrice, maxPrice, onPriceChange }) => {
     return (
         <FilterBox title="Mức giá">
             {priceRanges.map((range) => (
-                <li key={range.label}>
+                <li key={range.label} className={styles.pricename}>
                     <input
                         type="checkbox"
                         className={styles.checkboxSmall}
