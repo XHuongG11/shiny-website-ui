@@ -49,7 +49,7 @@ export default function Header() {
     if (searchQuery.trim()) {
       // Chuyển hướng đến trang tìm kiếm với query
 
-      navigate(`/allproduct?query=${encodeURIComponent(searchQuery)}`);
+      navigate(`/products?query=${encodeURIComponent(searchQuery)}`);
     }
   };
   const handleKeyPress = (event) => {

@@ -102,7 +102,9 @@ const AllProduct = () => {
     const handleCategorySelect = (categoryId) => {
         console.log("Đã chọn category có ID:", categoryId);
         setSelectedCategoryId(categoryId);
-        setFilterCategories(prev => [...prev, categoryId])
+
+        setFilterCategories([categoryId])
+      
         setPage(1);
         setProductList([]);
         setError(null);
