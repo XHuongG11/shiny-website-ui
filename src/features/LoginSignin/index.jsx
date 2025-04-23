@@ -46,6 +46,7 @@ function LoginRegister() {
       const data = {
         email: emailLogin,
         password: passwordLogin,
+        role: "CUSTOMER",
       };
       const action = await dispatch(login(data));
       unwrapResult(action);
