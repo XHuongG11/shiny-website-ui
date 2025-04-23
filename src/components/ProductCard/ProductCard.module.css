@@ -77,12 +77,13 @@
 }
 
 .productName {
-    font-size: 14px;
+    font-size: 15px;
     color: #1E1E1E;
     margin: 5px 8px;
     text-align: left;
     font-weight: bold;
     text-shadow: none;
+    font-family: var(--font-family-sans-serif);
 }
 
 .productPrice {
@@ -99,6 +100,7 @@
     font-weight: bold;
     margin-bottom: 16px;
     text-shadow: none;
+    font-family: var(--font-family-sans-serif); 
 }
 
 .productPriceOriginal {

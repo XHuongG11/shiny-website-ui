@@ -38,7 +38,7 @@ const MaterialFilter = ({ selectedMaterial, onMaterialChange }) => {
                             src={material.img}
                             alt={material.name}
                         />
-                        <label>{material.name}</label>
+                        <label className={styles.productMaterialname}>{material.name}</label>
                     </div>
                 </li>
             ))}
