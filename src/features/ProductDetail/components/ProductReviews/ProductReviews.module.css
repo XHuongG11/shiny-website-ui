@@ -1,36 +1,94 @@
 .reviewSection {
-  margin: 40px auto; /* auto canh giữa theo chiều ngang */
+  margin: 40px auto;
   padding: 24px;
-  align-items: center;
-  background: linear-gradient(145deg, #e8e8e8, #f8f9fa);
   border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  max-width: 70%;
+  max-width: 100%;
   overflow: hidden;
 }
+
 .reviewTitle {
-  display: flex;
-  align-items: center;
   font-size: 24px;
   font-weight: 600;
   color: #2d3436;
   margin-bottom: 24px;
 }
 
-.starIcon {
-  color: #f1c40f; /* Màu vàng, khớp với ProductInfo */
-  margin-right: 12px;
-  font-size: 28px;
-  animation: pulse 1.5s infinite ease-in-out;
+.ratingSummary {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
 }
 
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.2);
-  }
+.averageRating {
+  display: flex;
+  flex-direction: column;
+  margin-right: 24px;
+  font-weight: bold;
+}
+
+.ratingNumber {
+  font-size: 40px;
+  font-weight: 600;
+  color: #2d3436;
+  margin-right: 12px;
+}
+
+.reviewCount {
+  font-size: 16px;
+  color: #6b7280;
+  margin-left: 12px;
+}
+
+.ratingBreakdown {
+  flex: 1;
+}
+
+.breakdownRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.breakdownRow span:first-child {
+  width: 80px;
+  font-size: 14px;
+  color: #2d3436;
+}
+.fullStar {
+  color: #ff6f91; /* Pink color to match the image */
+  font-size: 40px;
+  margin-right: 4px;
+}
+.breakdownStar,
+.breakdownEmptyStar {
+  color: #ff6f91; /* Pink color to match the image */
+  font-size: 14px;
+  margin-right: 4px;
+}
+
+.breakdownEmptyStar {
+  color: #d1d5db;
+}
+
+.progressBar {
+  width: 200px !important; /* Đảm bảo chiều rộng cố định */
+  height: 8px;
+  background: #d1d5db;
+  border-radius: 4px;
+  margin: 0 12px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: #d1d5db; /* Gray fill since no reviews */
+  transition: width 0.3s ease;
+}
+
+.breakdownRow span:last-child {
+  width: 20px;
+  font-size: 14px;
+  color: #2d3436;
 }
 
 .reviewsList {
@@ -71,7 +129,7 @@
 }
 
 .filledStar {
-  color: #f1c40f; /* Màu vàng, khớp với ProductInfo */
+  color: #ff6f91; /* Pink color to match the image */
   font-size: 18px;
   transition: transform 0.2s ease;
 }
@@ -95,7 +153,6 @@
   color: #4b5563;
   line-height: 1.6;
   margin: 0;
-  text-shadow: none;
 }
 
 .noReviews {
@@ -122,7 +179,7 @@
 }
 
 .loadingIcon {
-  color: #f1c40f;
+  color: #ff6f91; /* Pink color to match the image */
   font-size: 24px;
   animation: spin 1s linear infinite;
 }
@@ -155,8 +212,21 @@
     font-size: 20px;
   }
 
-  .starIcon {
-    font-size: 24px;
+  .ratingSummary {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .averageRating {
+    margin-bottom: 16px;
+  }
+
+  .ratingNumber {
+    font-size: 28px;
+  }
+
+  .reviewCount {
+    font-size: 14px;
   }
 
   .reviewItem {
