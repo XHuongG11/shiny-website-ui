@@ -1,5 +1,5 @@
 // import imageProduct from '/image/allproduct/imageProduct.png';
-import icHeart from '/image/allproduct/ic-heart.png';
+// import icHeart from '/image/allproduct/ic-heart.png';
 import styles from './ProductCard.module.css';
 import PropTypes from "prop-types";
 import { useNavigate, } from "react-router-dom";
@@ -28,6 +28,8 @@ const ProductCard = ({ product}) => {
         }
 
         try {
+            console.log("isInWishlist", isInWishlist);
+            // Kiểm tra xem sản phẩm đã có trong wishlist chưa
             if (isInWishlist) {
                 // Xóa sản phẩm khỏi wishlist
                 await userApi.removeWishList(product.id);
@@ -35,7 +37,7 @@ const ProductCard = ({ product}) => {
                 setIsInWishlist(false);
             } else {
                 // Thêm sản phẩm vào wishlist
-                await userApi.addWishList({ productId: product.id });
+                await userApi.addWishList({ product: product});
                 alert("Đã thêm sản phẩm vào danh sách yêu thích!");
                 setIsInWishlist(true);
             }
@@ -51,17 +53,18 @@ const ProductCard = ({ product}) => {
                 console.log("Người dùng chưa đăng nhập, không tải danh sách wishlist.");
                 return;
             }
-
+    
             try {
                 const response = await userApi.getWishList({ params: { page: 1, size: 100 } });
+               // console.log("Dữ liệu wishlist trả về:", response.data);
                 const wishlist = response.data.content || [];
-                const isProductInWishlist = wishlist.some((item) => item.productId === product.id);
+                const isProductInWishlist = wishlist.some((item) => item.product.id === product.id);
                 setIsInWishlist(isProductInWishlist);
             } catch (error) {
-                console.error("Lỗi khi tải danh sách wishlist:", error);
+                console.error("Lỗi khi tải danh sách wishlist:", error.response?.data || error.message);
             }
         };
-
+    
         fetchWishlist();
     }, [isLoggedIn, product.id]);
 
@@ -70,7 +73,12 @@ const ProductCard = ({ product}) => {
             {/* Ảnh sản phẩm */}
             <img className={styles.productImage} src={product?.images[0]?.url} alt="product image" />
             {/* Biểu tượng yêu thích */}
-            <img className={styles.productFavourite} src={icHeart} alt="favourite product" onClick={handleToggleWishlist}/>
+            <img
+                className={styles.productFavourite}
+                src={isInWishlist ? '/image/productdetail/heart.png' : '/image/allproduct/ic-heart.png'}
+                alt="favourite product"
+                onClick={handleToggleWishlist}
+            />
             {/* Giảm giá */}
             {product.productSizes[0].discountRate > 0 && (
                 <p className={styles.productDiscount}>

@@ -43,7 +43,6 @@
 .productFavourite.added {
     filter: brightness(0) saturate(100%) invert(39%) sepia(98%) saturate(748%) hue-rotate(330deg) brightness(95%) contrast(101%);
 }
-
 .product:hover .productFavourite {
     transform: scale(1.2);
 }
