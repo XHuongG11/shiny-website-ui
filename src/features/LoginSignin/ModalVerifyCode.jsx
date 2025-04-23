@@ -76,9 +76,9 @@ function ModalVerifyCode({ customer }) {
   };
   const verifyCode = async () => {
     try {
-      console.log("CODE: " + code.join(""));
-      console.log("CUSTOMER:", JSON.stringify(customer));
-      console.log("CUSTOMER:", customer.email);
+      // console.log("CODE: " + code.join(""));
+      // console.log("CUSTOMER:", JSON.stringify(customer));
+      // console.log("CUSTOMER:", customer.email);
       const responseVerify = await authApi.verifyEmail({
         email: customer.email,
         code: code.join(""),

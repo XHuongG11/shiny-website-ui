@@ -2,7 +2,7 @@ import axiosClient from "./axiosClient";
 
 const userApi = {
   login(data) {
-    const url = `/auth/token?role=customer`;
+    const url = `/auth/login`;
     return axiosClient.post(url, data);
   },
 
@@ -36,16 +36,15 @@ const userApi = {
   },
   addWishList(data) {
     const url = `/wishlist/add`;
-    return axiosClient.post(url,data);
+    return axiosClient.post(url, data);
   },
   getWishList({ params = {} }) {
-      const url = `/wishlist/customer`;
-      return axiosClient.get(url, { params });
+    const url = `/wishlist/customer`;
+    return axiosClient.get(url, { params });
   },
   removeWishList(id) {
-      const url = `/wishlist/delete/${id}`;
-      return axiosClient.delete(url);
+    const url = `/wishlist/delete/${id}`;
+    return axiosClient.delete(url);
   },
-
 };
 export default userApi;
