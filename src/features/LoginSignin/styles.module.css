@@ -226,7 +226,7 @@ input {
 }
 
 .overlay {
-  background-image: url('https://locphuc.com.vn/Content/Images/Event/SlideBanner2_PC.jpg');
+  background-image: url("https://locphuc.com.vn/Content/Images/Event/SlideBanner2_PC.jpg");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 0 0;

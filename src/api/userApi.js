@@ -5,10 +5,17 @@ const userApi = {
     const url = `/auth/login`;
     return axiosClient.post(url, data);
   },
-
   getInfo() {
     const url = `/users/my-info`;
     return axiosClient.get(url);
+  },
+  updateInfo(data) {
+    const url = `/users/update`;
+    return axiosClient.put(url, data);
+  },
+  changePassword(params) {
+    const url = `/users/change-password`;
+    return axiosClient.post(url, null, { params });
   },
   getAddresses() {
     const url = `/addresses/customer`;
@@ -25,10 +32,6 @@ const userApi = {
   setDefaultAddress(addressId) {
     const url = `/addresses/setDefault/${addressId}`;
     return axiosClient.put(url);
-  },
-  updateInfo(data) {
-    const url = `/users/update`;
-    return axiosClient.put(url, data);
   },
   add(data) {
     const url = `/users/add-customer`;

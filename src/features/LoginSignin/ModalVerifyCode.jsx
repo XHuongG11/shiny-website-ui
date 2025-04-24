@@ -1,26 +1,30 @@
 import { Box, Button, Grid2, Modal, TextField } from "@mui/material";
 import propsType from "prop-types";
 import { useEffect, useRef, useState } from "react";
-import authApi from "../../api/authApi";
 import Notification from "../../components/Alert";
-ModalVerifyCode.propTypes = {};
 
-function ModalVerifyCode({ customer }) {
-  const [open, setOpen] = useState(true);
-  const [expiresAt, setExpireAt] = useState();
-  const [openNotification, setOpenNotification] = useState(false);
-  const [message, setMessage] = useState();
-  const [severity, setSeverity] = useState();
+function ModalVerifyCode({
+  expireAt,
+  verifyCode,
+  sendEmail,
+  openNotification,
+  setOpenNotification,
+  messageNotification,
+  typeNotification,
+  openVerifyModal,
+  typeModal,
+}) {
   const inputRefs = useRef([]);
   const [code, setCode] = useState([]);
   const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {
-    if (expiresAt) {
+    console.log("expiresAt ", expireAt);
+    if (expireAt) {
       const interval = setInterval(() => {
         const remaining = Math.max(
           0,
-          Math.floor((expiresAt - Date.now()) / 1000)
+          Math.floor((expireAt - Date.now()) / 1000)
         );
         setTimeLeft(remaining);
         if (remaining === 0) clearInterval(interval);
@@ -28,7 +32,7 @@ function ModalVerifyCode({ customer }) {
       return () => clearInterval(interval);
     }
     inputRefs.current[0]?.focus();
-  }, [expiresAt]);
+  }, [expireAt]);
 
   function handleCodeChange(event, index) {
     const value = event.target.value;
@@ -63,66 +67,19 @@ function ModalVerifyCode({ customer }) {
       event.preventDefault();
     }
   }
-  const sendEmail = async () => {
-    try {
-      const response = await authApi.sendEmail({ email: customer.email });
-      setExpireAt(response.data.expiresAt);
-    } catch (error) {
-      console.log(error);
-      setMessage("Gửi mã xác thực thất bại.");
-      setSeverity("error");
-      setOpenNotification(true);
-    }
-  };
-  const verifyCode = async () => {
-    try {
-      // console.log("CODE: " + code.join(""));
-      // console.log("CUSTOMER:", JSON.stringify(customer));
-      // console.log("CUSTOMER:", customer.email);
-      const responseVerify = await authApi.verifyEmail({
-        email: customer.email,
-        code: code.join(""),
-      });
-      console.log(responseVerify.data);
-      if (responseVerify.code === "200") {
-        // đăng ký tài khoản dưới database
-        const responseRegister = await authApi.createUser(customer);
-        console.log(responseRegister.data);
-        // notify register successfully
-        setMessage("Đăng ký thành công.");
-        setSeverity("success");
-        setOpenNotification(true);
-        setOpen(false);
-      } else {
-        // notify verify failed
-        setMessage("Xác thực thất bại.");
-        setSeverity("error");
-        setOpenNotification(true);
-      }
-    } catch (error) {
-      console.log(error);
-      setMessage("Đăng ký thất bại");
-      setSeverity("error");
-      setOpenNotification(true);
-      setOpen(false);
-    }
-  };
-  useEffect(() => {
-    sendEmail();
-  }, []);
   return (
     <>
       {openNotification && (
         <Notification
-          message={message}
+          message={messageNotification}
           open={openNotification}
-          severity={severity}
+          severity={typeNotification}
           setOpen={setOpenNotification}
           variant="filled"
         />
       )}
       <Modal
-        open={open}
+        open={openVerifyModal}
         aria-labelledby="parent-modal-title"
         aria-describedby="parent-modal-description"
       >
@@ -180,7 +137,7 @@ function ModalVerifyCode({ customer }) {
               alignItems: "center",
             }}
           >
-            {timeLeft > 0 ? (
+            {timeLeft > 0 && typeModal === "REGISTER" ? (
               <Button variant="outlined" color="success" disabled>
                 Gửi lại ({timeLeft})
               </Button>
@@ -195,7 +152,7 @@ function ModalVerifyCode({ customer }) {
               variant="contained"
               color="success"
               sx={{ color: "white" }}
-              onClick={verifyCode}
+              onClick={() => verifyCode(code)}
             >
               Xác nhận
             </Button>
@@ -206,6 +163,14 @@ function ModalVerifyCode({ customer }) {
   );
 }
 ModalVerifyCode.propTypes = {
-  customer: propsType.object.isRequired,
+  expireAt: propsType.number.isRequired,
+  verifyCode: propsType.func.isRequired,
+  sendEmail: propsType.func.isRequired,
+  setOpenNotification: propsType.func.isRequired,
+  openNotification: propsType.bool.isRequired,
+  messageNotification: propsType.func.isRequired,
+  typeNotification: propsType.string.isRequired,
+  openVerifyModal: propsType.bool.isRequired,
+  typeModal: propsType.string.isRequired,
 };
 export default ModalVerifyCode;

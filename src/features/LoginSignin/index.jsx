@@ -7,16 +7,17 @@ import {
   faLinkedinIn,
 } from "@fortawesome/free-brands-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { login } from "../../store/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "./store/authSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import Notification from "../../components/Alert";
 import { useForm } from "react-hook-form";
 import InputField from "../../components/InputField";
-import { Grid2 } from "@mui/material";
+import { Button, Grid2 } from "@mui/material";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import ModalVerifyCode from "./ModalVerifyCode";
+import ModalResetPassword from "./ModalResetPassword";
+import Register from "./Register";
 LoginRegister.propTypes = {};
 
 function LoginRegister() {
@@ -29,10 +30,19 @@ function LoginRegister() {
   const [emailLogin, setEmailLogin] = useState();
   const [dataRegister, setDataRegister] = useState();
   const [passwordLogin, setPasswordLogin] = useState();
+  const [openResetPass, setOpenResetPass] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const loading = useSelector((state) => state.email.loading);
 
   const handleRegisterClick = () => setIsRightPanelActive(true);
   const handleLoginClick = () => setIsRightPanelActive(false);
-
+  const handleClickForgot = () => {
+    setOpenResetPass(true);
+  };
+  const handleCloseForgot = () => {
+    setOpenResetPass(false);
+  };
   // handle chuyển trang
   const navigate = useNavigate();
   useEffect(() => {
@@ -53,8 +63,13 @@ function LoginRegister() {
 
       setShouldRedirect(true);
     } catch (error) {
-      // handle error here
       setError(true);
+
+      if (error.code === "ERR_BAD_REQUEST") {
+        setErrorMessage("Tên đăng nhập hoặc mật khẩu không đúng");
+      } else {
+        setErrorMessage(error.message);
+      }
       console.log(error);
     }
   };
@@ -65,7 +80,7 @@ function LoginRegister() {
         username: value.username,
         password: value.password,
         email: value.email,
-        phone: "",
+        phone: value.phone,
         fullName: value.fullName,
         dob: "",
         gender: "OTHER",
@@ -85,29 +100,31 @@ function LoginRegister() {
       .required("Please enter your email")
       .email("Please enter a valid email"),
     password: yup.string().required("Please enter your password"),
+    phone: yup.string().required("Please enter your phonenumber"),
     confirmPassword: yup
       .string()
-      .oneOf([yup.ref("password"), null], "Passwords must match"),
+      .oneOf([yup.ref("password"), null], "Password must match"),
   });
   const { control, handleSubmit } = useForm({
     defaultValues: {
       fullName: "",
       username: "",
       email: "",
+      phone: "",
       password: "",
       confirmPassword: "",
     },
     resolver: yupResolver(schema),
   });
-
   return (
     <div className={styles.body}>
       {error && (
         <Notification
           severity="error"
-          message="Login failed"
+          message={errorMessage}
           open={error}
           setOpen={setError}
+          variant="filled"
         />
       )}
       <div
@@ -116,9 +133,6 @@ function LoginRegister() {
         }`}
         id="container"
       >
-        {openModal && dataRegister && dataRegister?.email && (
-          <ModalVerifyCode customer={dataRegister} />
-        )}
         {/* Register Form */}
         <div
           className={`${styles["form-container"]} ${styles["register-container"]}`}
@@ -132,6 +146,7 @@ function LoginRegister() {
               <InputField control={control} name="fullName" label="Name" />
               <InputField control={control} name="username" label="Username" />
               <InputField control={control} name="email" label="Email" />
+              <InputField control={control} name="phone" label="Phone" />
               <InputField control={control} name="password" label="Password" />
               <InputField
                 control={control}
@@ -139,10 +154,32 @@ function LoginRegister() {
                 label="Confirm password"
               />
             </Grid2>
-            <button className={styles.button}>Register</button>
+            {/* <button className={styles.button}>Register</button> */}
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "#002b6b",
+                color: "white",
+                fontWeight: "bold",
+                borderRadius: "999px",
+                textTransform: "none",
+                paddingX: 9,
+                paddingY: 1.2,
+                "&:hover": {
+                  backgroundColor: "#001f4d",
+                },
+              }}
+              type="submit"
+              loading={loading}
+              loadingPosition="start"
+            >
+              Register
+            </Button>
           </form>
+          {openModal && dataRegister && dataRegister?.email && (
+            <Register customer={dataRegister} />
+          )}
         </div>
-
         {/* Login Form */}
         <div
           className={`${styles["form-container"]} ${styles["login-container"]}`}
@@ -166,7 +203,9 @@ function LoginRegister() {
                 <label htmlFor="checkbox">Remember me</label>
               </div>
               <div className={styles["pass-link"]}>
-                <Link href="#">Forgot password?</Link>
+                <Link href="" onClick={handleClickForgot}>
+                  Forgot password?
+                </Link>
               </div>
             </div>
             <button
@@ -190,7 +229,6 @@ function LoginRegister() {
             </div>
           </form>
         </div>
-
         {/* Overlay Section */}
         <div className={styles["overlay-container"]}>
           <div className={styles.overlay}>
@@ -230,6 +268,13 @@ function LoginRegister() {
           </div>
         </div>
       </div>
+
+      {openResetPass && (
+        <ModalResetPassword
+          open={openResetPass}
+          handleClose={handleCloseForgot}
+        />
+      )}
     </div>
   );
 }

@@ -9,13 +9,13 @@ import { Provider } from "react-redux";
 import store from "./store/store.js";
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <Provider store={store}>
-      <BrowserRouter>
-        <ThemeProvider theme={theme}>
-          <App />
-        </ThemeProvider>
-      </BrowserRouter>
-    </Provider>
-  </StrictMode>
+  // <StrictMode>
+  <Provider store={store}>
+    <BrowserRouter>
+      <ThemeProvider theme={theme}>
+        <App />
+      </ThemeProvider>
+    </BrowserRouter>
+  </Provider>
+  // {/* </StrictMode> */}
 );

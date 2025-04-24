@@ -1,6 +1,6 @@
-import { Grid2 } from "@mui/material";
+import { Button, Grid2 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import userApi from "../../api/userApi";
 import Breadcrumb from "../../components/Breadcrumb/breadcrum";
 import styles from "./InfoCus.module.css";
@@ -9,12 +9,32 @@ import Banner from "./components/Banner/Banner";
 import CustomerInfo from "./components/CustomerInfo/CustomerInfo";
 import WishList from "./components/WishList/WishList";
 import SubscribedBanner from "./components/Subscribed/Subscribed";
+import ModalChangePassword from "./components/ChangePassword";
+import { logout } from "../LoginSignin/store/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const InfoCustomer = () => {
   const infocus = useSelector((state) => state.user.current);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [addresses, setAddresses] = useState([]);
   const [wishlist, setWishlist] = useState([]);
+  const [openModalChangePass, setOpenModalChangePass] = useState(false);
+
+  const handleClickChangePass = () => {
+    setOpenModalChangePass(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModalChangePass(false);
+  };
+
+  const handleClickLogout = () => {
+    dispatch(logout());
+    navigate("/");
+  };
+
   const fetchAddress = async () => {
     try {
       const addressResponse = await userApi.getAddresses();
@@ -26,7 +46,9 @@ const InfoCustomer = () => {
   };
   const fetchWishlist = async () => {
     try {
-      const wishlistResponse = await userApi.getWishList({ params: { page: 1, size: 10 } }); // Gọi API để lấy danh sách wishlist
+      const wishlistResponse = await userApi.getWishList({
+        params: { page: 1, size: 10 },
+      }); // Gọi API để lấy danh sách wishlist
       console.log("Danh sách wishlist: ", wishlistResponse.data.content); // Log danh sách wishlist
       setWishlist(wishlistResponse.data.content); // Lưu danh sách wishlist vào state
     } catch (error) {
@@ -62,7 +84,9 @@ const InfoCustomer = () => {
   const RemoveWishlist = async (id) => {
     try {
       await userApi.removeWishList(id); // Gọi API để xóa sản phẩm khỏi wishlist
-      setWishlist((prevWishlist) => prevWishlist.filter((item) => item.id !== id)); // Cập nhật state
+      setWishlist((prevWishlist) =>
+        prevWishlist.filter((item) => item.id !== id)
+      ); // Cập nhật state
     } catch (error) {
       console.error("Lỗi khi xóa sản phẩm khỏi wishlist:", error);
     }
@@ -73,8 +97,7 @@ const InfoCustomer = () => {
     <div className={styles.infoCus}>
       <Banner fullName={infocus?.fullName} />
       <Breadcrumb currentPage="Thông tin tài khoản" />
-      <SubscribedBanner/>
-      {/* <div className={styles.container}> */}
+      <SubscribedBanner />
       <Grid2
         container
         direction="row"
@@ -84,7 +107,6 @@ const InfoCustomer = () => {
         <Grid2 size={{ md: 5, xs: 11 }}>
           <CustomerInfo infoCus={infocus} />
         </Grid2>
-        {/* <div className={styles.containerMore}> */}
         <Grid2
           container
           size={{ md: 5, xs: 11 }}
@@ -92,16 +114,40 @@ const InfoCustomer = () => {
           spacing={3}
         >
           <Grid2 size={12}>
-            <WishList wishlist={wishlist} onRemove={RemoveWishlist}/>
+            <WishList wishlist={wishlist} onRemove={RemoveWishlist} />
           </Grid2>
           <Grid2 size={12}>
             <Address addresses={addresses} onUpdate={updateAddresses} />
           </Grid2>
+          <Grid2
+            container
+            size={12}
+            direction="row"
+            sx={{ justifyContent: "flex-end" }}
+          >
+            <Button
+              variant="outlined"
+              sx={{ textTransform: "none" }}
+              onClick={handleClickChangePass}
+            >
+              Thay đổi mật khẩu
+            </Button>
+            <Button
+              variant="contained"
+              sx={{ textTransform: "none" }}
+              onClick={handleClickLogout}
+            >
+              Đăng xuất
+            </Button>
+          </Grid2>
         </Grid2>
-        {/* </div> */}
       </Grid2>
 
-      {/* </div> */}
+      {/* Notification */}
+      <ModalChangePassword
+        handleCloseModal={handleCloseModal}
+        openDialog={openModalChangePass}
+      />
     </div>
   );
 };
