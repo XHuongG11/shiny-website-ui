@@ -131,12 +131,17 @@ function ProductInfo({ product }) {
     }
   };
   const handleBuyNow = () => {
+    if (!isLoggedIn) {
+      alert("Vui lòng đăng nhập để mua hàng.");
+      navigate("/login");
+      return;
+    }
+  
     if (!selectedSize) {
       alert("Vui lòng chọn kích thước trước khi mua.");
       return;
     }
   
-    // Tìm thông tin size đã chọn
     const selectedProductSize = product.productSizes.find(
       (sizeObj) => sizeObj.size === selectedSize
     );
@@ -145,7 +150,7 @@ function ProductInfo({ product }) {
       alert("Kích thước không hợp lệ.");
       return;
     }
-    // Chuẩn bị dữ liệu đơn hàng tạm thời
+  
     const tempOrder = {
       productId: product.id,
       title: product.title,
@@ -154,10 +159,18 @@ function ProductInfo({ product }) {
       size: selectedSize,
       price: selectedProductSize.discountPrice,
       quantity: 1,
-      productSizeId: selectedProductSize.id, // nếu có
+      productSizeId: selectedProductSize.id,
+      product: product,
+      productSize: selectedProductSize,
     };
-    navigate("/checkouts", { state: { items: [tempOrder] } });
+  
+    // Lưu vào localStorage
+    localStorage.setItem("checkoutItems", JSON.stringify([tempOrder]));
+  
+    // Chuyển hướng
+    navigate("/checkouts");
   };
+  
 
   return (
     <div className={styles.infoProduct}>
@@ -220,7 +233,7 @@ function ProductInfo({ product }) {
                 content: [
                   "Việc chọn size chính xác là yếu tố quan trọng giúp bạn cảm thấy thoải mái và tự tin khi đeo các sản phẩm trang sức như vòng tay, nhẫn hay các loại vòng cổ. Dưới đây là một số cách đơn giản giúp bạn lựa chọn size phù hợp:",
                   "1. Sử dụng thước dây mềm: Đo chu vi vị trí bạn muốn đeo sản phẩm (ví dụ, cổ tay, ngón tay, cổ) bằng một thước dây mềm. Hãy chắc chắn rằng thước dây không quá chật hoặc quá lỏng. Sau khi đo, bạn có thể đối chiếu với bảng size để xác định kích cỡ phù hợp.",
-                  "2. Sử dụng sản phẩm có sẵn: Nếu bạn có một chiếc vòng tay, nhẫn hoặc sản phẩm tương tự vừa vặn, bạn có thể đo đường kính hoặc chu vi của sản phẩm đó và đối chiếu với bảng size của chúng tôi để tìm kích cỡ tương ứng.",
+                  "2. Sử dụng sản phẩm có sẵn: Nếu bạn có một chiếc vòng tay, nhẫn hoặc sản phẩm tương tựu vừa vặn, bạn có thể đo đường kính hoặc chu vi của sản phẩm đó và đối chiếu với bảng size của chúng tôi để tìm kích cỡ tương ứng.",
                   "3. Thử trực tiếp sản phẩm: Nếu có thể, bạn nên đến cửa hàng để thử trực tiếp sản phẩm và cảm nhận sự phù hợp của sản phẩm trên cơ thể mình.",
                   "Lưu ý: Các vùng trên cơ thể có thể thay đổi kích thước trong ngày (ví dụ, cổ tay, ngón tay có thể to lên vào cuối ngày). Do đó, bạn nên chọn size khi cảm thấy thoải mái nhất.",
                   "Nếu bạn vẫn không chắc chắn về size của mình, chúng tôi luôn sẵn sàng hỗ trợ và tư vấn thêm cho bạn."
