@@ -1,7 +1,8 @@
-import { useState, useEffect  } from "react";
+import { useState, useEffect } from "react";
 import styles from "./ProductInfo.module.css";
 import PropTypes from "prop-types";
 import userApi from "../../../../api/userApi";
+import CartApi from "../../../../api/cartApi";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import silverMaterial from "/image/allproduct/material_silver.png";
@@ -23,7 +24,7 @@ const materialImages = {
   "Platinum": platinumKMaterial,
 };
 
-function ProductInfo({product}) {
+function ProductInfo({ product }) {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [isInWishlist, setIsInWishlist] = useState(false); // State để kiểm tra sản phẩm có trong wishlist không
   const [selectedSize, setSelectedSize] = useState(null);
@@ -68,7 +69,7 @@ function ProductInfo({product}) {
       navigate("/login");
       return; // Ngăn chặn logic tiếp theo nếu chưa đăng nhập
     }
-  
+
     if (isInWishlist) {
       // Nếu sản phẩm đã có trong danh sách yêu thích, xóa nó
       userApi
@@ -99,6 +100,64 @@ function ProductInfo({product}) {
   const handleSizeClick = (size) => {
     setSelectedSize(size); // Set the selected size when clicked
   };
+  const handleAddToCart = async () => {
+    if (!isLoggedIn) {
+      alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.");
+      navigate("/login");
+      return;
+    }
+    
+    if (!selectedSize) {
+      alert("Vui lòng chọn kích thước trước khi thêm vào giỏ hàng.");
+      return;
+    }
+
+    try {
+      // Tìm productSizeId tương ứng với size đã chọn
+      const selectedProductSize = product.productSizes.find(
+        (sizeObj) => sizeObj.size === selectedSize
+      );
+
+      if (!selectedProductSize) {
+        alert("Kích thước không hợp lệ.");
+        return;
+      }
+
+      await CartApi.addItemToCart(selectedProductSize.id, 1); // 1 là số lượng
+      alert("Đã thêm sản phẩm vào giỏ hàng!");
+    } catch (error) {
+      console.error("Lỗi khi thêm vào giỏ hàng:", error.response?.data || error.message);
+      alert("Thêm vào giỏ hàng thất bại. Vui lòng thử lại sau.");
+    }
+  };
+  const handleBuyNow = () => {
+    if (!selectedSize) {
+      alert("Vui lòng chọn kích thước trước khi mua.");
+      return;
+    }
+  
+    // Tìm thông tin size đã chọn
+    const selectedProductSize = product.productSizes.find(
+      (sizeObj) => sizeObj.size === selectedSize
+    );
+  
+    if (!selectedProductSize) {
+      alert("Kích thước không hợp lệ.");
+      return;
+    }
+    // Chuẩn bị dữ liệu đơn hàng tạm thời
+    const tempOrder = {
+      productId: product.id,
+      title: product.title,
+      image: product.images[0]?.url,
+      material: product.material,
+      size: selectedSize,
+      price: selectedProductSize.discountPrice,
+      quantity: 1,
+      productSizeId: selectedProductSize.id, // nếu có
+    };
+    navigate("/checkouts", { state: { items: [tempOrder] } });
+  };
 
   return (
     <div className={styles.infoProduct}>
@@ -113,35 +172,35 @@ function ProductInfo({product}) {
         <div className={styles.infoProductContent}>
           <label className={styles.nameProduct}>{product.title}</label>
           <div className={styles.price}>
-          <label className={styles.priceCurrent}>{formatPrice(product.productSizes[0].discountPrice)}</label>
-          {product.productSizes[0].discountPrice !== product.productSizes[0].price && (
-          <label className={styles.basePrice}>{formatPrice(product.productSizes[0].price)}</label>)}
+            <label className={styles.priceCurrent}>{formatPrice(product.productSizes[0].discountPrice)}</label>
+            {product.productSizes[0].discountPrice !== product.productSizes[0].price && (
+              <label className={styles.basePrice}>{formatPrice(product.productSizes[0].price)}</label>)}
           </div>
           <label>Chọn kích thước: </label>
           <div className={styles.sizeProduct}>
             {product.productSizes.map((sizeObj, index) => (
-               <button
+              <button
                 key={index}
                 onClick={() => handleSizeClick(sizeObj.size)}
                 className={`${styles.sizeButton} ${selectedSize === sizeObj.size ? styles.selected : ""}`}
               >
-              {sizeObj.size === "No size" ? "One size" : sizeObj.size}
-             </button>
+                {sizeObj.size === "No size" ? "One size" : sizeObj.size}
+              </button>
             ))}
           </div>
 
           <div className={styles.colorProduct}>
-        <button>
-          <img
-            src={materialImages[product.material] || silverMaterial} 
-            alt={product.material}
-          />
-          <span>{product.material}</span>
-        </button>
-      </div>
+            <button>
+              <img
+                src={materialImages[product.material] || silverMaterial}
+                alt={product.material}
+              />
+              <span>{product.material}</span>
+            </button>
+          </div>
           <label className={styles.stockQuantity}>Chỉ còn 1 sản phẩm</label>
-          <button className={styles.btnAddToCart}>Thêm vào giỏ hàng</button>
-          <button className={styles.btnBuyNow}>Mua ngay</button>
+          <button className={styles.btnAddToCart} onClick={handleAddToCart}>Thêm vào giỏ hàng</button>
+          <button className={styles.btnBuyNow}onClick={handleBuyNow}>Mua ngay</button>
           <button className={`${styles.favoriteBtn} ${isInWishlist ? styles.added : ""}`} onClick={handleToggleWishlist}>
             <span className={styles.icon}>
             </span>
@@ -154,7 +213,7 @@ function ProductInfo({product}) {
               {
                 title: "Chi tiết",
                 content: product.description ? product.description.split(".").filter(line => line.trim() !== "")
-        : [],
+                  : [],
               },
               {
                 title: "Hướng dẫn chọn size",
@@ -178,9 +237,8 @@ function ProductInfo({product}) {
             ].map((item, index) => (
               <div
                 key={index}
-                className={`${styles.dropdown} ${
-                  openDropdown === index ? styles.active : ""
-                }`}
+                className={`${styles.dropdown} ${openDropdown === index ? styles.active : ""
+                  }`}
               >
                 <button
                   className={styles.dropdownBtn}
