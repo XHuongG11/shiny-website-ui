@@ -19,6 +19,8 @@ function MakeOrder() {
     const [momoQrUrl, setMomoQrUrl] = useState(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const [orderId, setOrderId] = useState(null);
+    const [deliveryMethod, setDeliveryMethod] = useState('standard');
+
 
     const navigate = useNavigate();
     const formRef = useRef(null);
@@ -52,9 +54,17 @@ function MakeOrder() {
         const price = item.productSize?.price || item.product?.price || 0;
         return total + price * (item.quantity || 1);
     }, 0);
-
-    const discount = 1000000;
-    const shippingFee = 40000;
+    const calculateShippingFee = (method) => {
+        switch (method) {
+            case 'express':
+                return 40000;
+            case 'standard':
+            default:
+                return 15000;
+        }
+    };
+    const shippingFee = calculateShippingFee(deliveryMethod);
+    const discount = 0;
     const total = subtotal - discount + shippingFee;
 
     const handlePaymentMethodChange = (method) => {
@@ -109,7 +119,7 @@ function MakeOrder() {
 
             const orderRequest = {
                 shippingAddress: { id: shippingAddress.id },
-                shippingMethod: "STANDARD",
+                shippingMethod: deliveryMethod.toUpperCase(),
                 paymentMethod,
                 cartItems: prepareCartItems(checkoutItems),
                 totalProductPrice: subtotal,
@@ -132,11 +142,7 @@ function MakeOrder() {
 
             if (paymentMethod === 'MOMO') {
                 try {
-                    const orderId = typeof newOrderId === 'object' ? newOrderId.id : Number(newOrderId);
-                    console.log('OrderID (fixed):', orderId, 'Type:', typeof orderId);
-
-                    const { data } = await paymentApi.createMomoPayment(orderId);
-
+                    const { data } = await paymentApi.createMomoPayment(newOrderId);
                     console.log('📦 Full API Response:', JSON.stringify(data, null, 2));
                     console.log('🔗 Payment URL:', data);
                     console.log('📏 Type of data:', typeof data);
@@ -144,18 +150,34 @@ function MakeOrder() {
                     if (!data || typeof data !== 'string' || !data.startsWith('http')) {
                         throw new Error("Không nhận được liên kết thanh toán hợp lệ");
                     }
-
                     window.location.href = data;
                 } catch (error) {
+                    await orderApi.updateOrderStatus(newOrderId, 'CANCELED');
                     console.error("Lỗi thanh toán MoMo:", error);
                     alert("Lỗi thanh toán: " + error.message);
                 }
             }
+            else if (paymentMethod === 'VN_PAY') {
+                try {
+                    const { data } = await paymentApi.createVNpayPayment(newOrderId);
+                    console.log('📦 Full API Response:', JSON.stringify(data, null, 2));
+                    console.log('🔗 Payment URL:', data);
+                    console.log('📏 Type of data:', typeof data);
 
+                    if (!data || typeof data !== 'string' || !data.startsWith('http')) {
+                        throw new Error("Không nhận được liên kết thanh toán hợp lệ");
+                    }
+                    window.location.href = data;
+                } catch (error) {
+                    await orderApi.updateOrderStatus(newOrderId, 'CANCELED');
+                    console.error("Lỗi thanh toán MoMo:", error);
+                    alert("Lỗi thanh toán: " + error.message);
+                }
+            }
             else if (paymentMethod === 'COD') {
                 try {
-                    console.log("Updating order status:", { orderId: newOrderId, status: 'SHIPPING' });
-                    await orderApi.updateOrderStatus(newOrderId, 'SHIPPING');
+                    console.log("Updating order status:", { orderId: newOrderId, status: 'PENDING' });
+                    await orderApi.updateOrderStatus(newOrderId, 'PENDING');
                 } catch (statusErr) {
                     console.warn("⚠️ Không thể cập nhật trạng thái đơn hàng:", statusErr);
                 }
@@ -182,7 +204,7 @@ function MakeOrder() {
                         </div>
                     </div>
                     <UserInfoForm addresses={addresses} onSubmit={handleFormSubmit} ref={formRef} />
-                    <DeliveryMethod />
+                    <DeliveryMethod onChange={(method) => setDeliveryMethod(method)} />
                     <PaymentMethod onChange={handlePaymentMethodChange} />
                     {momoQrUrl && (
                         <div style={{ textAlign: 'center', margin: '20px 0' }}>

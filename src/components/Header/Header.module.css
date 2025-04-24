@@ -23,10 +23,10 @@ nav {
 }
 
   
-  .navIcons {
-    display: flex;
-    align-items: center;
-  }
+.navIcons {
+  display: flex;
+  align-items: center;
+}
 .navIcons svg:last-child {
     margin-right: 20px; /* Xóa khoảng cách ở phần tử cuối */
 }

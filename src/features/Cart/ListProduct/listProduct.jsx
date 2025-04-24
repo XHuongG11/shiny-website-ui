@@ -5,6 +5,8 @@ import Breadcrumb from "../../../components/Breadcrumb/breadcrum";
 import cartApi from "../../../api/cartApi"; // Import API for fetching products
 import { useNavigate } from 'react-router-dom';
 import orderApi from "../../../api/orderApi";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const CartItemlist = () => {
@@ -12,6 +14,8 @@ const CartItemlist = () => {
     const [loading, setLoading] = useState(true);
     const [selectedItems, setSelectedItems] = useState([]);
     const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState("");
+    const [errorMessages, setErrorMessages] = useState({});
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -64,37 +68,75 @@ const CartItemlist = () => {
     }, []);
 
     // Tăng số lượng
-    const increaseQuantity = (id) => {
-        setCartItems((prevItems) =>
-            prevItems.map((item) =>
-                item.id === id ? { ...item, quantity: (item.quantity || 1) + 1 } : item
-            )
-        );
+    const increaseQuantity = async (id) => {
+        const item = cartItems.find(item => item.id === id);
+        if (!item) return;
+
+        const newQuantity = (item.quantity || 1) + 1;
+
+        try {
+            await cartApi.updateItemQuantity(item.productSize?.id, newQuantity);
+            setCartItems((prevItems) =>
+                prevItems.map((item) =>
+                    item.id === id ? { ...item, quantity: newQuantity } : item
+                )
+            );
+            setErrorMessage(""); // Xóa lỗi nếu thành công
+        } catch (error) {
+            console.error("Lỗi khi tăng số lượng:", error);
+            const message = error?.response?.data?.message || "Đã xảy ra lỗi khi cập nhật số lượng";
+            setErrorMessage(message);
+        }
     };
 
-    // Giảm số lượng (tối thiểu 1)
-    const decreaseQuantity = (id) => {
-        setCartItems((prevItems) =>
-            prevItems.map((item) =>
-                item.id === id && (item.quantity || 1) > 1
-                    ? { ...item, quantity: (item.quantity || 1) - 1 }
-                    : item
-            )
-        );
+
+    const decreaseQuantity = async (id) => {
+        const item = cartItems.find(item => item.id === id);
+        if (!item) return;
+
+        const currentQuantity = item.quantity || 1;
+        const newQuantity = currentQuantity > 1 ? currentQuantity - 1 : 1;
+
+        try {
+            await cartApi.updateItemQuantity(item.productSize?.id, newQuantity);
+            setCartItems((prevItems) =>
+                prevItems.map((item) =>
+                    item.id === id ? { ...item, quantity: newQuantity } : item
+                )
+            );
+            setErrorMessage(""); // Reset lỗi nếu có
+        } catch (error) {
+            console.error("Lỗi khi giảm số lượng:", error);
+            const message = error?.response?.data?.message || "Đã xảy ra lỗi khi giảm số lượng";
+            setErrorMessage(message);
+        }
     };
+
+
 
     // Xóa sản phẩm
     const removeItem = (id) => {
         setCartItems(cartItems.filter((item) => item.id !== id));
     };
 
-    const handleQuantityChange = (id, newQuantity) => {
+    const handleQuantityChange = async (id, newQuantity, productSizeId) => {
         setCartItems((prevItems) =>
             prevItems.map((item) =>
                 item.id === id ? { ...item, quantity: newQuantity } : item
             )
         );
+
+        try {
+            await cartApi.updateItemQuantity(productSizeId, newQuantity);
+            toast.success("Cập nhật số lượng thành công ✅", { autoClose: 5000 });
+        } catch (error) {
+            const message = error?.response?.data?.message || "Lỗi khi cập nhật số lượng ❌";
+            toast.error(message, { autoClose: 5000 });
+        }
     };
+
+
+
 
     // Tính tổng tiền - đảm bảo quantity và price tồn tại
     // Add this function to toggle item selection
@@ -108,13 +150,13 @@ const CartItemlist = () => {
 
     // Update the totalPrice calculation to only include selected items
     const totalPrice = selectedItems.length === 0
-    ? 0
-    : cartItems
-        .filter((item) => selectedItems.includes(item.id)) // Chỉ cộng những item đã được chọn
-        .reduce((total, item) => {
-            const price = item.productSize?.price || item.product?.price || 0;
-            return total + price * (item.quantity || 1);
-        }, 0);
+        ? 0
+        : cartItems
+            .filter((item) => selectedItems.includes(item.id)) // Chỉ cộng những item đã được chọn
+            .reduce((total, item) => {
+                const price = item.productSize?.price || item.product?.price || 0;
+                return total + price * (item.quantity || 1);
+            }, 0);
 
 
     // Add a function to select/deselect all items
@@ -135,12 +177,12 @@ const CartItemlist = () => {
     const handleCheckout = () => {
         // Filter only the selected items
         const selectedProducts = cartItems.filter(item => selectedItems.includes(item.id));
-    
+
         if (selectedProducts.length === 0) return;
-    
+
         // Save selected products to localStorage
         localStorage.setItem('checkoutItems', JSON.stringify(selectedProducts));
-    
+
         // Navigate to checkout page
         navigate('/checkouts');
     };
@@ -163,9 +205,9 @@ const CartItemlist = () => {
                         <Grid2 className={styles.cartItem} key={item.id} container direction="row" spacing={2}
                             sx={{ justifyContent: "space-between", alignItems: "center" }}>
                             <Grid2 container direction="row" spacing={2} sx={{ alignItems: "center" }}>
-                                <input 
-                                    type="checkbox" 
-                                    className={styles.checkbox} 
+                                <input
+                                    type="checkbox"
+                                    className={styles.checkbox}
                                     checked={selectedItems.includes(item.id)}
                                     onChange={() => toggleSelectItem(item.id)}
                                 />
@@ -198,7 +240,7 @@ const CartItemlist = () => {
                                         onChange={(e) => {
                                             const newQuantity = parseInt(e.target.value, 10);
                                             if (!isNaN(newQuantity) && newQuantity >= 0) {
-                                                handleQuantityChange(item.id, newQuantity);
+                                                handleQuantityChange(item.id, newQuantity, item.productSize?.id);
                                             }
                                         }}
                                     />
@@ -228,7 +270,7 @@ const CartItemlist = () => {
                     <p>
                         Tổng: <span>{totalPrice.toLocaleString()}đ</span>
                     </p>
-                    <button 
+                    <button
                         onClick={handleCheckout}
                         disabled={selectedItems.length === 0}
                         className={selectedItems.length === 0 ? styles.disabledButton : ''}
@@ -242,6 +284,7 @@ const CartItemlist = () => {
                     <a href="/allproduct">&lt; Tiếp Tục Mua Hàng</a>
                 </div>
             </div>
+            <ToastContainer position="top-right" />
         </div>
     );
 };

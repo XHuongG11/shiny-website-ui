@@ -28,6 +28,9 @@ export default function Header() {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+  const handleGoToCart = () => {
+    navigate('/cart');
+  };
   const handleLogout = () => {
     dispatch(logout());
     navigate("/");
@@ -110,21 +113,20 @@ export default function Header() {
           >
             {Object.keys(userInfo).length === 0
               ? [
-                  <MenuItem key="login" onClick={handleLogin}>
-                    Login
-                  </MenuItem>,
-                ]
+                <MenuItem key="login" onClick={handleLogin}>
+                  Login
+                </MenuItem>,
+              ]
               : [
-                  <MenuItem key="profile" onClick={handleProfileClick}>
-                    Profile
-                  </MenuItem>,
-                  <MenuItem key="logout" onClick={handleLogout}>
-                    Logout
-                  </MenuItem>,
-                ]}
+                <MenuItem key="profile" onClick={handleProfileClick}>
+                  Profile
+                </MenuItem>,
+                <MenuItem key="logout" onClick={handleLogout}>
+                  Logout
+                </MenuItem>,
+              ]}
           </Menu>
-
-          <ShoppingBagOutlinedIcon />
+          <ShoppingBagOutlinedIcon onClick={handleGoToCart} />
         </div>
       </div>
     </nav>

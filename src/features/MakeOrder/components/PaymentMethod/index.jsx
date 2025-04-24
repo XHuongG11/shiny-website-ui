@@ -1,13 +1,14 @@
 import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material';
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 
 function PaymentMethod({ onChange }) {
     // Danh sách các phương thức thanh toán
     const paymentMethods = [
         {
-            value: 'VNPAY',
+            value: 'VN_PAY',
             label: 'Thanh toán online qua VNPAY',
-            icon: 'https://vnpay.vn/wp-content/uploads/2021/07/logo-vnpay-vector-1.svg',
+            icon: 'https://stcd02206177151.cloud.edgevnpay.vn/assets/images/logo-icon/logo-primary.svg',
         },
         {
             value: 'MOMO',
