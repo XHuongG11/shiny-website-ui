@@ -4,6 +4,7 @@ import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import PermIdentityOutlinedIcon from "@mui/icons-material/PermIdentityOutlined";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import React, { useState } from "react";
 import DropdownMenu from "./components/DropdownMenu";
 import styles from "./Header.module.css";
@@ -101,6 +102,7 @@ export default function Header() {
         <div className={styles.icons}>
           <FavoriteBorderRoundedIcon />
           <PlaceOutlinedIcon />
+          <ReceiptLongOutlinedIcon />
           <PermIdentityOutlinedIcon onClick={handleClick} />
           <Menu
             id="basic-menu"
