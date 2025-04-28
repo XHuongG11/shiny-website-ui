@@ -17,7 +17,9 @@
     align-items: center;
     font-size: 14px;
 }
-
+.li{
+    font-weight: bold;
+}
 .filter__box input[type="checkbox"] {
     margin-right: 20px; 
     margin-left: 8px;
@@ -25,8 +27,8 @@
     transform: scale(1);
     width: 18px;
     height: 18px;
+    
 }
-
 .filterSize{
     display: flex;
     flex-wrap: wrap;
@@ -58,6 +60,13 @@
     width: 30px;  
     height: 30px;
     border-radius: 50%;
+    font-weight: bold;
+}
+.pricename{
+    font-weight: bold;
+}
+.productMaterialname{
+    font-weight: bold;
 }
 .filterSizeNumber.selected {
     font-weight: bold;

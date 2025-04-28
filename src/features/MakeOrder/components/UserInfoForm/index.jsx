@@ -100,7 +100,7 @@ const UserInfoForm = forwardRef(({ addresses, onSubmit }, ref) => {
   // Fetch danh sách tỉnh/thành khi component mount
   useEffect(() => {
     fetchProvinces();
-  }, [fetchProvinces]);
+  }, []);
 
   return (
     <form
@@ -126,9 +126,8 @@ const UserInfoForm = forwardRef(({ addresses, onSubmit }, ref) => {
             addresses.length > 0 &&
             addresses.map((address) => (
               <MenuItem key={address.id} value={address.id}>
-                {`${address.address || ""}, ${address.village || ""}, ${
-                  address.district || ""
-                }, ${address.province || ""}`}
+                {`${address.address || ""}, ${address.village || ""}, ${address.district || ""
+                  }, ${address.province || ""}`}
               </MenuItem>
             ))}
         </Select>

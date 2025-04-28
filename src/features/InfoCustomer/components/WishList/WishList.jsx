@@ -19,8 +19,8 @@ const WishList = ({ wishlist , onRemove }) => { // Destructure prop wishlist t�
       <div className={styles.cardBody}>
         {wishlist.length > 0 ? (
           wishlist.slice(0, 2).map((item) => { // Hiển thị tối đa 2 sản phẩm
-            console.log("Dữ liệu product được truyền vào ProductCard:", item.product); // Log dữ liệu product
-            return <ProductCard key={item.product.id} product={item.product} onRemove={() => onRemove(item.id)} />; // Truyền product vào ProductCard
+            console.log("ID sp:", item.product.id); // Log dữ liệu wishlist
+            return <ProductCard key={item.product.id} product={item.product} onRemove={() => onRemove(item.product.id)} />; // Truyền product vào ProductCard
           })
         ) : (
           <p className={styles.emptyMessage}>Danh sách yêu thích của bạn đang trống.</p>

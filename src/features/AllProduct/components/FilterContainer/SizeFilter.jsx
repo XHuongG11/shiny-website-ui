@@ -1,8 +1,9 @@
 import FilterBox from "./FilterBox";
 import styles from "./Filter.module.css";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import PropTypes from "prop-types";
 
-const SizeFilter = () => {
+const SizeFilter = ({onSizeChange}) => {
   const [selectedSizes, setSelectedSizes] = useState([]);
 
   const handleClick = (size) => {
@@ -11,10 +12,13 @@ const SizeFilter = () => {
       setSelectedSizes(selectedSizes.filter(s => s !== size));
     } else {
       // Thêm vào danh sách đã chọn
-      setSelectedSizes([...selectedSizes, size]);
+      setSelectedSizes(prev => [...prev, size]);
     }
-  };
 
+  };
+  useEffect(() => {
+    onSizeChange(selectedSizes);
+}, [selectedSizes, setSelectedSizes]);
   return (
     <FilterBox title="Size">
       <div className={styles.filterSize}>
@@ -31,5 +35,7 @@ const SizeFilter = () => {
     </FilterBox>
   );
 };
-
+SizeFilter.propTypes = {
+  onSizeChange: PropTypes.func.isRequired
+}
 export default SizeFilter;

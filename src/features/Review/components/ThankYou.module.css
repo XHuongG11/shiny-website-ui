@@ -1,0 +1,40 @@
+.thankYouContainer {
+    text-align: center;
+    padding: 50px 20px;
+  }
+  
+  .title {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin-bottom: 10px;
+  }
+  
+  .message {
+    padding: 10px;
+    margin: 10px ;
+    font-weight: normal;
+    font-size: 1.3rem;
+    text-shadow: none; /* loại bỏ bóng chữ nếu có */
+    color: #333;        /* chọn màu chữ dịu nhẹ hơn nếu cần */
+  }
+  
+  
+  .homeLink {
+    background-color: #0d0d0e;
+    padding: 10px 20px;
+    border-radius: 8px;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.3s ease-in-out; /* Tối ưu transition */
+    display: inline-block; /* Đảm bảo transform hoạt động */
+  }
+  
+  .homeLink:hover {
+    background-color: #1a1a1b; /* Thêm thay đổi màu nhẹ khi hover */
+    color: white;
+    transform: scale(1.1); /* Phóng to 10% */
+  }
+  
+
+  

@@ -66,6 +66,7 @@ const InfoCustomer = () => {
     } catch (error) {
       console.error("Lỗi khi xóa sản phẩm khỏi wishlist:", error);
     }
+    await fetchWishlist(); // Gọi lại API để lấy danh sách wishlist mới
   };
 
   return (

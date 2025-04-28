@@ -15,6 +15,7 @@ export const login = createAsyncThunk("user/login", async (payload) => {
   // Lưu thông tin user
   localStorage.setItem(StorageKeys.USER, JSON.stringify(userData.data.user));
   // console.log("User: " + JSON.stringify(userData.data.user));
+  console.log("User Data:", userData.data.user);
   return userData.data.user;
 });
 export const update = createAsyncThunk("user/update", async (payload) => {

@@ -19,8 +19,8 @@
     flex-shrink: 0;
 }
 .catagory__itemImage {
-    width: 140px;
-    height: 140px;
+    width: 120px;
+    height: 120px;
     background-color: var(--background-catagory-color);
     border-radius: 50%;
     object-fit: cover;
@@ -52,4 +52,8 @@
   .catagory__item:hover .catagory__itemImage {
     background-color: #e2e4ea; /* hoặc một màu nền sáng hơn để nổi bật */
     transition: background-color 0.2s ease;
+  }
+  .catagory__itemName{
+    text-shadow: none;
+    font-weight: bold;
   }

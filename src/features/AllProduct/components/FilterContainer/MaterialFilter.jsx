@@ -6,48 +6,49 @@ import gold18KMaterial from "/image/allproduct/material_gold18k.png";
 import gold24KMaterial from "/image/allproduct/material_gold24k.png";
 import platinumKMaterial from "/image/allproduct/material_platinum.png";
 import styles from "./Filter.module.css";
+import PropTypes from "prop-types";
 
-const MaterialFilter = () => {
-  return (
-    <FilterBox title="Chất liệu">
-      <li>
-        <div className={styles.filterMaterial}>
-          <img className={styles.productMaterial} src={silverMaterial} alt="Bạc" />
-          <label> Bạc</label>
-        </div>
-      </li>
-      <li>
-        <div className={styles.filterMaterial}>
-          <img className={styles.productMaterial} src={whiteGoldMaterial} alt="Vàng trắng" />
-          <label> Vàng trắng</label>
-        </div>
-      </li>
-      <li>
-        <div className={styles.filterMaterial}>
-          <img className={styles.productMaterial} src={gold10KMaterial} alt="Vàng 10K" />
-          <label> Vàng 10K</label>
-        </div>
-      </li>
-      <li>
-        <div className={styles.filterMaterial}>
-          <img className={styles.productMaterial} src={gold18KMaterial} alt="Vàng 18K<" />
-          <label> Vàng 18K</label>
-        </div>
-      </li>
-      <li>
-        <div className={styles.filterMaterial}>
-          <img className={styles.productMaterial} src={gold24KMaterial} alt="Vàng 24K" />
-          <label> Vàng 24K</label>
-        </div>
-      </li>
-      <li>
-        <div className={styles.filterMaterial}>
-          <img className={styles.productMaterial} src={platinumKMaterial} alt="Bạch kim" />
-          <label> Bạch kim</label>
-        </div>
-      </li>
-    </FilterBox>
-  );
+const MaterialFilter = ({ selectedMaterial, onMaterialChange }) => {
+    const materials = [
+        { name: "Bạc", img: silverMaterial },
+        { name: "Vàng trắng", img: whiteGoldMaterial },
+        { name: "Vàng 10K", img: gold10KMaterial },
+        { name: "Vàng 18K", img: gold18KMaterial },
+        { name: "Vàng 24K", img: gold24KMaterial },
+        { name: "Bạch kim", img: platinumKMaterial },
+    ];
+
+    const handleMaterialChange = (material) => {
+        onMaterialChange(selectedMaterial === material ? null : material);
+    };
+
+    return (
+        <FilterBox title="Chất liệu">
+            {materials.map((material) => (
+                <li key={material.name}>
+                    <div className={styles.filterMaterial}>
+                        <input
+                            type="checkbox"
+                            className={styles.checkboxSmall}
+                            checked={selectedMaterial === material.name}
+                            onChange={() => handleMaterialChange(material.name)}
+                        />
+                        <img
+                            className={styles.productMaterial}
+                            src={material.img}
+                            alt={material.name}
+                        />
+                        <label className={styles.productMaterialname}>{material.name}</label>
+                    </div>
+                </li>
+            ))}
+        </FilterBox>
+    );
+};
+
+MaterialFilter.propTypes = {
+    selectedMaterial: PropTypes.string,
+    onMaterialChange: PropTypes.func.isRequired,
 };
 
 export default MaterialFilter;
