@@ -13,6 +13,9 @@ import Cart from "./features/Cart/Cart";
 import HandleError from "./utils/HandleError";
 import ReviewProduct from "./features/Review/ReviewProduct";
 import ThankYou from "./features/Review/components/ThankYou";
+import ReturnOrder from "./features/ReturnProduct/ReturnOrder";
+import ReturnProduct from "./features/ReturnProduct/ReturnProduct";
+import ThankYouReturn from "./features/ReturnProduct/components/Thankyou";
 function App() {
   return (
     <div className="App">
@@ -28,7 +31,10 @@ function App() {
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />}></Route>
         <Route path="/review/:id" element={<ReviewProduct />} />
+        <Route path="/return/:id" element={<ReturnOrder />} />
+        <Route path="/returnproduct" element={<ReturnProduct />} />
         <Route path="/thankyou-review" element={<ThankYou />} />
+        <Route path="/thankyou-return" element={<ThankYouReturn />} />
         <Route path="/error/:statusCode" element={<HandleError />}></Route>
         <Route path="*" element={<Navigate to="/error/404" replace />} />
       </Routes>

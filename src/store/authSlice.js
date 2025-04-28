@@ -5,9 +5,8 @@ import StorageKeys from "../constants/storage-key";
 export const login = createAsyncThunk("user/login", async (payload) => {
   // goi api
   const data = await userApi.login(payload);
-
   const userData = data;
-  // console.log("Token: " + JSON.stringify(userData));
+   //console.log("Token: " + JSON.stringify(userData));
   // Lưu token
   localStorage.setItem(StorageKeys.TOKEN, userData.data.token);
   // console.log("Token: " + userData.data.token);

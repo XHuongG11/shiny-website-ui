@@ -100,7 +100,7 @@ const UserInfoForm = forwardRef(({ addresses, onSubmit }, ref) => {
   // Fetch danh sách tỉnh/thành khi component mount
   useEffect(() => {
     fetchProvinces();
-  }, [fetchProvinces]);
+  }, []);
 
   return (
     <form

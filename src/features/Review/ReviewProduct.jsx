@@ -77,7 +77,6 @@ function ReviewProduct() {
             <ReviewCard
               key={item.id}
               product={item.product}
-              productSize={item.productSize}
               quantity={item.quantity}
               price={item.price}
               discountPrice={item.discountPrice}

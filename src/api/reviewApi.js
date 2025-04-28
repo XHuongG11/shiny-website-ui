@@ -6,7 +6,7 @@ const reviewApi = {
         return axiosClient.post(url,data);
     },
     
-    getReviewsByProduct(productId, page = 1, size = 1) {
+    getReviewsByProduct(productId, page = 1, size = 10) {
         const url = `/reviews/${productId}`;
         return axiosClient.get(url, {
         params: { page, size },
