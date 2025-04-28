@@ -4,6 +4,7 @@ import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import PermIdentityOutlinedIcon from "@mui/icons-material/PermIdentityOutlined";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import React, { useState } from "react";
 import DropdownMenu from "./components/DropdownMenu";
 import styles from "./Header.module.css";
@@ -27,6 +28,12 @@ export default function Header() {
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
+  };
+  const handleOrder = () =>{
+    navigate('/myorder')
+  }
+  const handleGoToCart = () => {
+    navigate('/cart');
   };
   const handleLogout = () => {
     dispatch(logout());
@@ -98,6 +105,7 @@ export default function Header() {
         <div className={styles.icons}>
           <FavoriteBorderRoundedIcon />
           <PlaceOutlinedIcon />
+          <ReceiptLongOutlinedIcon onClick={handleOrder}/>
           <PermIdentityOutlinedIcon onClick={handleClick} />
           <Menu
             id="basic-menu"
@@ -110,21 +118,20 @@ export default function Header() {
           >
             {Object.keys(userInfo).length === 0
               ? [
-                  <MenuItem key="login" onClick={handleLogin}>
-                    Login
-                  </MenuItem>,
-                ]
+                <MenuItem key="login" onClick={handleLogin}>
+                  Login
+                </MenuItem>,
+              ]
               : [
-                  <MenuItem key="profile" onClick={handleProfileClick}>
-                    Profile
-                  </MenuItem>,
-                  <MenuItem key="logout" onClick={handleLogout}>
-                    Logout
-                  </MenuItem>,
-                ]}
+                <MenuItem key="profile" onClick={handleProfileClick}>
+                  Profile
+                </MenuItem>,
+                <MenuItem key="logout" onClick={handleLogout}>
+                  Logout
+                </MenuItem>,
+              ]}
           </Menu>
-
-          <ShoppingBagOutlinedIcon />
+          <ShoppingBagOutlinedIcon onClick={handleGoToCart} />
         </div>
       </div>
     </nav>

@@ -16,12 +16,16 @@ import ThankYou from "./features/Review/components/ThankYou";
 import ReturnOrder from "./features/ReturnProduct/ReturnOrder";
 import ReturnProduct from "./features/ReturnProduct/ReturnProduct";
 import ThankYouReturn from "./features/ReturnProduct/components/Thankyou";
+import MyOrder from "./features/MyOrder/AllMyOrder/MyOrders";
+import OrderDetail from "./features/MyOrder/OrderDetail/OrderDetails";
 function App() {
   return (
     <div className="App">
       <Header />
       <Routes>
         <Route path="/checkouts/*" element={<MakeOrder />}></Route>
+        <Route path="/myorder/" element={<MyOrder />}></Route>
+        <Route path="/myorder/orderdetail" element={<OrderDetail />}></Route>
         <Route path="/login" element={<LoginRegister />}></Route>
         <Route path="/checkouts/thank-you" element={<CompleteOrder />}></Route>
         <Route path="/" element={<Home />}></Route>

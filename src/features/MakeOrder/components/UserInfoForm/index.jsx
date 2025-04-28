@@ -126,9 +126,8 @@ const UserInfoForm = forwardRef(({ addresses, onSubmit }, ref) => {
             addresses.length > 0 &&
             addresses.map((address) => (
               <MenuItem key={address.id} value={address.id}>
-                {`${address.address || ""}, ${address.village || ""}, ${
-                  address.district || ""
-                }, ${address.province || ""}`}
+                {`${address.address || ""}, ${address.village || ""}, ${address.district || ""
+                  }, ${address.province || ""}`}
               </MenuItem>
             ))}
         </Select>
