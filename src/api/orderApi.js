@@ -1,5 +1,3 @@
-// src/api/orderApi.js
-
 import axiosClient from "./axiosClient";
 
 const orderApi = {
@@ -36,7 +34,28 @@ const orderApi = {
     return axiosClient.put(`/orders/${id}/status`, null, {
       params: { status }
     });
-  }
+  },
+   // Gửi yêu cầu hoàn trả
+   returnOrderItem(data) {
+    const url = `/orders/return`; // Endpoint API
+    return axiosClient.post(url, data);
+  },
+
+  // Tải lên hình ảnh chứng minh
+  uploadReturnItemProof(itemId, files) {
+    const url = `/orders/return/upload`; // Endpoint API
+    const formData = new FormData();
+    formData.append("itemId", itemId);
+    files.forEach((file) => {
+      formData.append("files", file);
+    });
+
+    return axiosClient.post(url, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
 };
 
 export default orderApi;
