@@ -13,12 +13,17 @@ import Cart from "./features/Cart/Cart";
 import HandleError from "./utils/HandleError";
 import ReviewProduct from "./features/Review/ReviewProduct";
 import ThankYou from "./features/Review/components/ThankYou";
+import MyOrder from "./features/MyOrder/AllMyOrder/MyOrders";
+import OrderDetail from "./features/MyOrder/OrderDetail/OrderDetails";
+
 function App() {
   return (
     <div className="App">
       <Header />
       <Routes>
         <Route path="/checkouts/*" element={<MakeOrder />}></Route>
+        <Route path="/myorder/" element={<MyOrder />}></Route>
+        <Route path="/myorder/orderdetail" element={<OrderDetail />}></Route>
         <Route path="/login" element={<LoginRegister />}></Route>
         <Route path="/checkouts/thank-you" element={<CompleteOrder />}></Route>
         <Route path="/" element={<Home />}></Route>

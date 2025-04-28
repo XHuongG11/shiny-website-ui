@@ -29,6 +29,9 @@ export default function Header() {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+  const handleOrder = () =>{
+    navigate('/myorder')
+  }
   const handleGoToCart = () => {
     navigate('/cart');
   };
@@ -102,7 +105,7 @@ export default function Header() {
         <div className={styles.icons}>
           <FavoriteBorderRoundedIcon />
           <PlaceOutlinedIcon />
-          <ReceiptLongOutlinedIcon />
+          <ReceiptLongOutlinedIcon onClick={handleOrder}/>
           <PermIdentityOutlinedIcon onClick={handleClick} />
           <Menu
             id="basic-menu"
