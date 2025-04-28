@@ -43,23 +43,22 @@ function ReviewProduct() {
 
   const handleSubmitReviews = async () => {
     try {
-        // Gửi đánh giá cho từng sản phẩm
-        const reviewPromises = Object.entries(reviews).map(([productId, review]) =>
-          reviewApi.addReviews({
-            productId,
-            rating: review.rating,
-           content: review.comment?.trim() || "" // Nếu không có nội dung, gửi chuỗi rỗng
-          })
-        );
-    
-        await Promise.all(reviewPromises); // Chờ tất cả các API hoàn thành
-        alert('Đánh giá đã được gửi thành công!');
-        setReviews({});
-        navigate('/thankyou-review'); // Chuyển hướng sang trang cảm ơn
-      } catch (error) {
-        console.error('Error submitting reviews:', error);
-        setError(error.response?.data?.message || 'Gửi đánh giá thất bại!');
-      }
+      const reviewData = Object.entries(reviews).map(([productId, review]) => ({
+        productId,
+        rating: review.rating,
+        content: review.comment?.trim() || "",
+      }));
+  
+      // Gọi API: truyền orderId trên URL, dữ liệu đánh giá trong body
+      await reviewApi.addReviews(id, reviewData);
+  
+      alert('Đánh giá đã được gửi thành công!');
+      setReviews({});
+      navigate('/thankyou-review');
+    } catch (error) {
+      console.error('Error submitting reviews:', error);
+      setError(error.response?.data?.message || 'Gửi đánh giá thất bại!');
+    }
   };
 
   if (loading) return <div>Đang tải...</div>;
