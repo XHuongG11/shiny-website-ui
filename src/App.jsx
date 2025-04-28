@@ -12,10 +12,10 @@ import ProductDetail from "./features/ProductDetail/ProductDetail";
 import Cart from "./features/Cart/Cart";
 import HandleError from "./utils/HandleError";
 import ReviewProduct from "./features/Review/ReviewProduct";
-import ThankYou from "./features/Review/components/ThankYou";
+import ThankYou from "./features/Review/components/ThankyouReview";
 import ReturnOrder from "./features/ReturnProduct/ReturnOrder";
 import ReturnProduct from "./features/ReturnProduct/ReturnProduct";
-import ThankYouReturn from "./features/ReturnProduct/components/Thankyou";
+import ThankYouReturn from "./features/ReturnProduct/components/ThankyouReturn";
 import MyOrder from "./features/MyOrder/AllMyOrder/MyOrders";
 import OrderDetail from "./features/MyOrder/OrderDetail/OrderDetails";
 function App() {

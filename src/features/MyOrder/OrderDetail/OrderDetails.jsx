@@ -1,9 +1,10 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import styles from './OrderDetail.module.css';
 import { Link } from 'react-router-dom';
 
 const OrderDetail = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { order } = location.state || {};
   console.log("🐣 Order nhận được từ location.state:", order);
   if (!order) {
@@ -68,10 +69,23 @@ const OrderDetail = () => {
             </div>
           ))}
           <div className={styles.productActions}>
+                {order.status === "DELIVERED" && (
+                  <div>
+                    <button className={styles.actionButton} onClick={() => navigate(`/return/${order.id}`)}>Hoàn trả đơn hàng</button>
+                  </div>
+                )}
                 {order.status === "COMPLETED" && (
                   <div>
-                    <button className={styles.actionButton}>Hoàn trả đơn hàng</button>
-                    <button className={styles.reviewButton}>Đánh giá</button>
+                    {order.reviewed === true ? (
+                      <button className={styles.reviewButton}>Đã đánh giá</button>
+                    ) : (
+                      <button
+                        className={styles.reviewButton}
+                        onClick={() => navigate(`/review/${order.id}`)}
+                      >
+                        Đánh giá
+                      </button>
+                    )}
                   </div>
                 )}
               </div>

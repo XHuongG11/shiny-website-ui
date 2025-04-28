@@ -11,7 +11,7 @@ function ThankYouReturn() {
       <p className={styles.message}>
         Đội ngũ hỗ trợ sẽ kiểm tra và phản hồi đến bạn trong thời gian sớm nhất.
       </p>
-      <Link to="/orders" className={styles.homeLink}>
+      <Link to="/myorder" className={styles.homeLink}>
         Xem danh sách đơn hàng
       </Link>
     </div>
