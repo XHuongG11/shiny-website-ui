@@ -1,0 +1,108 @@
+.container {
+    padding: 2rem;
+    max-width: 800px;
+    margin: 30px auto;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .title {
+    font-size: 1.75rem;
+    font-weight: bold;
+    text-align: center;
+    color: #242023; /* xanh xám sang trọng */
+    letter-spacing: 0.5px;
+  }
+  .productList {
+    list-style-type: none;
+    padding: 5px;
+    margin-bottom: 2rem;
+  }
+  
+  .productItem {
+    margin: 1rem 0;
+    padding: 1rem;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: black; /* Màu đen khi chưa chọn */
+  }
+  
+  .productContent {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+  }
+  .productDetail {
+    display: flex;
+    flex-direction: column; /* thêm dòng này để xếp theo cột */
+    align-items: flex-start; /* canh trái nội dung trong cột */
+    gap: 15px; /* khoảng cách giữa các phần tử trong cột */
+    flex: 1;
+  }
+  
+  .productImage {
+    width: 130px;
+    height: auto;
+    object-fit: contain;
+    border: 1px solid #9d9c9c;
+    border-radius: 5px;
+  }
+  .productTitle{
+    font-size: 1.3rem;
+    color: #282828;
+    flex: 1;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  .productText {
+    font-size: 1rem;
+    color: #515050;
+    flex: 1;
+    font-weight: bold;
+  }
+  .productPrice {
+    font-size: 1.1rem;
+    color: #ce134b;
+    flex: 1;
+    font-weight: bold;
+  }
+  .buttonContainer{
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  .nextButton {
+    display: block;
+    width: 40%;
+    height: 50px;
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+    background-color: #080808;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .nextButton:hover:not(:disabled) {
+    background-color: #080808;
+  }
+  
+  .nextButton:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }

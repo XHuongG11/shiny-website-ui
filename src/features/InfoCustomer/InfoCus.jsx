@@ -18,6 +18,9 @@ const InfoCustomer = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [subscribedForNews, setSubscribedForNews] = useState(false);
+  
+  console.log("Thông tin người dùng: ", infocus);
   const [addresses, setAddresses] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [openModalChangePass, setOpenModalChangePass] = useState(false);
@@ -55,12 +58,28 @@ const InfoCustomer = () => {
       console.log("Lỗi lấy wishlist: ", error);
     }
   };
-
+  useEffect(() => {
+    setSubscribedForNews(infocus?.subscribedForNews || false);
+  }, [infocus]);
   useEffect(() => {
     fetchAddress();
     fetchWishlist();
   }, []);
-
+  const handleSubscribe = async () => {
+    try {
+      const response = await userApi.registerForNews(!subscribedForNews); // Gửi trạng thái ngược lại
+      if (response) {
+        const message = subscribedForNews
+          ? "Bạn đã hủy đăng ký nhận thông báo!"
+          : "Bạn đã đăng ký nhận thông báo thành công!";
+        alert(message);
+        setSubscribedForNews(!subscribedForNews); // Cập nhật trạng thái
+      }
+    } catch (error) {
+      console.error("Lỗi khi gọi API:", error);
+      alert("Không thể kết nối đến máy chủ. Vui lòng thử lại sau.");
+    }
+  };
   const updateAddresses = (newAddress) => {
     console.log("Địa chỉ mới: ", newAddress);
     setAddresses((prev) => {
@@ -97,7 +116,8 @@ const InfoCustomer = () => {
     <div className={styles.infoCus}>
       <Banner fullName={infocus?.fullName} />
       <Breadcrumb currentPage="Thông tin tài khoản" />
-      <SubscribedBanner />
+      <SubscribedBanner onSubscribe={handleSubscribe} isSubscribed={subscribedForNews}/>
+      {/* <div className={styles.container}> */}
       <Grid2
         container
         direction="row"

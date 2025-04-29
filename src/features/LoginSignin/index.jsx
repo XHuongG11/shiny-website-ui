@@ -1,41 +1,27 @@
 import { useEffect, useState } from "react";
 import styles from "./styles.module.css"; // Importing the CSS module
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faFacebookF,
-  faGoogle,
-  faLinkedinIn,
-} from "@fortawesome/free-brands-svg-icons";
+import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { login } from "./store/authSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import Notification from "../../components/Alert";
-import { useForm } from "react-hook-form";
-import InputField from "../../components/InputField";
-import { Button, Grid2 } from "@mui/material";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
 import ModalResetPassword from "./ModalResetPassword";
-import Register from "./Register";
 LoginRegister.propTypes = {};
 
 function LoginRegister() {
   const dispatch = useDispatch();
 
-  const [openModal, setOpenModal] = useState(false);
   const [error, setError] = useState(false);
   const [isRightPanelActive, setIsRightPanelActive] = useState(false);
   const [shouldRedirect, setShouldRedirect] = useState(false);
   const [emailLogin, setEmailLogin] = useState();
-  const [dataRegister, setDataRegister] = useState();
   const [passwordLogin, setPasswordLogin] = useState();
   const [openResetPass, setOpenResetPass] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const loading = useSelector((state) => state.email.loading);
-
-  const handleRegisterClick = () => setIsRightPanelActive(true);
+  const handleRegisterClick = () => navigate("/register");
   const handleLoginClick = () => setIsRightPanelActive(false);
   const handleClickForgot = () => {
     setOpenResetPass(true);
@@ -73,49 +59,7 @@ function LoginRegister() {
       console.log(error);
     }
   };
-  const handleFormRegisterSubmit = async (value) => {
-    try {
-      console.log(value);
-      const data = {
-        username: value.username,
-        password: value.password,
-        email: value.email,
-        phone: value.phone,
-        fullName: value.fullName,
-        dob: "",
-        gender: "OTHER",
-      };
-      setDataRegister(data);
-      setOpenModal(true);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
-  const schema = yup.object().shape({
-    fullName: yup.string().required("Please enter your full name"),
-    username: yup.string().required("Please enter your username"),
-    email: yup
-      .string()
-      .required("Please enter your email")
-      .email("Please enter a valid email"),
-    password: yup.string().required("Please enter your password"),
-    phone: yup.string().required("Please enter your phonenumber"),
-    confirmPassword: yup
-      .string()
-      .oneOf([yup.ref("password"), null], "Password must match"),
-  });
-  const { control, handleSubmit } = useForm({
-    defaultValues: {
-      fullName: "",
-      username: "",
-      email: "",
-      phone: "",
-      password: "",
-      confirmPassword: "",
-    },
-    resolver: yupResolver(schema),
-  });
   return (
     <div className={styles.body}>
       {error && (
@@ -133,54 +77,6 @@ function LoginRegister() {
         }`}
         id="container"
       >
-        {/* Register Form */}
-        <div
-          className={`${styles["form-container"]} ${styles["register-container"]}`}
-        >
-          <form
-            className={styles.form}
-            onSubmit={handleSubmit(handleFormRegisterSubmit)}
-          >
-            <h1>Register here.</h1>
-            <Grid2 container spacing={1.5}>
-              <InputField control={control} name="fullName" label="Name" />
-              <InputField control={control} name="username" label="Username" />
-              <InputField control={control} name="email" label="Email" />
-              <InputField control={control} name="phone" label="Phone" />
-              <InputField control={control} name="password" label="Password" />
-              <InputField
-                control={control}
-                name="confirmPassword"
-                label="Confirm password"
-              />
-            </Grid2>
-            {/* <button className={styles.button}>Register</button> */}
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: "#002b6b",
-                color: "white",
-                fontWeight: "bold",
-                borderRadius: "999px",
-                textTransform: "none",
-                paddingX: 9,
-                paddingY: 1.2,
-                "&:hover": {
-                  backgroundColor: "#001f4d",
-                },
-              }}
-              type="submit"
-              loading={loading}
-              loadingPosition="start"
-            >
-              Register
-            </Button>
-          </form>
-          {openModal && dataRegister && dataRegister?.email && (
-            <Register customer={dataRegister} />
-          )}
-        </div>
-        {/* Login Form */}
         <div
           className={`${styles["form-container"]} ${styles["login-container"]}`}
         >
@@ -217,14 +113,11 @@ function LoginRegister() {
             </button>
             <span>or use your account</span>
             <div className={styles["social-container"]}>
-              <Link to="#" className={styles.social}>
-                <FontAwesomeIcon icon={faFacebookF} />
-              </Link>
-              <Link to="#" className={styles.social}>
+              <Link
+                to="https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?response_type=code&client_id=704590983800-2nahpu6ac7oura3nv2ajo2suruahrr11.apps.googleusercontent.com&scope=profile%20email&state=-lRQDRwUy7N4eye0o8p1ArJ_vlA_t0oPAHQyJJOPvZY%3D&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fauth%2Foauth2%2Fredirect&service=lso&o2v=2&ddm=1&flowName=GeneralOAuthFlow"
+                className={styles.social}
+              >
                 <FontAwesomeIcon icon={faGoogle} />
-              </Link>
-              <Link to="#" className={styles.social}>
-                <FontAwesomeIcon icon={faLinkedinIn} />
               </Link>
             </div>
           </form>

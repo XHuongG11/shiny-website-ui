@@ -11,8 +11,8 @@ function ThankYou() {
       <p className={styles.message}>
         Chúng tôi sẽ phản hồi đánh giá của bạn trong thời gian sớm nhất.
       </p>
-      <Link to="/" className={styles.homeLink}>
-        Quay lại trang chủ
+      <Link to="/myorder" className={styles.homeLink}>
+          Xem danh sách đơn hàng
       </Link>
     </div>
   );

@@ -1,122 +1,189 @@
 .card {
-    border: 1px solid #ddd;
-    padding: 16px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    background-color: #fff;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  
-  .productSection {
-    display: flex;
-    gap: 12px; /* giảm khoảng cách giữa ảnh và thông tin */
-    align-items: flex-start;
-    width: 100%;
-  }
-  
-  .productImage {
-    width: 120px;
-    height: auto;
-    object-fit: contain;
-    border: 1px solid #0c0c0c;
-    border-radius: 8px;
-    /* align-self: center; căn giữa theo chiều dọc */
-  }
-  
-  .productInfo {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    margin-left: 10px;
-    gap: 4px; /* giảm khoảng cách giữa các dòng thông tin */
-  }
-  
-  .productName {
-    font-weight: bold;
-    margin: 0;
-    line-height: 1.3;
-    font-size: 16px;
-  }
-  
-  .productOptions {
-    padding-top: 10px;
-    font-size: 16px;
-    color: #4a4848;
-    margin: 0;
-  }
-  
-  .priceWrapper {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: 0;
-  }
-  
-  .oldPrice {
-    text-decoration: line-through;
-    color: #999;
-    font-size: 14px;
-  }
-  
-  .currentPrice {
-    color: rgb(219, 49, 49);
-    font-weight: bold;
-    margin-top: 18px;
-    font-size: 16px;
-  }
-  
-  .quantity {
-    font-size: 14px;
-    color: #555;
-    margin: 0;
-    line-height: 1.3;
-  }
-  
-  .reviewSection {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 6px;
-  }
-  
-  .ratingReview {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    width: 100%;
-    padding: 0;
-    gap: 6px;
-  }
-  
-  .stars {
-    font-size: 35px;
-    margin-bottom: 4px;
-    cursor: pointer;
-    display: flex;
-    gap: 4px;
-  }
-  
-  .filledStar {
-    color: gold;
-  }
-  
-  .emptyStar {
-    color: #ccc;
-  }
-  
-  .reviewText {
-    font-family: 'Roboto', sans-serif;
-    width: 100%;
-    border-radius: 4px;
-    padding: 8px;
-    resize: none;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-    font-size: 16px;
-    line-height: 1.4;
-  }
-  
+  border: 1px solid #ddd;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.productSection {
+  display: flex;
+  gap: 12px; /* giảm khoảng cách giữa ảnh và thông tin */
+  align-items: flex-start;
+  width: 100%;
+}
+
+.productImage {
+  width: 150px;
+  height: auto;
+  object-fit: contain;
+  border: 1px solid #6c6b6b;
+  border-radius: 8px;
+  align-self: center; 
+}
+
+.productInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+  margin-top: 15px;
+  gap: 4px; /* giảm khoảng cách giữa các dòng thông tin */
+}
+
+.productName {
+  font-weight: bold;
+  margin: 0;
+  line-height: 1.3;
+  font-size: 20px;
+}
+
+.productOptions {
+  padding-top: 10px;
+  font-size: 16px;
+  color: #6c6b6b;
+  margin: 0;
+  font-weight: bold;
+  text-shadow: none;
+}
+
+.priceWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.oldPrice {
+  text-decoration: line-through;
+  color: #999;
+  font-size: 14px;
+}
+
+.currentPrice {
+  color: rgb(219, 49, 49);
+  font-weight: bold;
+  margin-top: 18px;
+  font-size: 16px;
+}
+
+.quantity {
+  font-weight: bold;
+  font-size: 14px;
+  color: #555;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.reviewSection {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 6px;
+}
+.ratingReview {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* không can thiệp vào vị trí con */
+  width: 100%;
+  padding: 0;
+  gap: 6px;
+}
+.stars {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+}
+/* Gói stars để căn giữa */
+.starsWrapper {
+display: flex;
+justify-content: center; /* căn giữa hàng sao */
+width: 100%;
+}
+/* class chung cho tất cả các sao */
+.starBox {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+width: 50px;
+height: 50px;
+border: 2px solid #ccc;
+border-radius: 8px;
+transition: all 0.3s ease;
+font-size: 30px;
+cursor: pointer;
+margin-bottom: 15px;
+}
+.starBox:hover {
+color: #ff6f91;        /* Màu sao khi hover */
+border-color: #ff6f91; /* Viền hồng khi hover */
+}
+
+/* Ngôi sao được chọn */
+.filledStar {
+align-items: center;
+color: #ff6f91;
+border-color: #ff6f91; /* Viền hồng khi chọn */
+}
+
+/* Ngôi sao chưa chọn */
+.emptyStar {
+align-items: center;
+color: #ccc;
+border-color: #ccc;
+}
+.reviewText {
+  font-family: 'Roboto', sans-serif;
+  width: 100%;
+  border-radius: 4px;
+  padding: 18px;
+  resize: none;
+  margin-top: 15px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  font-size: 20px;
+  line-height: 1.5;
+  font-weight: bold;
+}
+.wordCount {
+  font-size: 14px;
+  color: #555;
+  text-align: right;
+  margin-top: 5px;
+}
+.starDescription {
+  margin: 0;
+  font-size: 20px;
+  color: #555;
+  text-align: center;
+  text-shadow: none;
+  font-weight: bold;
+}
+.reviewHeader {
+  display: flex;
+  padding: 10px;
+  justify-content: space-between; /* Căn đều hai bên */
+  align-items: center; /* Căn giữa theo chiều dọc */
+  margin-bottom: -20px; /* Khoảng cách dưới */
+}
+
+.charCount {
+  font-size: 20px;
+  color: #555;
+  text-shadow: none;
+  font-weight: bold;
+}
+.titleReview{
+  margin: 0;
+  font-size: 20px;
+  color: #282828;
+  text-align: left;
+  text-shadow: none;
+  font-weight: bold;
+}

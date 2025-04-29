@@ -5,8 +5,12 @@ import axiosClient from "./axiosClient";
 const paymentApi = {
   // Thực hiện thanh toán MoMo
   createMomoPayment: (orderId) => {
-    // Cách 1: Gửi qua URL query param
     const url = `/payments/momo-payment?orderId=${orderId}`;
+    return axiosClient.post(url); // KHÔNG gửi body
+
+  },
+  createVNpayPayment: (orderId) => {
+    const url = `/payments/vnpay-payment?orderId=${orderId}`;
     return axiosClient.post(url); // KHÔNG gửi body
 
   },

@@ -25,6 +25,7 @@ const ProductReviews = ({ productId }) => {
         }
         const response = await reviewApi.getReviewsByProduct(productId);
         const fetchedReviews = response.data.content || [];
+        console.log("Fetched Reviews:", fetchedReviews);
         setReviews(fetchedReviews);
         
         // Calculate average rating
@@ -32,7 +33,6 @@ const ProductReviews = ({ productId }) => {
         const sumRatings = fetchedReviews.reduce((sum, review) => sum + review.rating, 0);
         const avgRating = totalRatings > 0 ? (sumRatings / totalRatings).toFixed(1) : 0;
         setAverageRating(avgRating);
-
         // Calculate rating breakdown
         const breakdown = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
         fetchedReviews.forEach((review) => {
@@ -75,23 +75,12 @@ const ProductReviews = ({ productId }) => {
         <>
           <div className={styles.ratingSummary}>
             <div className={styles.averageRating}>
-              <span className={styles.ratingNumber}>{averageRating}</span>
-              {[...Array(5)].map((_, index) => (
-                <FaStar
-                  key={index}
-                  className={
-                    index < Math.floor(averageRating)
-                      ? styles.filledStar
-                      : styles.emptyStar
-                  }
-                />
-              ))}
+              <span className={styles.ratingNumber}><FaStar className={styles.fullStar} />{averageRating}</span>
               <span className={styles.reviewCount}>{reviews.length} đánh giá</span>
             </div>
             <div className={styles.ratingBreakdown}>
               {[5, 4, 3, 2, 1].map((star) => (
-                <div key={star} className={styles.breakdownRow}>
-                  <span>{star} đánh giá</span>
+                <div key={star} className={styles.breakdownRow}>          
                   {[...Array(star)].map((_, index) => (
                     <FaStar key={index} className={styles.breakdownStar} />
                   ))}
@@ -113,7 +102,7 @@ const ProductReviews = ({ productId }) => {
                       }}
                     />
                   </div>
-                  <span>{ratingBreakdown[star]}</span>
+                  <span className={styles.ratingBreakdown}>{ratingBreakdown[star]}</span>
                 </div>
               ))}
             </div>
@@ -125,7 +114,15 @@ const ProductReviews = ({ productId }) => {
                   <span className={styles.reviewerName}>
                     {review.reviewer?.fullName || "Người dùng ẩn danh"}
                   </span>
-                  <div className={styles.reviewRating}>
+                  <p className={styles.reviewDate}>
+                  {new Date(review.createdAt).toLocaleString('vi-VN', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                  })}
+                </p>
+                </header>
+                <div className={styles.reviewRating}>
                     {[1, 2, 3, 4, 5].map((star) => (
                       <FaStar
                         key={star}
@@ -137,7 +134,6 @@ const ProductReviews = ({ productId }) => {
                       />
                     ))}
                   </div>
-                </header>
                 <p className={styles.reviewContent}>
                   {review.content || "Không có nội dung đánh giá."}
                 </p>
@@ -181,7 +177,7 @@ const ProductReviews = ({ productId }) => {
               })}
             </div>
           </div>
-          <p className={styles.noReviews}>Chưa có đánh giá nào cho sản phẩm này.</p>
+          {/* <p className={styles.noReviews}>Chưa có đánh giá nào cho sản phẩm này.</p> */}
         </>
       )}
     </section>

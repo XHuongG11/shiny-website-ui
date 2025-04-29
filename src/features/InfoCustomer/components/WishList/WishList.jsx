@@ -19,7 +19,6 @@ const WishList = ({ wishlist , onRemove }) => { // Destructure prop wishlist t�
       <div className={styles.cardBody}>
         {wishlist.length > 0 ? (
           wishlist.slice(0, 2).map((item) => { // Hiển thị tối đa 2 sản phẩm
-            console.log("ID sp:", item.product.id); // Log dữ liệu wishlist
             return <ProductCard key={item.product.id} product={item.product} onRemove={() => onRemove(item.product.id)} />; // Truyền product vào ProductCard
           })
         ) : (

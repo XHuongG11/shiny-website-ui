@@ -21,5 +21,14 @@ const authApi = {
     const url = `/auth/reset-password/verify`;
     return axiosClient.post(url, data);
   },
+  loginOAuth(code) {
+    const url = `/auth/call-back/google`;
+    return axiosClient.post(url, null, {
+      params: {
+        code,
+        role: "CUSTOMER",
+      },
+    });
+  },
 };
 export default authApi;

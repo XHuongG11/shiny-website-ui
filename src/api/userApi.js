@@ -37,6 +37,10 @@ const userApi = {
     const url = `/users/add-customer`;
     return axiosClient.post(url, data);
   },
+  registerForNews(isSubscribed) {
+    const url = `/users/register-for-news?isSubscribed=${isSubscribed}`;
+    return axiosClient.post(url);
+  },
   addWishList(data) {
     const url = `/wishlist/add`;
     return axiosClient.post(url, data);

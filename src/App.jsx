@@ -12,14 +12,23 @@ import ProductDetail from "./features/ProductDetail/ProductDetail";
 import Cart from "./features/Cart/Cart";
 import HandleError from "./utils/HandleError";
 import ReviewProduct from "./features/Review/ReviewProduct";
-import ThankYou from "./features/Review/components/ThankYou";
+import ThankYou from "./features/Review/components/ThankyouReview";
+import ReturnOrder from "./features/ReturnProduct/ReturnOrder";
+import ReturnProduct from "./features/ReturnProduct/ReturnProduct";
+import ThankYouReturn from "./features/ReturnProduct/components/ThankyouReturn";
+import MyOrder from "./features/MyOrder/AllMyOrder/MyOrders";
+import OrderDetail from "./features/MyOrder/OrderDetail/OrderDetails";
 import RecoverPassword from "./features/RecoverPassword";
+import OAuth2RedirectHandler from "./features/LoginSignin/OAuth2Redirect";
+import Register from "./features/LoginSignin/Register";
 function App() {
   return (
     <div className="App">
       <Header />
       <Routes>
         <Route path="/checkouts/*" element={<MakeOrder />}></Route>
+        <Route path="/myorder/" element={<MyOrder />}></Route>
+        <Route path="/myorder/orderdetail" element={<OrderDetail />}></Route>
         <Route path="/login" element={<LoginRegister />}></Route>
         <Route path="/checkouts/thank-you" element={<CompleteOrder />}></Route>
         <Route path="/" element={<Home />}></Route>
@@ -29,9 +38,17 @@ function App() {
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />}></Route>
         <Route path="/review/:id" element={<ReviewProduct />} />
+        <Route path="/return/:id" element={<ReturnOrder />} />
+        <Route path="/returnproduct" element={<ReturnProduct />} />
         <Route path="/thankyou-review" element={<ThankYou />} />
+        <Route path="/thankyou-return" element={<ThankYouReturn />} />
         <Route path="/recover-password" element={<RecoverPassword />} />
         <Route path="/error/:statusCode" element={<HandleError />}></Route>
+        <Route
+          path="/auth/oauth2/redirect"
+          element={<OAuth2RedirectHandler />}
+        />
+        <Route path="/register" element={<Register />} />
         <Route path="*" element={<Navigate to="/error/404" replace />} />
       </Routes>
       <Footer />
