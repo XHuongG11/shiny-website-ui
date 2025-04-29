@@ -40,14 +40,12 @@ axiosClient.interceptors.response.use(
       //   case 403:
       //     window.location.href = `/error/${error.response.status}`;
       //     break;
-      //   // case 404:
-      //   //   window.location.href = `/error/${error.response.status}`;
-      //   //   break;
+      //   case 404:
+      //     window.location.href = `/error/${error.response.status}`;
+      //     break;
       //   case 500:
       //     window.location.href = `/error/${error.response.status}`;
       //     break;
-      //   default:
-      //     window.location.href = `/error/${error.response.status}`;
       // }
     } else {
       alert("Không thể kết nối đến máy chủ. Vui lòng kiểm tra mạng.");

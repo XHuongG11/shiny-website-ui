@@ -18,6 +18,9 @@ import ReturnProduct from "./features/ReturnProduct/ReturnProduct";
 import ThankYouReturn from "./features/ReturnProduct/components/ThankyouReturn";
 import MyOrder from "./features/MyOrder/AllMyOrder/MyOrders";
 import OrderDetail from "./features/MyOrder/OrderDetail/OrderDetails";
+import RecoverPassword from "./features/RecoverPassword";
+import OAuth2RedirectHandler from "./features/LoginSignin/OAuth2Redirect";
+import Register from "./features/LoginSignin/Register";
 function App() {
   return (
     <div className="App">
@@ -39,7 +42,13 @@ function App() {
         <Route path="/returnproduct" element={<ReturnProduct />} />
         <Route path="/thankyou-review" element={<ThankYou />} />
         <Route path="/thankyou-return" element={<ThankYouReturn />} />
+        <Route path="/recover-password" element={<RecoverPassword />} />
         <Route path="/error/:statusCode" element={<HandleError />}></Route>
+        <Route
+          path="/auth/oauth2/redirect"
+          element={<OAuth2RedirectHandler />}
+        />
+        <Route path="/register" element={<Register />} />
         <Route path="*" element={<Navigate to="/error/404" replace />} />
       </Routes>
       <Footer />

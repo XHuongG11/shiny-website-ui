@@ -4,17 +4,21 @@ import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import PermIdentityOutlinedIcon from "@mui/icons-material/PermIdentityOutlined";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
-import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
+import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import React, { useState } from "react";
 import DropdownMenu from "./components/DropdownMenu";
 import styles from "./Header.module.css";
 import { Menu, MenuItem } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../../store/authSlice";
+import { logout } from "../../features/LoginSignin/store/authSlice";
 import { useNavigate } from "react-router-dom";
 import Popover from "@mui/material/Popover";
 import notificationApi from "../../api/notificationApi";
+import LoginIcon from "@mui/icons-material/Login";
+import LogoutIcon from "@mui/icons-material/Logout";
+import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
+import ContactPageIcon from "@mui/icons-material/ContactPage";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -22,9 +26,9 @@ export default function Header() {
   const userInfo = useSelector((state) => state.user.current);
 
   const [isOpen, setIsOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("")
   const [notificationAnchor, setNotificationAnchor] = useState(null);
   const [notifications, setNotifications] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -34,9 +38,9 @@ export default function Header() {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleOrder = () =>{
-    navigate('/myorder')
-  }
+  const handleOrder = () => {
+    navigate("/myorder");
+  };
   const handleNotificationClick = async (event) => {
     if (!userInfo || !userInfo.id) {
       alert("Bạn cần đăng nhập để có thể nhận thông báo!");
@@ -44,7 +48,11 @@ export default function Header() {
     }
     setNotificationAnchor(event.currentTarget);
     try {
-      const response = await notificationApi.getCustomerNotifications(userInfo.id, 1, 10);
+      const response = await notificationApi.getCustomerNotifications(
+        userInfo.id,
+        1,
+        10
+      );
       const notificationsData = response?.data?.content || []; // Kiểm tra an toàn
       setNotifications(notificationsData); // Gán danh sách thông báo vào state
     } catch (error) {
@@ -55,9 +63,11 @@ export default function Header() {
     setNotificationAnchor(null); // Đóng popup
   };
   const isNotificationOpen = Boolean(notificationAnchor);
-  const notificationId = isNotificationOpen ? "notification-popover" : undefined;
+  const notificationId = isNotificationOpen
+    ? "notification-popover"
+    : undefined;
   const handleGoToCart = () => {
-    navigate('/cart');
+    navigate("/cart");
   };
   const handleLogout = () => {
     dispatch(logout());
@@ -129,7 +139,7 @@ export default function Header() {
         <div className={styles.icons}>
           <FavoriteBorderRoundedIcon />
           <PlaceOutlinedIcon />
-          <ReceiptLongOutlinedIcon onClick={handleOrder}/>
+          <ReceiptLongOutlinedIcon onClick={handleOrder} />
           <NotificationsOutlinedIcon
             aria-describedby={notificationId}
             onClick={(event) => {
@@ -140,7 +150,7 @@ export default function Header() {
               handleNotificationClick(event); // Gọi hàm mở popup nếu đã đăng nhập
             }}
           />
-        
+
           <Popover
             id={notificationId}
             open={isNotificationOpen}
@@ -162,11 +172,15 @@ export default function Header() {
                   <div
                     key={notification.id}
                     className={`${styles.notificationListItem} ${
-                      notification.status === "UNREAD" ? styles.unread : styles.read
+                      notification.status === "UNREAD"
+                        ? styles.unread
+                        : styles.read
                     }`}
                   >
                     <div className={styles.notificationHeader}>
-                      <span className={styles.notificationTitle}>{notification.title}</span>
+                      <span className={styles.notificationTitle}>
+                        {notification.title}
+                      </span>
                       <span
                         className={
                           notification.status === "UNREAD"
@@ -174,44 +188,58 @@ export default function Header() {
                             : styles.readStatus
                         }
                       >
-                        {notification.status === "UNREAD" ? "Chưa xem" : "Đã xem"}
+                        {notification.status === "UNREAD"
+                          ? "Chưa xem"
+                          : "Đã xem"}
                       </span>
                     </div>
-                    <p className={styles.notificationContent}>{notification.content}</p>
+                    <p className={styles.notificationContent}>
+                      {notification.content}
+                    </p>
                     <small className={styles.notificationTime}>
                       {new Date(notification.sentAt).toLocaleString()}
                     </small>
                   </div>
                 ))
               ) : (
-                <p className={styles.notificationEmpty}>You have no new notifications.</p>
+                <p className={styles.notificationEmpty}>
+                  You have no new notifications.
+                </p>
               )}
             </div>
           </Popover>
           <PermIdentityOutlinedIcon onClick={handleClick} />
           <Menu
-            id="basic-menu"
+            id="user-menu"
             anchorEl={anchorEl}
             open={open}
             onClose={handleClose}
+            sx={{ marginTop: "5px" }}
             MenuListProps={{
               "aria-labelledby": "basic-button",
             }}
           >
             {Object.keys(userInfo).length === 0
               ? [
-                <MenuItem key="login" onClick={handleLogin}>
-                  Login
-                </MenuItem>,
-              ]
+                  <MenuItem key="login" onClick={handleLogin}>
+                    <LoginIcon sx={{ marginRight: "5px" }} />
+                    Đăng nhập
+                  </MenuItem>,
+                  <MenuItem key="login" onClick={handleLogin}>
+                    <AppRegistrationIcon sx={{ marginRight: "5px" }} />
+                    Đăng ký
+                  </MenuItem>,
+                ]
               : [
-                <MenuItem key="profile" onClick={handleProfileClick}>
-                  Profile
-                </MenuItem>,
-                <MenuItem key="logout" onClick={handleLogout}>
-                  Logout
-                </MenuItem>,
-              ]}
+                  <MenuItem key="profile" onClick={handleProfileClick}>
+                    <ContactPageIcon sx={{ marginRight: "5px" }} />
+                    Thông tin cá nhân
+                  </MenuItem>,
+                  <MenuItem key="logout" onClick={handleLogout}>
+                    <LogoutIcon sx={{ marginRight: "5px" }} />
+                    Đăng xuất
+                  </MenuItem>,
+                ]}
           </Menu>
           <ShoppingBagOutlinedIcon onClick={handleGoToCart} />
         </div>
