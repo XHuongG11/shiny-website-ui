@@ -5,6 +5,7 @@ import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import PermIdentityOutlinedIcon from "@mui/icons-material/PermIdentityOutlined";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
+import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import React, { useState } from "react";
 import DropdownMenu from "./components/DropdownMenu";
 import styles from "./Header.module.css";
@@ -12,6 +13,8 @@ import { Menu, MenuItem } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../store/authSlice";
 import { useNavigate } from "react-router-dom";
+import Popover from "@mui/material/Popover";
+import notificationApi from "../../api/notificationApi";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -20,6 +23,8 @@ export default function Header() {
 
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("")
+  const [notificationAnchor, setNotificationAnchor] = useState(null);
+  const [notifications, setNotifications] = useState([]);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -32,6 +37,25 @@ export default function Header() {
   const handleOrder = () =>{
     navigate('/myorder')
   }
+  const handleNotificationClick = async (event) => {
+    if (!userInfo || !userInfo.id) {
+      alert("Bạn cần đăng nhập để có thể nhận thông báo!");
+      return;
+    }
+    setNotificationAnchor(event.currentTarget);
+    try {
+      const response = await notificationApi.getCustomerNotifications(userInfo.id, 1, 10);
+      const notificationsData = response?.data?.content || []; // Kiểm tra an toàn
+      setNotifications(notificationsData); // Gán danh sách thông báo vào state
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách thông báo:", error);
+    }
+  };
+  const handleNotificationClose = () => {
+    setNotificationAnchor(null); // Đóng popup
+  };
+  const isNotificationOpen = Boolean(notificationAnchor);
+  const notificationId = isNotificationOpen ? "notification-popover" : undefined;
   const handleGoToCart = () => {
     navigate('/cart');
   };
@@ -40,7 +64,6 @@ export default function Header() {
     navigate("/");
     setAnchorEl(null);
   };
-
   const handleLogin = () => {
     navigate("/login");
     setAnchorEl(null);
@@ -64,6 +87,7 @@ export default function Header() {
       handleSearch();
     }
   };
+
   return (
     <nav>
       <div className={styles.on}>
@@ -106,6 +130,64 @@ export default function Header() {
           <FavoriteBorderRoundedIcon />
           <PlaceOutlinedIcon />
           <ReceiptLongOutlinedIcon onClick={handleOrder}/>
+          <NotificationsOutlinedIcon
+            aria-describedby={notificationId}
+            onClick={(event) => {
+              if (!userInfo || Object.keys(userInfo).length === 0) {
+                alert("Bạn cần đăng nhập để có thể nhận thông báo!"); // Hiển thị thông báo yêu cầu đăng nhập
+                return;
+              }
+              handleNotificationClick(event); // Gọi hàm mở popup nếu đã đăng nhập
+            }}
+          />
+        
+          <Popover
+            id={notificationId}
+            open={isNotificationOpen}
+            anchorEl={notificationAnchor}
+            onClose={handleNotificationClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "center",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "center",
+            }}
+            disableEnforceFocus
+          >
+            <div className={styles.notificationList}>
+              {notifications.length > 0 ? (
+                notifications.map((notification) => (
+                  <div
+                    key={notification.id}
+                    className={`${styles.notificationListItem} ${
+                      notification.status === "UNREAD" ? styles.unread : styles.read
+                    }`}
+                  >
+                    <div className={styles.notificationHeader}>
+                      <span className={styles.notificationTitle}>{notification.title}</span>
+                      <span
+                        className={
+                          notification.status === "UNREAD"
+                            ? styles.unreadStatus
+                            : styles.readStatus
+                        }
+                      >
+                        {notification.status === "UNREAD" ? "Chưa xem" : "Đã xem"}
+                      </span>
+                    </div>
+                    <p className={styles.notificationContent}>{notification.content}</p>
+                    <small className={styles.notificationTime}>
+                      {new Date(notification.sentAt).toLocaleString()}
+                    </small>
+                  </div>
+                ))
+              ) : (
+                <p className={styles.notificationEmpty}>You have no new notifications.</p>
+              )}
+            </div>
+          </Popover>
           <PermIdentityOutlinedIcon onClick={handleClick} />
           <Menu
             id="basic-menu"
