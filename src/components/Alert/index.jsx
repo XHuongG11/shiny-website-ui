@@ -27,7 +27,7 @@ function Notification({
           onClose={handleClose}
           severity={severity}
           variant={variant}
-          sx={{ width: "100%" }}
+          sx={{ width: "100%" , color: "white !important"}}
         >
           {message}
         </Alert>
