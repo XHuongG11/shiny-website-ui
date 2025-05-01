@@ -11,8 +11,47 @@ const notificationApi = {
   getCustomerNotifications: async (customerId, page = 1, size = 10) => {
     const url = `/notifications/customer/${customerId}`;
     const response = await axiosClient.get(url, { params: { page, size } });
-    // console.log("API Response:", response); // In ra console dữ liệu trả về
     return response;
+  },
+
+  /**
+   * Đánh dấu trạng thái đã xem hoặc chưa xem cho một thông báo
+   * @param {number} notificationId - ID của thông báo
+   * @returns {Promise<ApiResponse>} Kết quả cập nhật trạng thái
+   */
+  toggleReadStatus: async (notificationId) => {
+    const url = `/notifications/mark-as-read/${notificationId}`;
+    return axiosClient.put(url);
+  },
+
+  /**
+   * Đánh dấu tất cả thông báo là đã xem cho một khách hàng
+   * @param {number} customerId - ID của khách hàng
+   * @returns {Promise<ApiResponse>} Kết quả cập nhật trạng thái
+   */
+  markAllAsRead: async (customerId) => {
+    const url = `/notifications/mark-as-read-all/customer/${customerId}`;
+    return axiosClient.put(url);
+  },
+
+  /**
+   * Xóa một thông báo
+   * @param {number} notificationId - ID của thông báo
+   * @returns {Promise<ApiResponse>} Kết quả xóa thông báo
+   */
+  deleteNotification: async (notificationId) => {
+    const url = `/notifications/delete/${notificationId}`;
+    return axiosClient.delete(url);
+  },
+
+  /**
+   * Xóa tất cả thông báo của một khách hàng
+   * @param {number} customerId - ID của khách hàng
+   * @returns {Promise<ApiResponse>} Kết quả xóa tất cả thông báo
+   */
+  deleteAllNotifications: async (customerId) => {
+    const url = `/notifications/delete-all/customer/${customerId}`;
+    return axiosClient.delete(url);
   },
 };
 

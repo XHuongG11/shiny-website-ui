@@ -62,6 +62,22 @@ export default function Header() {
   const handleNotificationClose = () => {
     setNotificationAnchor(null); // Đóng popup
   };
+  const handleToggleReadStatus = async (index) => {
+    const notification = notifications[index];
+    try {
+      // Gọi API để cập nhật trạng thái
+      await notificationApi.toggleReadStatus(notification.id);
+  
+      // Cập nhật trạng thái trong state
+      setNotifications((prevNotifications) => {
+        const updatedNotifications = [...prevNotifications];
+        updatedNotifications[index].status = "READ"; // Đặt trạng thái thành "Đã xem"
+        return updatedNotifications;
+      });
+    } catch (error) {
+      console.error("Lỗi khi thay đổi trạng thái thông báo:", error);
+    }
+  };
   const isNotificationOpen = Boolean(notificationAnchor);
   const notificationId = isNotificationOpen
     ? "notification-popover"
@@ -168,7 +184,7 @@ export default function Header() {
           >
             <div className={styles.notificationList}>
               {notifications.length > 0 ? (
-                notifications.map((notification) => (
+                notifications.map((notification, index) => (
                   <div
                     key={notification.id}
                     className={`${styles.notificationListItem} ${
@@ -199,6 +215,14 @@ export default function Header() {
                     <small className={styles.notificationTime}>
                       {new Date(notification.sentAt).toLocaleString()}
                     </small>
+                    {notification.status === "UNREAD" && (
+                      <button
+                        className={styles.markButton}
+                        onClick={() => handleToggleReadStatus(index)}
+                      >
+                        Đánh dấu đã xem
+                      </button>
+                    )}
                   </div>
                 ))
               ) : (

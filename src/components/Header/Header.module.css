@@ -128,3 +128,25 @@ nav {
     color: #999;
     font-size: 0.9rem;
   }
+  .markButton {
+  margin-top: 10px;
+  padding: 4px 8px; /* Giảm kích thước nút */
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 12px; /* Bo góc tròn hơn */
+  cursor: pointer;
+  font-size: 0.8rem; /* Giảm kích thước chữ */
+  font-weight: 500; /* Làm chữ đậm hơn một chút */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Thêm hiệu ứng hover */
+}
+
+.markButton:hover {
+  background-color: #0056b3;
+  transform: scale(1.05); /* Phóng to nhẹ khi hover */
+}
+
+.markButton:active {
+  background-color: #003f7f; /* Màu tối hơn khi nhấn */
+  transform: scale(0.95); /* Thu nhỏ nhẹ khi nhấn */
+}
