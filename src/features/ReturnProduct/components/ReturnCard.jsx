@@ -4,27 +4,26 @@ import styles from './ReturnCard.module.css';
 
 const ReturnCard = ({ product, quantity, price, discountPrice, onReturnChange }) => {
   const [returnQuantity, setReturnQuantity] = useState(0);
-  const [reason, setReason] = useState(''); // Lý do hoàn trả từ select
-  const [reasonDescription, setReasonDescription] = useState(''); // Mô tả lý do từ textarea
+  const [reason, setReason] = useState('');
+  const [reasonDescription, setReasonDescription] = useState('');
   const [bank, setBank] = useState('');
   const [charCount, setCharCount] = useState(0);
   const [images, setImages] = useState([]);
   const maxChars = 500;
   const fileInputRef = useRef();
 
-  // Gọi onReturnChange bất cứ khi nào các giá trị thay đổi
+  // Chỉ gọi onReturnChange khi dữ liệu thực sự thay đổi
   useEffect(() => {
-    // Kiểm tra xem form đã được điền đầy đủ chưa
-  const isFormComplete = returnQuantity > 0 && reason && reasonDescription && bank && images.length > 0;
+    const isFormComplete = returnQuantity > 0 && reason && reasonDescription && bank && images.length > 0;
     onReturnChange(product.id, {
       quantity: returnQuantity,
       reason,
-      reasonDescription, // Truyền thêm mô tả lý do
+      reasonDescription,
       bank,
       images,
       isFormComplete,
     });
-  }, [returnQuantity, reason, reasonDescription, bank, images, product.id, onReturnChange]);
+  }, [returnQuantity, reason, reasonDescription, bank, images.length, product.id, onReturnChange]); // Dùng images.length thay vì images
 
   const handleQuantityChange = (e) => {
     const qty = parseInt(e.target.value, 10) || 0;
@@ -54,28 +53,21 @@ const ReturnCard = ({ product, quantity, price, discountPrice, onReturnChange })
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     const newImages = files.map((file) => ({
-      url: URL.createObjectURL(file), // URL để hiển thị ảnh preview
-      file, // Lưu file gốc để gửi lên server
+      url: URL.createObjectURL(file),
+      file,
     }));
-    setImages((prevImages) => {
-      const updatedImages = [...prevImages, ...newImages];
-      console.log('Updated images:', updatedImages);
-      onReturnChange(product.id, { quantity: returnQuantity, reason, images: updatedImages });
-      return updatedImages;
-    });
+    setImages((prevImages) => [...prevImages, ...newImages]); // Giữ tham chiếu ổn định
   };
 
   const handleSelectReasonChange = (e) => {
-    const selected = e.target.value;
-    setReason(selected);
+    setReason(e.target.value);
   };
 
   return (
     <div className={styles.card}>
-      {/* Product Information */}
       <div className={styles.productSection}>
         <img
-          src={product.images && product.images.length > 0 ? product.images[0].url : '/image/placeholder.png'}
+          src={product.images?.[0]?.url || '/image/placeholder.png'}
           className={styles.productImage}
           alt={product.title}
         />
@@ -94,7 +86,6 @@ const ReturnCard = ({ product, quantity, price, discountPrice, onReturnChange })
           <p className={styles.productOptions}>Số lượng đã mua: {quantity}</p>
         </div>
       </div>
-      {/* Return Form */}
       <div className={styles.returnSection}>
         <div className={styles.returnForm}>
           <div className={styles.rowWrapper}>
@@ -112,7 +103,6 @@ const ReturnCard = ({ product, quantity, price, discountPrice, onReturnChange })
                 className={styles.quantityInput}
               />
             </div>
-
             <div className={styles.titleReason}>
               <label htmlFor="returnReason" className={styles.reasonlabel}>Lý do hoàn trả: </label>
               <select
