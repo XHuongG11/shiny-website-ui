@@ -48,11 +48,7 @@ export default function Header() {
     }
     setNotificationAnchor(event.currentTarget);
     try {
-      const response = await notificationApi.getCustomerNotifications(
-        userInfo.id,
-        1,
-        10
-      );
+      const response = await notificationApi.getAllNotifications();
       const notificationsData = response?.data?.content || []; // Kiểm tra an toàn
       setNotifications(notificationsData); // Gán danh sách thông báo vào state
     } catch (error) {
