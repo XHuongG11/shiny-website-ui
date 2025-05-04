@@ -1,8 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import authApi from "../../../api/authApi";
 import userApi from "../../../api/userApi";
 import StorageKeys from "../../../constants/storage-key";
-import authApi from "../../../api/authApi";
-import { useNavigate } from "react-router-dom";
 
 export const login = createAsyncThunk("user/login", async (payload) => {
   // goi api
@@ -72,9 +71,7 @@ export const userSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(login.fulfilled, (state, action) => {
-        if (action.payload?.token) {
-          state.current = action.payload;
-        }
+        state.current = action.payload;
       })
       .addCase(update.fulfilled, (state, action) => {
         state.current = action.payload;

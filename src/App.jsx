@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import "./App.css";
 import LoginRegister from "./features/LoginSignin";
 import MakeOrder from "./features/MakeOrder";
@@ -22,9 +22,13 @@ import RecoverPassword from "./features/RecoverPassword";
 import OAuth2RedirectHandler from "./features/LoginSignin/OAuth2Redirect";
 import Register from "./features/LoginSignin/Register";
 function App() {
+  const location = useLocation();
+  const hideLayoutRoutes = ["/recover-password"];
+
+  const shouldHideLayout = hideLayoutRoutes.includes(location.pathname);
   return (
     <div className="App">
-      <Header />
+      {!shouldHideLayout && <Header />}
       <Routes>
         <Route path="/checkouts/*" element={<MakeOrder />}></Route>
         <Route path="/myorder/" element={<MyOrder />}></Route>
@@ -51,7 +55,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<Navigate to="/error/404" replace />} />
       </Routes>
-      <Footer />
+      {!shouldHideLayout && <Footer />}
     </div>
   );
 }

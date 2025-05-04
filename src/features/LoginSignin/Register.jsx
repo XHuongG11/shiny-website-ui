@@ -3,7 +3,7 @@ import { Box, Button, Grid2, Paper } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import * as yup from "yup";
 import authApi from "../../api/authApi";
 import Notification from "../../components/Alert";
@@ -26,8 +26,6 @@ function Register() {
   const loading = useSelector((state) => state.email.loading);
   const location = useLocation();
   const state = location.state;
-  const from = location.state?.from || "/";
-  const navigate = useNavigate();
 
   const sendEmail = async () => {
     const resultAction = await dispatch(sendEmailRegister(customer.email));
@@ -66,8 +64,22 @@ function Register() {
       .string()
       .required("Please enter your email")
       .email("Please enter a valid email"),
-    password: yup.string().required("Please enter your password"),
-    phone: yup.string().required("Please enter your phonenumber"),
+    password: yup
+      .string()
+      .required("Please enter your new password")
+      .min(8, "Password must be at least 8 characters")
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$#!%*?&])[A-Za-z\d@$#!%*?&]/,
+        "Password not strong enough"
+      ),
+
+    phone: yup
+      .string()
+      .required("Please enter your phonenumber")
+      .matches(
+        /(84|0[2|3|5|7|8|9])+([0-9]{8})\b/,
+        "Số điện thoại không hợp lệ"
+      ),
     confirmPassword: yup
       .string()
       .oneOf([yup.ref("password"), null], "Password must match"),
@@ -99,10 +111,6 @@ function Register() {
         setSeverity("success");
         setOpenNotification(true);
         setOpenVerifyModal(false);
-        // đợi 2s, chuyển về login
-        setTimeout(() => {
-          navigate(from);
-        }, 2000);
       } else {
         // notify verify failed
         setMessage("Xác thực thất bại.");
@@ -208,17 +216,16 @@ function Register() {
                 Register
               </Button>
             </Grid2>
+            <p style={{ marginTop: "10px" }}>
+              Quay về{" "}
+              <Link style={{ color: "blue" }} to="/login">
+                Login
+              </Link>
+            </p>
           </form>
         </Paper>
       </Box>
-
-      {/* {openModal && dataRegister && dataRegister?.email && (
-        <Register customer={dataRegister} />
-      )} */}
     </>
   );
 }
-// Register.propTypes = {
-//   customer: propsType.object.isRequired,
-// };
 export default Register;
