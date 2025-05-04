@@ -399,7 +399,7 @@ function MakeOrder() {
                                         <div>
                                         <strong>{option.code}</strong>
                                         <div style={{ fontSize: 12, color: '#888' }}>
-                                            Miễn phí vận chuyển
+                                            {option.discountRate ? `giảm ${option.discountRate}% phí vận chuyển` : ''}
                                         </div>
                                         </div>
                                     </li>

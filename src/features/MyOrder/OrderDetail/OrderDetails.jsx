@@ -70,7 +70,6 @@ const OrderDetail = () => {
           ))}
           <div className={styles.productActions}>
                 {order.status === "DELIVERED" && (
-<<<<<<< Updated upstream
                   <div>
                     <button className={styles.actionButton} onClick={() => navigate(`/return/${order.id}`)}>Hoàn trả đơn hàng</button>
                   </div>
@@ -87,15 +86,6 @@ const OrderDetail = () => {
                         Đánh giá
                       </button>
                     )}
-=======
-                  <div>
-                    <button className={styles.actionButton}>Hoàn trả đơn hàng</button>
-                  </div>
-                )}
-                {order.status === "COMPLETED" && (
-                  <div>
-                    <button className={styles.reviewButton}>Đánh giá</button>
->>>>>>> Stashed changes
                   </div>
                 )}
               </div>

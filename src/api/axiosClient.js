@@ -28,27 +28,6 @@ axiosClient.interceptors.response.use(
   },
   function (error) {
     if (error.response) {
-<<<<<<< Updated upstream
-      // switch (error.response.status) {
-      //   case 401:
-      //     if (error.response.data.code === "0") {
-      //       alert("Phiên đăng nhập hết hạn, vui lòng đăng nhập lại.");
-      //       localStorage.removeItem(StorageKeys.TOKEN);
-      //       localStorage.removeItem(StorageKeys.USER);
-      //       window.location.href = "/login";
-      //     }
-      //     break;
-      //   case 403:
-      //     window.location.href = `/error/${error.response.status}`;
-      //     break;
-      //   case 404:
-      //     window.location.href = `/error/${error.response.status}`;
-      //     break;
-      //   case 500:
-      //     window.location.href = `/error/${error.response.status}`;
-      //     break;
-      // }
-=======
       switch (error.response.status) {
         case 401:
           if (error.response.data.code === "0") {
@@ -67,10 +46,7 @@ axiosClient.interceptors.response.use(
         case 500:
           window.location.href = `/error/${error.response.status}`;
           break;
-        default:
-          window.location.href = `/error/${error.response.status}`;
       }
->>>>>>> Stashed changes
     } else {
       alert("Không thể kết nối đến máy chủ. Vui lòng kiểm tra mạng.");
     }
