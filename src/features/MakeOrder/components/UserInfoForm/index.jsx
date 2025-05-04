@@ -13,8 +13,23 @@ import InputField from "../../../../components/InputField";
 import "./styles.css";
 import PropTypes from "prop-types";
 import useAddress from "../../../../utils/hooks/address";
+import customerAddressApi from "../../../../api/customerAddressApi"; // Đảm bảo đúng đường dẫn API
 
-const UserInfoForm = forwardRef(({ addresses, onSubmit }, ref) => {
+
+const UserInfoForm = forwardRef(({ onSubmit }, ref) => {
+  const [addresses, setAddresses] = useState([]);
+  const [selectedAddress, setSelectedAddress] = useState("");
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      try {
+        const response = await customerAddressApi.getCustomerAddresses();
+        setAddresses(response.data.content || []);
+      } catch (error) {
+        console.error("Failed to fetch addresses:", error);
+      }
+    };
+    fetchAddresses();
+  }, []);
   const {
     provinces,
     districts,
@@ -23,8 +38,6 @@ const UserInfoForm = forwardRef(({ addresses, onSubmit }, ref) => {
     handleDistrictChange,
     fetchProvinces,
   } = useAddress();
-
-  const [selectedAddress, setSelectedAddress] = useState("");
 
   // Khai báo schema validation cho form
   const schema = yup.object().shape({
@@ -58,36 +71,35 @@ const UserInfoForm = forwardRef(({ addresses, onSubmit }, ref) => {
     resolver: yupResolver(schema),
   });
 
-  // Xử lý khi chọn địa chỉ từ dropdown
-  const handleChangeAddress = (event) => {
-    const addressId = event.target.value;
+  const handleChangeAddress = async (event) => {
+    const addressId = Number(event.target.value);
     setSelectedAddress(addressId);
+    setValue("addressId", addressId);
 
-    if (addressId) {
-      // Tìm địa chỉ đã chọn trong danh sách
-      const selectedAddr = addresses.find((addr) => addr.id === addressId);
-      if (selectedAddr) {
-        // Cập nhật các trường form với thông tin từ địa chỉ đã chọn
-        setValue("userName", selectedAddr.recipient_name || "");
-        setValue("phoneNumber", selectedAddr.recipient_phone || "");
-        setValue("houseNumber", selectedAddr.address || "");
-        setValue("city", selectedAddr.province || "");
-        setValue("district", selectedAddr.district || "");
-        setValue("ward", selectedAddr.village || "");
+    const selectedAddr = addresses.find((addr) => addr.id === addressId);
+    if (selectedAddr) {
+      setValue("userName", selectedAddr.recipientName || "");
+      setValue("phoneNumber", selectedAddr.recipientPhone || "");
+      setValue("houseNumber", selectedAddr.address || "");
+      setValue("city", selectedAddr.province || "");
+      setValue("district", selectedAddr.district || "");
+      setValue("ward", selectedAddr.village || "");
+      console.log("addressId", selectedAddr.village || "");
 
-        // Cập nhật danh sách quận/huyện và phường/xã
-        if (selectedAddr.province) {
-          handleProvinceChange(selectedAddr.province);
-        }
-        if (selectedAddr.district) {
-          handleDistrictChange(selectedAddr.district);
-        }
-      }
+      // Cập nhật danh sách quận/huyện và phường/xã tương ứng
+      await handleProvinceChange(selectedAddr.province);
+      await handleDistrictChange(selectedAddr.district);
+      setValue("ward", selectedAddr.village || "");
+
     }
   };
 
+
+
   // Xử lý khi form được submit
   const onSubmitHandler = (values) => {
+    console.log("Form values:", selectedAddress);
+
     if (onSubmit) {
       // Thêm addressId vào dữ liệu form nếu người dùng đã chọn địa chỉ có sẵn
       onSubmit({
@@ -109,7 +121,6 @@ const UserInfoForm = forwardRef(({ addresses, onSubmit }, ref) => {
       onSubmit={handleSubmit(onSubmitHandler)}
     >
       <FormControl fullWidth>
-        {/* Dropdown chọn địa chỉ có sẵn */}
         <InputLabel id="address-label">Chọn địa chỉ</InputLabel>
         <Select
           value={selectedAddress}
@@ -122,17 +133,14 @@ const UserInfoForm = forwardRef(({ addresses, onSubmit }, ref) => {
           <MenuItem value="">
             <em>Thêm địa chỉ mới</em>
           </MenuItem>
-          {addresses &&
-            addresses.length > 0 &&
-            addresses.map((address) => (
-              <MenuItem key={address.id} value={address.id}>
-                {`${address.address || ""}, ${address.village || ""}, ${address.district || ""
-                  }, ${address.province || ""}`}
-              </MenuItem>
-            ))}
+          {addresses?.map((address) => (
+            <MenuItem key={address.id} value={address.id}>
+              {`${address.address || ""}, ${address.province || ""},  ${address.district || ""},${address.village || ""}`}
+              {address.default ? " (Mặc định)" : ""}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
-
       <InputField
         control={control}
         name="userName"

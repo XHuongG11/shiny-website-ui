@@ -199,8 +199,7 @@ const CartItemlist = () => {
                 ) : cartItems.length === 0 ? (
                     <p>Không có sản phẩm nào trong giỏ hàng</p>
                 ) : (
-                    /* Danh sách sản phẩm */
-                    // Update the checkbox in the item mapping
+
                     cartItems.map((item) => (
                         <Grid2 className={styles.cartItem} key={item.id} container direction="row" spacing={2}
                             sx={{ justifyContent: "space-between", alignItems: "center" }}>

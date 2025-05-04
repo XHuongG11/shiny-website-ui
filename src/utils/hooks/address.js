@@ -44,7 +44,7 @@ const useAddress = () => {
             console.error("Lỗi khi lấy danh sách xã/phường:", error);
         }
     };
-
+    
     const loadAddress = async (address) => {
         try {
             if (address) {
@@ -65,7 +65,6 @@ const useAddress = () => {
                 setProvinces(provincesResponse.data);
                 setDistricts(districtsResponse.data.districts || []);
                 setWards(wardsResponse.data.wards || []);
-
             }
         } catch (error) {
             console.error("Lỗi khi lấy danh sách xã/phường:", error);

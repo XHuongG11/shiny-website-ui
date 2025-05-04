@@ -21,6 +21,10 @@ const productApi = {
         paramsSerializer: (params) => qs.stringify(params, { arrayFormat: 'repeat' }),
       });
   },
+  getProductById(id) {
+    const url = `/products/${id}`;
+    return axiosClient.get(url);
+  },
 };
 
 export default productApi;

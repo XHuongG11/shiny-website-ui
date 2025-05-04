@@ -51,12 +51,21 @@ const dropdownData = [
 
 function ProductInfo({ product, isInWishlist, updateWishlist }) {
   const [openDropdown, setOpenDropdown] = useState(null);
+<<<<<<< Updated upstream
   const [selectedSize, setSelectedSize] = useState(null);
   const [notification, setNotification] = useState({ open: false, message: "", severity: "success" });
   const navigate = useNavigate();
   const isLoggedIn = !!useSelector((state) => state.user.current)?.email;
 
   const handleToggleWishlist = async () => {
+=======
+  const [isInWishlist, setIsInWishlist] = useState(false);
+  const [selectedSize, setSelectedSize] = useState(null);
+  const user = useSelector((state) => state.user.current);
+  const isLoggedIn = !!(user && user.email); // Kiểm tra người dùng đã đăng nhập hay chưa
+  const navigate = useNavigate(); // Hook để điều hướng
+  useEffect(() => {
+>>>>>>> Stashed changes
     if (!isLoggedIn) {
       setNotification({ open: true, message: "Vui lòng đăng nhập để thêm vào danh sách yêu thích.", severity: "error" });
       return setTimeout(() => navigate("/login"), 2000);
@@ -95,12 +104,17 @@ function ProductInfo({ product, isInWishlist, updateWishlist }) {
       alert("Thêm vào giỏ hàng thất bại. Vui lòng thử lại sau.");
     }
   };
+<<<<<<< Updated upstream
 
   const handleBuyNow = () => {
+=======
+  const handleBuyNow = async () => {
+>>>>>>> Stashed changes
     if (!isLoggedIn) {
       alert("Vui lòng đăng nhập để mua hàng.");
       return navigate("/login");
     }
+<<<<<<< Updated upstream
     if (!selectedSize) return alert("Vui lòng chọn kích thước trước khi mua.");
 
     const sizeObj = product.productSizes.find((s) => s.size === selectedSize);
@@ -121,6 +135,51 @@ function ProductInfo({ product, isInWishlist, updateWishlist }) {
 
     localStorage.setItem("checkoutItems", JSON.stringify([tempOrder]));
     navigate("/checkouts");
+=======
+  
+    if (!selectedSize) {
+      alert("Vui lòng chọn kích thước trước khi mua.");
+      return;
+    }
+  
+    const selectedProductSize = product.productSizes.find(
+      (sizeObj) => sizeObj.size === selectedSize
+    );
+  
+    if (!selectedProductSize) {
+      alert("Kích thước không hợp lệ.");
+      return;
+    }
+  
+    try {
+      // Thêm sản phẩm vào giỏ hàng
+      await CartApi.addItemToCart(selectedProductSize.id, 1); // 1 là số lượng
+      
+      // Tạo đơn hàng tạm thời để lưu vào localStorage
+      const tempOrder = {
+        productId: product.id,
+        title: product.title,
+        image: product.images[0]?.url,
+        material: product.material,
+        size: selectedSize,
+        price: selectedProductSize.discountPrice,
+        quantity: 1,
+        productSizeId: selectedProductSize.id,
+        product: product,
+        productSize: selectedProductSize,
+      };
+  
+      // Lưu vào localStorage
+      localStorage.setItem("checkoutItems", JSON.stringify([tempOrder]));
+  
+      // Chuyển hướng đến trang thanh toán
+      navigate("/checkouts");
+  
+    } catch (error) {
+      console.error("Lỗi khi thêm vào giỏ hàng:", error.response?.data || error.message);
+      alert("Thêm vào giỏ hàng thất bại. Vui lòng thử lại sau.");
+    }
+>>>>>>> Stashed changes
   };
 
   return (

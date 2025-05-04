@@ -28,6 +28,11 @@ const addressApi = {
         const url = `/w`;
         return axiosAddress.get(url);
     },
+    getWard(code) {
+        const url = `/w/${code}`;
+        return axiosAddress.get(url);
+    }
+    
 
 };
 

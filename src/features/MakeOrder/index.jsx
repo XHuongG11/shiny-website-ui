@@ -9,19 +9,118 @@ import UserInfoForm from './components/UserInfoForm';
 import './styles.css';
 import paymentApi from '../../api/paymentApi';
 import orderApi from '../../api/orderApi';
+import voucherApi from '../../api/voucherApi';
 import customerAddressApi from '../../api/customerAddressApi';
+import { Autocomplete } from '@mui/material';
 
 function MakeOrder() {
     const [checkoutItems, setCheckoutItems] = useState([]);
     const [addresses, setAddresses] = useState([]);
     const [shouldRedirect, setShouldRedirect] = useState(false);
-    const [paymentMethod, setPaymentMethod] = useState('MOMO');  // State lưu phương thức thanh toán
+    const [paymentMethod, setPaymentMethod] = useState('MOMO'); 
     const [momoQrUrl, setMomoQrUrl] = useState(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const [orderId, setOrderId] = useState(null);
     const [deliveryMethod, setDeliveryMethod] = useState('standard');
+    const [voucherOptions, setVoucherOptions] = useState([]);
+    const [promotionInput, setPromotionInput] = useState('');
+    const [freeshipInput, setFreeshipInput] = useState('');
+    const [promotionDiscount, setPromotionDiscount] = useState(0); // %
+    const [freeShipDiscount, setFreeShipDiscount] = useState(0);   // %
+    const [finalTotal, setFinalTotal] = useState(0);
+    const [discount, setDiscount] = useState(0);                   // số tiền giảm
 
+    const handleVoucherFocus = async () => {
+        try {
+            const res = await voucherApi.getValidVouchers(1, 30); 
+            const vouchers = res.data?.content || [];
+            setVoucherOptions(vouchers);
+        } catch (error) {
+            console.error("❌ Lỗi khi lấy voucher:", error);
+        }
+    };
 
+    const handlePromotionSelect = (event, newValue) => {
+        if (newValue && newValue.code) {
+            setPromotionInput(newValue.code);
+            setPromotionDiscount(newValue.discountRate || 0);
+        } else {
+            setPromotionInput('');
+            setPromotionDiscount(0);
+        }
+    };
+
+    const handleFreeshipSelect = (event, newValue) => {
+        if (newValue && newValue.code) {
+            setFreeshipInput(newValue.code);
+            setfreeShipDiscount(newValue.discountRate || 0);
+        } else {
+            setFreeshipInput('');
+            setfreeShipDiscount(0);
+        }
+    };
+    const subtotal = checkoutItems.reduce((total, item) => {
+        const price = item.productSize?.price || item.product?.price || 0;
+        return total + price * (item.quantity || 1);
+    }, 0);
+
+    const calculateShippingFee = (method) => {
+        switch (method) {
+            case 'express': return 40000;
+            case 'standard':
+            default: return 15000;
+        }
+    };
+    const rawShippingFee = calculateShippingFee(deliveryMethod);
+    const applyVoucher = async () => {
+        try {
+            const voucherCodes = [promotionInput, freeshipInput].filter(Boolean);
+            if (voucherCodes.length === 0) {
+                alert("Vui lòng nhập mã voucher!");
+                return;
+            }
+    
+            const cartItems = checkoutItems.map(item => ({
+                product: { id: item.product?.id },
+                productSize: { id: item.productSize?.id },
+                quantity: item.quantity || 1
+            }));
+    
+            const res = await voucherApi.validateVoucher({
+                voucherCodes,
+                totalProductPrice: subtotal,
+                cartItems
+            });
+    
+            if (res.code === '200') {
+                console.log("✅ Voucher hợp lệ");
+    
+                const discountedSubtotal = subtotal * (1 - promotionDiscount / 100);
+                const discountedShippingFee = rawShippingFee * (1 - freeShipDiscount / 100);
+                const calculatedDiscount = subtotal * promotionDiscount / 100 + rawShippingFee * freeShipDiscount / 100;
+                const total = discountedSubtotal + discountedShippingFee;
+    
+                setDiscount(calculatedDiscount);
+                setFinalTotal(total);
+            } else {
+                console.log("❌ API trả về lỗi:", res.data?.message);
+                setPromotionDiscount(0);
+                setFreeShipDiscount(0);
+                setDiscount(0);
+                setFinalTotal(subtotal + rawShippingFee);
+                alert('Voucher không hợp lệ hoặc đã hết hạn.');
+            }
+        } catch (error) {
+            console.error("❌ Lỗi khi áp dụng voucher:", error);
+            setPromotionDiscount(0);
+            setFreeShipDiscount(0);
+            setDiscount(0);
+            setFinalTotal(subtotal + rawShippingFee);
+            alert('Voucher không hợp lệ hoặc đã hết hạn.');
+        }
+    };
+
+    
     const navigate = useNavigate();
     const formRef = useRef(null);
 
@@ -42,7 +141,7 @@ function MakeOrder() {
         async function fetchAddresses() {
             try {
                 const res = await customerAddressApi.getCustomerAddresses();
-                setAddresses(res.data.data.content || []);
+                setAddresses(res.data.content || []);
             } catch (e) {
                 setAddresses([]);
             }
@@ -50,26 +149,9 @@ function MakeOrder() {
         fetchAddresses();
     }, []);
 
-    const subtotal = checkoutItems.reduce((total, item) => {
-        const price = item.productSize?.price || item.product?.price || 0;
-        return total + price * (item.quantity || 1);
-    }, 0);
-    const calculateShippingFee = (method) => {
-        switch (method) {
-            case 'express':
-                return 40000;
-            case 'standard':
-            default:
-                return 15000;
-        }
-    };
-    const shippingFee = calculateShippingFee(deliveryMethod);
-    const discount = 0;
-    const total = subtotal - discount + shippingFee;
-
     const handlePaymentMethodChange = (method) => {
-        setPaymentMethod(method);  // Cập nhật phương thức thanh toán khi người dùng chọn
-        setMomoQrUrl(null);  // Reset URL QR MOMO nếu đổi phương thức
+        setPaymentMethod(method);
+        setMomoQrUrl(null); 
     };
 
     function validateCheckoutItems(items) {
@@ -109,13 +191,17 @@ function MakeOrder() {
     async function handleFormSubmit(value) {
         setIsProcessing(true);
         try {
+            console.log("🛒 Bắt đầu xử lý đặt hàng...");
             if (!validateCheckoutItems(checkoutItems)) {
+                console.error("❌ Giỏ hàng không hợp lệ");
                 alert('Giỏ hàng không hợp lệ');
                 setIsProcessing(false);
                 return;
             }
 
+            console.log("🏠 Đang xử lý địa chỉ giao hàng...");
             const shippingAddress = await resolveShippingAddress(value);
+            console.log("✅ Địa chỉ giao hàng:", shippingAddress);
 
             const orderRequest = {
                 shippingAddress: { id: shippingAddress.id },
@@ -125,67 +211,70 @@ function MakeOrder() {
                 totalProductPrice: subtotal,
                 shippingFee,
                 totalPrice: total,
-                voucherCodes: [],
+                voucherCodes: [promotionInput, freeshipInput].filter(Boolean),
                 freeShipDiscount: 0,
                 promotionDiscount: discount,
                 note: value.note || "",
             };
+            console.log("📦 Thông tin đơn hàng gửi lên:", orderRequest);
 
+            console.log("🔄 Đang gửi yêu cầu đặt hàng...");
             const orderResponse = await orderApi.placeOrder(orderRequest);
-            console.log(">> orderResponse full:", orderResponse);
+            console.log("✅ Kết quả đặt hàng:", orderResponse);
 
             const newOrderId = orderResponse?.data?.id;
-            console.log(">> newOrderId:", newOrderId);
+            console.log("🆔 ID đơn hàng mới:", newOrderId);
 
-            if (!newOrderId) throw new Error('Không nhận được ID đơn hàng');
+            if (!newOrderId) {
+                console.error("❌ Không nhận được ID đơn hàng");
+                throw new Error('Không nhận được ID đơn hàng');
+            }
             setOrderId(newOrderId);
 
             if (paymentMethod === 'MOMO') {
                 try {
+                    console.log("💳 Đang tạo thanh toán MoMo cho đơn hàng:", newOrderId);
                     const { data } = await paymentApi.createMomoPayment(newOrderId);
-                    console.log('📦 Full API Response:', JSON.stringify(data, null, 2));
-                    console.log('🔗 Payment URL:', data);
-                    console.log('📏 Type of data:', typeof data);
+                    console.log('📦 Kết quả API thanh toán MoMo:', JSON.stringify(data, null, 2));
+                    console.log('🔗 URL thanh toán MoMo:', data);
 
                     if (!data || typeof data !== 'string' || !data.startsWith('http')) {
+                        console.error("❌ URL thanh toán MoMo không hợp lệ:", data);
                         throw new Error("Không nhận được liên kết thanh toán hợp lệ");
                     }
+                    console.log("🔄 Chuyển hướng đến trang thanh toán MoMo:", data);
                     window.location.href = data;
                 } catch (error) {
-                    await orderApi.updateOrderStatus(newOrderId, 'CANCELED');
-                    console.error("Lỗi thanh toán MoMo:", error);
+                    console.error("❌ Lỗi thanh toán MoMo:", error);
+                    console.error("❌ Chi tiết lỗi:", error.response?.data || error.message);
                     alert("Lỗi thanh toán: " + error.message);
                 }
-            }
-            else if (paymentMethod === 'VN_PAY') {
+            } else if (paymentMethod === 'VN_PAY') {
                 try {
+                    console.log("💳 Đang tạo thanh toán VN_PAY cho đơn hàng:", newOrderId);
                     const { data } = await paymentApi.createVNpayPayment(newOrderId);
-                    console.log('📦 Full API Response:', JSON.stringify(data, null, 2));
-                    console.log('🔗 Payment URL:', data);
-                    console.log('📏 Type of data:', typeof data);
+                    console.log('📦 Kết quả API thanh toán VN_PAY:', JSON.stringify(data, null, 2));
+                    console.log('🔗 URL thanh toán VN_PAY:', data);
 
                     if (!data || typeof data !== 'string' || !data.startsWith('http')) {
+                        console.error("❌ URL thanh toán VN_PAY không hợp lệ:", data);
                         throw new Error("Không nhận được liên kết thanh toán hợp lệ");
                     }
+                    console.log("🔄 Chuyển hướng đến trang thanh toán VN_PAY:", data);
                     window.location.href = data;
                 } catch (error) {
-                    await orderApi.updateOrderStatus(newOrderId, 'CANCELED');
-                    console.error("Lỗi thanh toán MoMo:", error);
+                    console.error("❌ Lỗi thanh toán VN_PAY:", error);
+                    console.error("❌ Chi tiết lỗi:", error.response?.data || error.message);
                     alert("Lỗi thanh toán: " + error.message);
                 }
-            }
-            else if (paymentMethod === 'COD') {
-                try {
-                    console.log("Updating order status:", { orderId: newOrderId, status: 'PENDING' });
-                    await orderApi.updateOrderStatus(newOrderId, 'PENDING');
-                } catch (statusErr) {
-                    console.warn("⚠️ Không thể cập nhật trạng thái đơn hàng:", statusErr);
-                }
-                navigate(`/orders/${newOrderId}/status`);
             } else {
+                console.log("✅ Đặt hàng thành công với phương thức thanh toán:", paymentMethod);
+                console.log("🔄 Chuẩn bị chuyển hướng đến trang cảm ơn...");
                 setShouldRedirect(true);
             }
         } catch (error) {
+            console.error("❌ Lỗi khi đặt hàng:", error);
+            console.error("❌ Chi tiết lỗi:", error.response?.data || error.message);
             alert(`Đã xảy ra lỗi: ${error.message}`);
         } finally {
             setIsProcessing(false);
@@ -243,19 +332,102 @@ function MakeOrder() {
                                 <ProductItem />
                             </>
                         )}
-
                         <div className="discount-container">
-                            <FormControl>
-                                <TextField
-                                    id="discount"
-                                    name="discount"
-                                    label="Mã giảm giá"
-                                    sx={{ '& .MuiInputBase-root': { height: 47 } }}
+                        <FormControl sx={{ flex: 1, marginRight: 1 }}>
+                            <div style={{ display: 'flex', gap: 16 }}>
+                                <div style={{ flex: 1 }}>
+                                <Autocomplete
+                                    freeSolo
+                                    options={voucherOptions.filter(v => v.type === 'PROMOTION')}
+                                    getOptionLabel={(option) => option.code || ''}
+                                    onFocus={handleVoucherFocus}
+                                    value={voucherOptions.find(v => v.code === promotionInput) || null}
+                                    inputValue={promotionInput}
+                                    onInputChange={(event, newInputValue) => setPromotionInput(newInputValue)}
+                                    onChange={(event, newValue) => {
+                                    if (newValue && newValue.code) {
+                                        setPromotionInput(newValue.code);
+                                        setPromotionDiscount(newValue.discountRate || 0);
+                                    } else {
+                                        setPromotionInput('');
+                                        setPromotionDiscount(0);
+                                    }
+                                    }}
+                                    renderOption={(props, option, { index }) => (
+                                    <li {...props} key={option.id || `promotion-${index}`}>
+                                        <div>
+                                        <strong>{option.code}</strong>
+                                        <div style={{ fontSize: 12, color: '#888' }}>
+                                            {option.discountRate ? `${option.discountRate}% khuyến mãi` : ''}
+                                        </div>
+                                        </div>
+                                    </li>
+                                    )}
+                                    renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label="Mã khuyến mãi"
+                                        sx={{
+                                        '& .MuiInputBase-root': {
+                                            height: 47,
+                                        },
+                                        }}
+                                    />
+                                    )}
                                 />
+                                </div>
+                            <div style={{ flex: 1 }}>
+                                <Autocomplete
+                                    freeSolo
+                                    options={voucherOptions.filter(v => v.type === 'FREESHIP')}
+                                    getOptionLabel={(option) => option.code || ''}
+                                    onFocus={handleVoucherFocus}
+                                    value={voucherOptions.find(v => v.code === freeshipInput) || null}
+                                    inputValue={freeshipInput}
+                                    onInputChange={(event, newInputValue) => setFreeshipInput(newInputValue)}
+                                    onChange={(event, newValue) => {
+                                    if (newValue && newValue.code) {
+                                        setFreeshipInput(newValue.code);
+                                        setFreeShipDiscount(newValue.discountRate || 0);
+                                    } else {
+                                        setFreeshipInput('');
+                                        setFreeShipDiscount(0);
+                                    }
+                                    }}
+                                    renderOption={(props, option, { index }) => (
+                                    <li {...props} key={option.id || `freeship-${index}`}>
+                                        <div>
+                                        <strong>{option.code}</strong>
+                                        <div style={{ fontSize: 12, color: '#888' }}>
+                                            Miễn phí vận chuyển
+                                        </div>
+                                        </div>
+                                    </li>
+                                    )}
+                                    renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label="Mã freeship"
+                                        sx={{
+                                        '& .MuiInputBase-root': {
+                                            height: 47,
+                                        },
+                                        }}
+                                    />
+                                    )}
+                                />
+                                </div>
+                            </div>
                             </FormControl>
-                            <Button title='Sử dụng' />
+                            <Button
+                                title="Sử dụng"
+                                onClick={applyVoucher}
+                                variant="contained"
+                                sx={{ height: 47, minWidth: 100 }}
+                            >
+                                SỬ DỤNG
+                            </Button>
                         </div>
-
                         <div className="line"></div>
                         <div className="estimate">
                             <span className="text">Tạm tính</span>
@@ -267,12 +439,12 @@ function MakeOrder() {
                         </div>
                         <div className="delivery-cost">
                             <span className="text">Phí vận chuyển</span>
-                            <span className="value">{shippingFee.toLocaleString()}đ</span>
+                            <span className="value">{rawShippingFee.toLocaleString()}đ</span>
                         </div>
                         <div className="line"></div>
                         <div className="overall">
                             <span className="text total">Tổng cộng</span>
-                            <span className="value total">{total.toLocaleString()}đ</span>
+                            <span className="value total">{finalTotal.toLocaleString()}đ</span>
                         </div>
                     </div>
                 </div>
