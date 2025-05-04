@@ -18,6 +18,11 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 import userApi from "../../../../api/userApi";
 import Notification from "../../../../components/Alert";
+import * as Yup from "yup";
+import { useDispatch } from "react-redux";
+import { logout } from "../../../LoginSignin/store/authSlice";
+import { useNavigate } from "react-router-dom";
+import { delay } from "framer-motion";
 
 ModalChangePassword.propTypes = {
   handleCloseModal: PropTypes.func.isRequired,
@@ -30,6 +35,9 @@ function ModalChangePassword({ handleCloseModal, openDialog }) {
   const [message, setMessage] = useState();
   const [openNotification, setOpenNotification] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
@@ -46,6 +54,20 @@ function ModalChangePassword({ handleCloseModal, openDialog }) {
     confirmPassword: "",
   });
 
+  const passwordSchema = Yup.object().shape({
+    oldPassword: Yup.string().required("Vui lòng nhập mật khẩu cũ."),
+    newPassword: Yup.string()
+      .required("Vui lòng nhập mật khẩu mới.")
+      .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$#!%*?&])[A-Za-z\d@$#!%*?&]/,
+        "Mật khẩu không đủ mạnh. Vui lòng sử dụng ít nhất 1 chữ cái viết hoa, 1 chữ cái viết thường, 1 số và 1 ký tự đặc biệt."
+      ),
+
+    confirmPassword: Yup.string()
+      .required("Vui lòng nhập xác nhận mật khẩu.")
+      .oneOf([Yup.ref("newPassword")], "Mật khẩu mới và xác nhận không khớp."),
+  });
   return (
     <>
       <Dialog
@@ -66,42 +88,58 @@ function ModalChangePassword({ handleCloseModal, openDialog }) {
               const confirmPassword = formJson.confirmPassword.trim();
 
               // handle exception
-              if (!oldPassword)
-                errorFields.oldPassword = "Vui lòng nhập mật khẩu cũ.";
-              if (!newPassword)
-                errorFields.newPassword = "Vui lòng nhập mật khẩu mới.";
-              if (!confirmPassword)
-                errorFields.confirmPassword =
-                  "Vui lòng nhập xác nhận mật khẩu.";
-              if (confirmPassword !== newPassword)
-                errorFields.confirmPassword =
-                  "Mật khẩu mới và xác nhận mật khẩu không khớp.";
-              if (Object.keys(errorFields).length > 0) {
+              try {
+                await passwordSchema.validate(
+                  {
+                    oldPassword,
+                    newPassword,
+                    confirmPassword,
+                  },
+                  { abortEarly: false }
+                );
+              } catch (err) {
+                err.inner.forEach((validationError) => {
+                  if (validationError.path) {
+                    errorFields[validationError.path] = validationError.message;
+                  }
+                });
+
                 setErrors(errorFields);
                 return;
               }
+
               setErrors({});
 
               // call api
               try {
                 setLoading(true);
-                await userApi.changePassword({
+                const resp = await userApi.changePassword({
                   oldPassword: oldPassword,
                   newPassword: newPassword,
                 });
-                setLoading(false);
-                setOpenNotification(true);
-                setMessage("Thay đổi mật khẩu thành công.");
-                setSeverity("success");
-                handleCloseModal();
-              } catch (error) {
-                console.log("Error", error);
-                if (error.status == 400) {
+                console.log("Response từ API:", resp);
+                if (resp.code === "400") {
                   setOpenNotification(true);
                   setMessage("Mật khẩu cũ không chính xác.");
                   setSeverity("error");
                   setLoading(false);
                 }
+                if (resp.code === "200") {
+                  setLoading(false);
+                  setOpenNotification(true);
+                  setMessage(
+                    "Thay đổi mật khẩu thành công. Vui lòng đăng nhập lại."
+                  );
+                  setSeverity("success");
+                  handleCloseModal();
+                  setTimeout(() => {
+                    delay(2000);
+                    dispatch(logout());
+                    navigate("/login");
+                  }, 2000);
+                }
+              } catch (error) {
+                console.log("Error", error);
               }
             },
           },

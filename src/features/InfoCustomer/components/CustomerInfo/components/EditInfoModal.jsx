@@ -24,7 +24,13 @@ const EditInfoModal = ({ onClose, infoCus }) => {
   const dispatch = useDispatch();
   const schema = yup.object().shape({
     fullName: yup.string().required("Vui lòng nhập họ và tên"),
-    phone: yup.string(),
+    phone: yup
+      .string()
+      .required("Vui lòng nhập số điện thoại")
+      .matches(
+        /(84|0[2|3|5|7|8|9])+([0-9]{8})\b/,
+        "Số điện thoại không hợp lệ"
+      ),
     dob: yup.string(),
   });
   const {
@@ -90,6 +96,7 @@ const EditInfoModal = ({ onClose, infoCus }) => {
                   <DatePicker
                     {...field}
                     label="Ngày sinh"
+                    format="DD/MM/YYYY"
                     value={field.value ? dayjs(field.value) : null}
                     onChange={(newValue) =>
                       field.onChange(
