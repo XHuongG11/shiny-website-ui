@@ -17,7 +17,7 @@ function MakeOrder() {
     const [checkoutItems, setCheckoutItems] = useState([]);
     const [addresses, setAddresses] = useState([]);
     const [shouldRedirect, setShouldRedirect] = useState(false);
-    const [paymentMethod, setPaymentMethod] = useState('MOMO'); 
+    const [paymentMethod, setPaymentMethod] = useState('MOMO');
     const [momoQrUrl, setMomoQrUrl] = useState(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const [orderId, setOrderId] = useState(null);
@@ -25,53 +25,98 @@ function MakeOrder() {
     const [voucherOptions, setVoucherOptions] = useState([]);
     const [promotionInput, setPromotionInput] = useState('');
     const [freeshipInput, setFreeshipInput] = useState('');
-    const [promotionDiscount, setPromotionDiscount] = useState(0); // %
-    const [freeShipDiscount, setFreeShipDiscount] = useState(0);   // %
-    const [finalTotal, setFinalTotal] = useState(0);
-    const [discount, setDiscount] = useState(0);                   // số tiền giảm
-
+    const [promotionDiscount, setPromotionDiscount] = useState(0);
+    const [promotionDiscountFee, setPromotionDiscountFee] = useState(0);
+    const [freeShipDiscount, setFreeShipDiscount] = useState(0);
+    const [freeShipDiscountFee, setFreeShipDiscountFee] = useState(0);
+    const [totalPrice, setTotalPrice] = useState(0);
+    const [discount, setDiscount] = useState(0);
+    const [shippingFee, setShippingFee] = useState(0);
+    const [selectedAddress, setSelectedAddress] = useState(null);
+    const [applyLimitFreeShip, setApplyLimitFreeShip] = useState(0);
+    const [applyLimitPromotion, setApplyLimitPromotion] = useState(0);
     const handleVoucherFocus = async () => {
         try {
-            const res = await voucherApi.getValidVouchers(1, 30); 
+            const res = await voucherApi.getValidVouchers({ data: { totalProductPrice: subtotal }, page: 1, size: 30 });
             const vouchers = res.data?.content || [];
+            console.log("Vouchers:", vouchers);
             setVoucherOptions(vouchers);
         } catch (error) {
             console.error("❌ Lỗi khi lấy voucher:", error);
         }
     };
 
-    const handlePromotionSelect = (event, newValue) => {
-        if (newValue && newValue.code) {
-            setPromotionInput(newValue.code);
-            setPromotionDiscount(newValue.discountRate || 0);
-        } else {
-            setPromotionInput('');
-            setPromotionDiscount(0);
-        }
-    };
-
-    const handleFreeshipSelect = (event, newValue) => {
-        if (newValue && newValue.code) {
-            setFreeshipInput(newValue.code);
-            setfreeShipDiscount(newValue.discountRate || 0);
-        } else {
-            setFreeshipInput('');
-            setfreeShipDiscount(0);
-        }
-    };
     const subtotal = checkoutItems.reduce((total, item) => {
         const price = item.productSize?.price || item.product?.price || 0;
         return total + price * (item.quantity || 1);
     }, 0);
 
-    const calculateShippingFee = (method) => {
-        switch (method) {
-            case 'express': return 40000;
-            case 'standard':
-            default: return 15000;
+    // Hàm gọi API lấy phí ship
+    const fetchShippingFee = async (address, method) => {
+        if (!address) {
+            console.log("Chưa có địa chỉ, không thể lấy phí ship");
+            setShippingFee(0);
+            updateTotalPrice(0);
+            return;
+        }
+
+        // Đảm bảo method luôn viết hoa khi gửi lên API
+        const shippingMethod = method.toUpperCase();
+        console.log("Phương thức vận chuyển:", shippingMethod);
+
+        try {
+            const res = await orderApi.getEstimateShippingFee(address, shippingMethod);
+            console.log("Kết quả trả về từ API:", res.data);
+            const newShippingFee = res.data?.fee || res.data || 0;
+            console.log("Phí ship mới:", newShippingFee);
+
+            setShippingFee(newShippingFee);
+            updateTotalPrice(newShippingFee);
+        } catch (error) {
+            console.error("Lỗi khi lấy phí ship:", error);
+            setShippingFee(0);
+            updateTotalPrice(0);
         }
     };
-    const rawShippingFee = calculateShippingFee(deliveryMethod);
+
+    // Hàm cập nhật tổng tiền
+    const updateTotalPrice = (newShippingFee) => {
+        const discountedSubtotal = subtotal * (1 - promotionDiscount / 100);
+        const discountedShippingFee = newShippingFee * (1 - freeShipDiscount / 100);
+        const calculatedDiscount = subtotal * promotionDiscount / 100 + newShippingFee * freeShipDiscount / 100;
+        const total = discountedSubtotal + discountedShippingFee;
+        setDiscount(calculatedDiscount);
+        setTotalPrice(total);
+    };
+
+    // Thêm hàm xử lý khi thay đổi phương thức vận chuyển
+    const handleDeliveryMethodChange = (method) => {
+        setDeliveryMethod(method);
+
+        // Nếu đã có địa chỉ, gọi ngay API lấy phí ship
+        if (selectedAddress) {
+            fetchShippingFee(selectedAddress, method);
+        }
+    };
+
+    // Hàm xử lý khi địa chỉ thay đổi
+    const handleAddressChange = (address) => {
+        console.log("Địa chỉ đã thay đổi:", address);
+        setSelectedAddress(address);
+
+        // Nếu đã có phương thức vận chuyển, gọi ngay API lấy phí ship
+        if (address && deliveryMethod) {
+            console.log("Gọi API tính phí ship với địa chỉ mặc định");
+            fetchShippingFee(address, deliveryMethod);
+        }
+    };
+
+    useEffect(() => {
+        if (selectedAddress && deliveryMethod) {
+            fetchShippingFee(selectedAddress, deliveryMethod);
+        }
+    }, [selectedAddress, deliveryMethod]);
+
     const applyVoucher = async () => {
         try {
             const voucherCodes = [promotionInput, freeshipInput].filter(Boolean);
@@ -79,35 +124,43 @@ function MakeOrder() {
                 alert("Vui lòng nhập mã voucher!");
                 return;
             }
-    
+
             const cartItems = checkoutItems.map(item => ({
                 product: { id: item.product?.id },
                 productSize: { id: item.productSize?.id },
                 quantity: item.quantity || 1
             }));
-    
+
             const res = await voucherApi.validateVoucher({
                 voucherCodes,
                 totalProductPrice: subtotal,
                 cartItems
             });
-    
+
             if (res.code === '200') {
                 console.log("✅ Voucher hợp lệ");
-    
-                const discountedSubtotal = subtotal * (1 - promotionDiscount / 100);
-                const discountedShippingFee = rawShippingFee * (1 - freeShipDiscount / 100);
-                const calculatedDiscount = subtotal * promotionDiscount / 100 + rawShippingFee * freeShipDiscount / 100;
+                setPromotionDiscountFee(
+                    Math.min(subtotal * (promotionDiscount / 100), applyLimitPromotion)
+                );
+
+                setFreeShipDiscountFee(
+                    Math.min(shippingFee * (freeShipDiscount / 100), applyLimitFreeShip)
+                );
+
+                const discountedSubtotal = subtotal - applyLimitPromotion;
+                console.log("Giá trị giảm giá:", discountedSubtotal);
+                const discountedShippingFee = shippingFee - applyLimitFreeShip;
+                console.log("Giá trị giảm phí vận chuyển:", discountedShippingFee);
                 const total = discountedSubtotal + discountedShippingFee;
-    
-                setDiscount(calculatedDiscount);
-                setFinalTotal(total);
+                console.log("Tổng tiền sau khi áp dụng voucher:", total);
+
+                setTotalPrice(total);
             } else {
                 console.log("❌ API trả về lỗi:", res.data?.message);
                 setPromotionDiscount(0);
                 setFreeShipDiscount(0);
                 setDiscount(0);
-                setFinalTotal(subtotal + rawShippingFee);
+                setTotalPrice(subtotal + shippingFee);
                 alert('Voucher không hợp lệ hoặc đã hết hạn.');
             }
         } catch (error) {
@@ -115,12 +168,12 @@ function MakeOrder() {
             setPromotionDiscount(0);
             setFreeShipDiscount(0);
             setDiscount(0);
-            setFinalTotal(subtotal + rawShippingFee);
+            setTotalPrice(subtotal + shippingFee);
             alert('Voucher không hợp lệ hoặc đã hết hạn.');
         }
     };
 
-    
+
     const navigate = useNavigate();
     const formRef = useRef(null);
 
@@ -133,7 +186,7 @@ function MakeOrder() {
 
     useEffect(() => {
         if (shouldRedirect) {
-            navigate(`/checkouts/thank-you?id=${orderId}`);
+            navigate(`/checkouts/thank-you/${orderId}`);
         }
     }, [shouldRedirect, navigate, orderId]);
 
@@ -151,7 +204,7 @@ function MakeOrder() {
 
     const handlePaymentMethodChange = (method) => {
         setPaymentMethod(method);
-        setMomoQrUrl(null); 
+        setMomoQrUrl(null);
     };
 
     function validateCheckoutItems(items) {
@@ -209,11 +262,11 @@ function MakeOrder() {
                 paymentMethod,
                 cartItems: prepareCartItems(checkoutItems),
                 totalProductPrice: subtotal,
-                shippingFee,
-                totalPrice: total,
+                shippingFee: shippingFee,
+                totalPrice,
                 voucherCodes: [promotionInput, freeshipInput].filter(Boolean),
-                freeShipDiscount: 0,
-                promotionDiscount: discount,
+                freeShipDiscount: freeShipDiscountFee,
+                promotionDiscount: Math.round(promotionDiscountFee),
                 note: value.note || "",
             };
             console.log("📦 Thông tin đơn hàng gửi lên:", orderRequest);
@@ -292,8 +345,13 @@ function MakeOrder() {
                             <Link href="#" className="logout">Đăng xuất</Link>
                         </div>
                     </div>
-                    <UserInfoForm addresses={addresses} onSubmit={handleFormSubmit} ref={formRef} />
-                    <DeliveryMethod onChange={(method) => setDeliveryMethod(method)} />
+                    <UserInfoForm
+                        addresses={addresses}
+                        onSubmit={handleFormSubmit}
+                        onAddressChange={handleAddressChange}
+                        ref={formRef}
+                    />
+                    <DeliveryMethod onChange={handleDeliveryMethodChange} />
                     <PaymentMethod onChange={handlePaymentMethodChange} />
                     {momoQrUrl && (
                         <div style={{ textAlign: 'center', margin: '20px 0' }}>
@@ -333,91 +391,93 @@ function MakeOrder() {
                             </>
                         )}
                         <div className="discount-container">
-                        <FormControl sx={{ flex: 1, marginRight: 1 }}>
-                            <div style={{ display: 'flex', gap: 16 }}>
-                                <div style={{ flex: 1 }}>
-                                <Autocomplete
-                                    freeSolo
-                                    options={voucherOptions.filter(v => v.type === 'PROMOTION')}
-                                    getOptionLabel={(option) => option.code || ''}
-                                    onFocus={handleVoucherFocus}
-                                    value={voucherOptions.find(v => v.code === promotionInput) || null}
-                                    inputValue={promotionInput}
-                                    onInputChange={(event, newInputValue) => setPromotionInput(newInputValue)}
-                                    onChange={(event, newValue) => {
-                                    if (newValue && newValue.code) {
-                                        setPromotionInput(newValue.code);
-                                        setPromotionDiscount(newValue.discountRate || 0);
-                                    } else {
-                                        setPromotionInput('');
-                                        setPromotionDiscount(0);
-                                    }
-                                    }}
-                                    renderOption={(props, option, { index }) => (
-                                    <li {...props} key={option.id || `promotion-${index}`}>
-                                        <div>
-                                        <strong>{option.code}</strong>
-                                        <div style={{ fontSize: 12, color: '#888' }}>
-                                            {option.discountRate ? `${option.discountRate}% khuyến mãi` : ''}
-                                        </div>
-                                        </div>
-                                    </li>
-                                    )}
-                                    renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        label="Mã khuyến mãi"
-                                        sx={{
-                                        '& .MuiInputBase-root': {
-                                            height: 47,
-                                        },
-                                        }}
-                                    />
-                                    )}
-                                />
+                            <FormControl sx={{ flex: 1, marginRight: 1 }}>
+                                <div style={{ display: 'flex', gap: 16 }}>
+                                    <div style={{ flex: 1 }}>
+                                        <Autocomplete
+                                            freeSolo
+                                            options={voucherOptions.filter(v => v.type === 'PROMOTION')}
+                                            getOptionLabel={(option) => option.code || ''}
+                                            onFocus={handleVoucherFocus}
+                                            value={voucherOptions.find(v => v.code === promotionInput) || null}
+                                            inputValue={promotionInput}
+                                            onInputChange={(event, newInputValue) => setPromotionInput(newInputValue)}
+                                            onChange={(event, newValue) => {
+                                                if (newValue && newValue.code) {
+                                                    setPromotionInput(newValue.code);
+                                                    setApplyLimitPromotion(newValue.applyLimit || 0);
+                                                    setPromotionDiscount(newValue.discountRate || 0);
+                                                } else {
+                                                    setPromotionInput('');
+                                                    setPromotionDiscount(0);
+                                                }
+                                            }}
+                                            renderOption={(props, option, { index }) => (
+                                                <li {...props} key={option.id || `promotion-${index}`}>
+                                                    <div>
+                                                        <strong>{option.code}</strong>
+                                                        <div style={{ fontSize: 12, color: '#888' }}>
+                                                            {option.discountRate ? `${option.discountRate}% khuyến mãi` : ''}
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            )}
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    label="Mã khuyến mãi"
+                                                    sx={{
+                                                        '& .MuiInputBase-root': {
+                                                            height: 47,
+                                                        },
+                                                    }}
+                                                />
+                                            )}
+                                        />
+                                    </div>
+                                    <div style={{ flex: 1 }}>
+                                        <Autocomplete
+                                            freeSolo
+                                            options={voucherOptions.filter(v => v.type === 'FREESHIP')}
+                                            getOptionLabel={(option) => option.code || ''}
+                                            onFocus={handleVoucherFocus}
+                                            value={voucherOptions.find(v => v.code === freeshipInput) || null}
+                                            inputValue={freeshipInput}
+                                            onInputChange={(event, newInputValue) => setFreeshipInput(newInputValue)}
+                                            onChange={(event, newValue) => {
+                                                if (newValue && newValue.code) {
+                                                    setFreeshipInput(newValue.code);
+                                                    setApplyLimitFreeShip(newValue.applyLimit || 0);
+                                                    setFreeShipDiscount(newValue.discountRate || 0);
+                                                } else {
+                                                    setFreeshipInput('');
+                                                    setFreeShipDiscount(0);
+                                                }
+                                            }}
+                                            renderOption={(props, option, { index }) => (
+                                                <li {...props} key={option.id || `freeship-${index}`}>
+                                                    <div>
+                                                        <strong>{option.code}</strong>
+                                                        <div style={{ fontSize: 12, color: '#888' }}>
+                                                            {option.discountRate ? `giảm ${option.discountRate}% phí vận chuyển` : ''}
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            )}
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    label="Mã freeship"
+                                                    sx={{
+                                                        '& .MuiInputBase-root': {
+                                                            height: 47,
+                                                        },
+                                                    }}
+                                                />
+                                            )}
+                                        />
+                                    </div>
                                 </div>
-                            <div style={{ flex: 1 }}>
-                                <Autocomplete
-                                    freeSolo
-                                    options={voucherOptions.filter(v => v.type === 'FREESHIP')}
-                                    getOptionLabel={(option) => option.code || ''}
-                                    onFocus={handleVoucherFocus}
-                                    value={voucherOptions.find(v => v.code === freeshipInput) || null}
-                                    inputValue={freeshipInput}
-                                    onInputChange={(event, newInputValue) => setFreeshipInput(newInputValue)}
-                                    onChange={(event, newValue) => {
-                                    if (newValue && newValue.code) {
-                                        setFreeshipInput(newValue.code);
-                                        setFreeShipDiscount(newValue.discountRate || 0);
-                                    } else {
-                                        setFreeshipInput('');
-                                        setFreeShipDiscount(0);
-                                    }
-                                    }}
-                                    renderOption={(props, option, { index }) => (
-                                    <li {...props} key={option.id || `freeship-${index}`}>
-                                        <div>
-                                        <strong>{option.code}</strong>
-                                        <div style={{ fontSize: 12, color: '#888' }}>
-                                            {option.discountRate ? `giảm ${option.discountRate}% phí vận chuyển` : ''}
-                                        </div>
-                                        </div>
-                                    </li>
-                                    )}
-                                    renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        label="Mã freeship"
-                                        sx={{
-                                        '& .MuiInputBase-root': {
-                                            height: 47,
-                                        },
-                                        }}
-                                    />
-                                    )}
-                                />
-                                </div>
-                            </div>
                             </FormControl>
                             <Button
                                 title="Sử dụng"
@@ -434,17 +494,21 @@ function MakeOrder() {
                             <span className="value">{subtotal.toLocaleString()}đ</span>
                         </div>
                         <div className="reduce">
-                            <span className="text">Giảm giá</span>
-                            <span className="value">{discount.toLocaleString()}đ</span>
+                            <span className="text">Giảm giá đơn hàng</span>
+                            <span className="value">{promotionDiscountFee.toLocaleString()}đ</span>
+                        </div>
+                        <div className="delivery-cost">
+                            <span className="text">Giảm phí vận chuyển</span>
+                            <span className="value">{freeShipDiscountFee.toLocaleString()}đ</span>
                         </div>
                         <div className="delivery-cost">
                             <span className="text">Phí vận chuyển</span>
-                            <span className="value">{rawShippingFee.toLocaleString()}đ</span>
+                            <span className="value">{shippingFee.toLocaleString()}đ</span>
                         </div>
                         <div className="line"></div>
                         <div className="overall">
                             <span className="text total">Tổng cộng</span>
-                            <span className="value total">{finalTotal.toLocaleString()}đ</span>
+                            <span className="value total">{totalPrice.toLocaleString()}đ</span>
                         </div>
                     </div>
                 </div>

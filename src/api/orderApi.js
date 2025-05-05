@@ -2,7 +2,19 @@ import axiosClient from "./axiosClient";
 
 const orderApi = {
   getOrder(id) {
-    return axiosClient.get(`/orders/${id}`);
+    return new Promise((resolve, reject) => {
+      axiosClient.get(`/orders/${id}`)
+        .then(response => {
+          if (response && response.code === "1000") {
+            window.location.href = "/error/404";
+            return;
+          }
+          resolve(response);
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
   },
 
   getMyOrders(page = 1, size = 30) {
@@ -17,18 +29,15 @@ const orderApi = {
     });
   },
 
-  getEstimateShippingFee(address, method) {
-    // address: { district, province }
-    return axiosClient.get(`/orders/shipping-fee`, {
-      params: { method },
-      data: address // tuỳ backend, nếu không hỗ trợ GET with body, đổi sang POST
-    });
-  },
-
   placeOrder(orderRequest) {
     return axiosClient.post('/orders/place', orderRequest);
   },
-
+  getEstimateShippingFee(address, method) {
+    return axiosClient.post('/orders/shipping-fee', address, {
+      params: { method }
+    });
+  },
+  
   // ✅ API cập nhật trạng thái đơn hàng
   updateOrderStatus(id, status) {
     return axiosClient.put(`/orders/${id}/status`, null, {

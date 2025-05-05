@@ -7,7 +7,7 @@ DeliveryMethod.propTypes = {
 };
 
 function DeliveryMethod({ onChange }) {
-    const [deliveryOption, setDeliveryOption] = useState('standard');
+    const [deliveryOption, setDeliveryOption] = useState('STANDARD');
 
     const handleDeliveryOptionChange = (event) => {
         const value = event.target.value;
@@ -59,8 +59,8 @@ function DeliveryMethod({ onChange }) {
                                 }}
                             />
                         }
-                        value='standard'
-                        label='Giao hàng tiêu chuẩn (7-10 ngày) 15,000đ'
+                        value='STANDARD'
+                        label='Giao hàng tiêu chuẩn (7-10 ngày)'
                     />
                     <FormControlLabel
                         sx={{ margin: '0px' }}
@@ -73,8 +73,8 @@ function DeliveryMethod({ onChange }) {
                                 }}
                             />
                         }
-                        value='express'
-                        label='Giao hàng hỏa tốc (1-2 ngày) 40,000đ'
+                        value='EXPRESS'
+                        label='Giao hàng hỏa tốc (1-2 ngày)'
                     />
                 </RadioGroup>
             </FormControl>
