@@ -16,20 +16,45 @@ import useAddress from "../../../../utils/hooks/address";
 import customerAddressApi from "../../../../api/customerAddressApi"; // Đảm bảo đúng đường dẫn API
 
 
-const UserInfoForm = forwardRef(({ onSubmit }, ref) => {
+const UserInfoForm = forwardRef(({ onSubmit, onAddressChange }, ref) => {
   const [addresses, setAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState("");
   useEffect(() => {
     const fetchAddresses = async () => {
       try {
         const response = await customerAddressApi.getCustomerAddresses();
-        setAddresses(response.data.content || []);
+        const fetchedAddresses = response.data.content || [];
+        setAddresses(fetchedAddresses);
+  
+        // 🔍 Tìm địa chỉ mặc định
+        const defaultAddress = fetchedAddresses.find((addr) => addr.default);
+        if (defaultAddress) {
+          setSelectedAddress(defaultAddress.id);
+          setValue("addressId", defaultAddress.id);
+  
+          // 🧠 Đặt các giá trị vào form
+          setValue("userName", defaultAddress.recipientName || "");
+          setValue("phoneNumber", defaultAddress.recipientPhone || "");
+          setValue("houseNumber", defaultAddress.address || "");
+          setValue("city", defaultAddress.province || "");
+          await handleProvinceChange(defaultAddress.province);
+          setValue("district", defaultAddress.district || "");
+          await handleDistrictChange(defaultAddress.district);
+          setValue("ward", defaultAddress.village || "");
+        
+          // Thông báo cho component cha về địa chỉ mặc định
+          if (onAddressChange) {
+            console.log("Gửi địa chỉ mặc định lên component cha:", defaultAddress);
+            onAddressChange(defaultAddress);
+          }
+        }
       } catch (error) {
         console.error("Failed to fetch addresses:", error);
       }
     };
+  
     fetchAddresses();
-  }, []);
+  }, []);  
   const {
     provinces,
     districts,
@@ -72,11 +97,30 @@ const UserInfoForm = forwardRef(({ onSubmit }, ref) => {
   });
 
   const handleChangeAddress = async (event) => {
-    const addressId = Number(event.target.value);
-    setSelectedAddress(addressId);
-    setValue("addressId", addressId);
-
-    const selectedAddr = addresses.find((addr) => addr.id === addressId);
+    const addressId = event.target.value;
+  
+    if (!addressId) {
+      // 👇 Nếu chọn "Thêm địa chỉ mới", clear form
+      setSelectedAddress("");
+      setValue("userName", "");
+      setValue("phoneNumber", "");
+      setValue("houseNumber", "");
+      setValue("city", "");
+      setValue("district", "");
+      setValue("ward", "");
+      
+      // Thông báo cho component cha rằng không có địa chỉ được chọn
+      if (onAddressChange) {
+        onAddressChange(null);
+      }
+      return;
+    }
+  
+    const id = Number(addressId);
+    setSelectedAddress(id);
+    setValue("addressId", id);
+  
+    const selectedAddr = addresses.find((addr) => addr.id === id);
     if (selectedAddr) {
       setValue("userName", selectedAddr.recipientName || "");
       setValue("phoneNumber", selectedAddr.recipientPhone || "");
@@ -84,15 +128,18 @@ const UserInfoForm = forwardRef(({ onSubmit }, ref) => {
       setValue("city", selectedAddr.province || "");
       setValue("district", selectedAddr.district || "");
       setValue("ward", selectedAddr.village || "");
-      console.log("addressId", selectedAddr.village || "");
-
-      // Cập nhật danh sách quận/huyện và phường/xã tương ứng
+  
       await handleProvinceChange(selectedAddr.province);
       await handleDistrictChange(selectedAddr.district);
       setValue("ward", selectedAddr.village || "");
-
+      
+      // Thông báo cho component cha về địa chỉ đã chọn
+      if (onAddressChange) {
+        onAddressChange(selectedAddr);
+      }
     }
   };
+  
 
 
 
@@ -119,7 +166,7 @@ const UserInfoForm = forwardRef(({ onSubmit }, ref) => {
       ref={ref}
       className="user-form"
       onSubmit={handleSubmit(onSubmitHandler)}
-    >
+    > 
       <FormControl fullWidth>
         <InputLabel id="address-label">Chọn địa chỉ</InputLabel>
         <Select
@@ -267,6 +314,7 @@ UserInfoForm.displayName = "UserInfoForm";
 UserInfoForm.propTypes = {
   addresses: PropTypes.array.isRequired,
   onSubmit: PropTypes.func.isRequired,
+  onAddressChange: PropTypes.func, // Thêm prop type mới
 };
 
 export default UserInfoForm;

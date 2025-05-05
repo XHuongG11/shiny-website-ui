@@ -21,7 +21,7 @@ import InputField from "../../../../../components/InputField";
 import styles from "./AddressModal.module.css"; // Import CSS cho modal
 import userApi from "../../../../../api/userApi";
 
-const AddressModal = ({ onClose = () => {}, action, address, onUpdate }) => {
+const AddressModal = ({ onClose = () => { }, action, address, onUpdate }) => {
   const {
     provinces,
     districts,

@@ -8,6 +8,7 @@ import ProductReviews from './components/ProductReviews/ProductReviews';
 import userApi from "../../api/userApi";
 import { useSelector } from "react-redux";
 import productApi from "../../api/productApi";
+import ScrollToTopButton from "../../components/ScrollToTopButton/ScrollToTopButton";
 
 const ProductDetail = () => {
   const location = useLocation();
@@ -98,6 +99,7 @@ const ProductDetail = () => {
       <ProductImages images={product.images} />
       <ProductReviews productId={product.id} />
       <SimilarProducts />
+      <ScrollToTopButton />
     </div>
   );
 };

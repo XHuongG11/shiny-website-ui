@@ -150,3 +150,19 @@ nav {
   background-color: #003f7f; /* Màu tối hơn khi nhấn */
   transform: scale(0.95); /* Thu nhỏ nhẹ khi nhấn */
 }
+
+.icons {
+  display: flex;
+  gap: 1px; /* Khoảng cách giữa các icon */
+}
+
+.icons svg {
+  font-size: 30px; /* Kích thước icon */
+  cursor: pointer; /* Thêm con trỏ chuột khi hover */
+  transition: transform 0.3s ease, color 0.3s ease; /* Hiệu ứng chuyển động và màu sắc */
+}
+
+.icons svg:hover {
+  transform: scale(1.2); /* Phóng to icon khi hover */
+  color: #56a6f1; /* Đổi màu khi hover (tùy chỉnh màu sắc bạn muốn) */
+}

@@ -21,6 +21,7 @@ import OrderDetail from "./features/MyOrder/OrderDetail/OrderDetails";
 import RecoverPassword from "./features/RecoverPassword";
 import OAuth2RedirectHandler from "./features/LoginSignin/OAuth2Redirect";
 import Register from "./features/LoginSignin/Register";
+import WishListPage from "./features/WishListPage/WishlistPage";
 import PriavcyAndTerm from "./components/PrivacyAndTerm";
 function App() {
   const location = useLocation();
@@ -31,14 +32,14 @@ function App() {
     <div className="App">
       {!shouldHideLayout && <Header />}
       <Routes>
-        <Route path="/checkouts/*" element={<MakeOrder />}></Route>
+        <Route path="/checkouts" element={<MakeOrder />}></Route>
         <Route path="/myorder/" element={<MyOrder />}></Route>
         <Route
           path="/myorder/orderdetail/:id"
           element={<OrderDetail />}
         ></Route>
         <Route path="/login" element={<LoginRegister />}></Route>
-        <Route path="/checkouts/thank-you" element={<CompleteOrder />}></Route>
+        <Route path="/checkouts/thank-you/:orderId" element={<CompleteOrder />}></Route>
         <Route path="/" element={<Home />}></Route>
         <Route path="/products" element={<AllProduct />}></Route>
         <Route path="/infocus" element={<InfoCustomer />}></Route>
@@ -51,6 +52,7 @@ function App() {
         <Route path="/thankyou-review" element={<ThankYou />} />
         <Route path="/thankyou-return" element={<ThankYouReturn />} />
         <Route path="/recover-password" element={<RecoverPassword />} />
+        <Route path="/wishlist" element={<WishListPage />}></Route>
         <Route path="/error/:statusCode" element={<HandleError />}></Route>
         <Route
           path="/auth/oauth2/redirect"

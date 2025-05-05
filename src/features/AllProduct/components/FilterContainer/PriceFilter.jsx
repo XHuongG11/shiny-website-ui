@@ -23,16 +23,18 @@ const PriceFilter = ({ minPrice, maxPrice, onPriceChange }) => {
         <FilterBox title="Mức giá">
             {priceRanges.map((range) => (
                 <li key={range.label} className={styles.pricename}>
+                <label className={styles.filterItem}>
                     <input
-                        type="checkbox"
-                        className={styles.checkboxSmall}
-                        checked={minPrice === range.min && maxPrice === range.max}
-                        onChange={() => handlePriceChange(range.min, range.max)}
+                    type="checkbox"
+                    className={styles.checkboxSmall}
+                    checked={minPrice === range.min && maxPrice === range.max}
+                    onChange={() => handlePriceChange(range.min, range.max)}
                     />
                     {range.label}
+                </label>
                 </li>
             ))}
-        </FilterBox>
+            </FilterBox>
     );
 };
 

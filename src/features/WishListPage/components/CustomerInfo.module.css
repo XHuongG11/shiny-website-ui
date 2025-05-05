@@ -1,0 +1,71 @@
+.userInfo {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    padding: 20px;
+    border-radius: 4px;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px;
+  }
+  
+  .headerLeft {
+    display: flex;
+    align-items: center;
+  }
+  .headerLeft h2 {
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+  }
+  .headerLeft svg {
+    margin-right: 15px;
+    font-size: 25px;
+  }
+  
+  .viewLink {
+    color: #000;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  
+  .viewLink:hover {
+    text-decoration: underline;
+  }
+  
+  .infoRow {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
+  
+  .infoItem {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    margin:15px;
+  }
+  
+  .infoItem .label {
+    font-weight: bold;
+    color: #666;
+    font-size: 186x;
+    margin-bottom: 5px;
+  }
+  
+  .infoItem .value {
+    color: #333;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  hr {
+    border: 0;
+    border-top: 1px solid #e0e0e0;
+    margin: 10px 0;
+  }
