@@ -25,24 +25,24 @@ const MaterialFilter = ({ selectedMaterial, onMaterialChange }) => {
     return (
         <FilterBox title="Chất liệu">
             {materials.map((material) => (
-                <li key={material.name}>
-                    <div className={styles.filterMaterial}>
-                        <input
-                            type="checkbox"
-                            className={styles.checkboxSmall}
-                            checked={selectedMaterial === material.name}
-                            onChange={() => handleMaterialChange(material.name)}
-                        />
-                        <img
-                            className={styles.productMaterial}
-                            src={material.img}
-                            alt={material.name}
-                        />
-                        <label className={styles.productMaterialname}>{material.name}</label>
-                    </div>
+                <li className={styles.li} key={material.name}>
+                <label className={styles.filterItem}>
+                    <input
+                    type="checkbox"
+                    className={styles.checkboxSmall}
+                    checked={selectedMaterial === material.name}
+                    onChange={() => handleMaterialChange(material.name)}
+                    />
+                    <img
+                    className={styles.productMaterial}
+                    src={material.img}
+                    alt={material.name}
+                    />
+                    <span className={styles.productMaterialname}>{material.name}</span>
+                </label>
                 </li>
             ))}
-        </FilterBox>
+            </FilterBox>
     );
 };
 

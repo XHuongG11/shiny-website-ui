@@ -9,6 +9,7 @@ import Breadcrumb from '../../components/Breadcrumb/breadcrum';
 import { useEffect, useState } from "react";
 import productApi from "../../api/productApi";
 import { useLocation, useNavigate } from "react-router-dom";
+import ScrollToTopButton from '../../components/ScrollToTopButton/ScrollToTopButton';
 
 const AllProduct = () => {
     const location = useLocation();
@@ -157,7 +158,7 @@ const AllProduct = () => {
             <Grid2 size={10}>
                 <Category onCategorySelect={handleCategorySelect} />
             </Grid2>
-            <Grid2 container size={9}>
+            <Grid2 container size={10}>
                 <Grid2 size={{ xs: 12, md: 3 }}>
                     <FilterContainer
                         selectedCategoryId={selectedCategoryId}
@@ -188,6 +189,7 @@ const AllProduct = () => {
             <Grid2 xs={11}>
                 <MoreProduct />
             </Grid2>
+            <ScrollToTopButton />
         </Grid2>
     );
 };
