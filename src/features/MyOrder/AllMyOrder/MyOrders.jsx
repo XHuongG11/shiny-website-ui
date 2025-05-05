@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from './MyOrder.module.css';
 import orderApi from '../../../api/orderApi';
 import { useNavigate } from "react-router-dom";
+import Breadcrumb from "../../../components/Breadcrumb/breadcrum";
 
 const MyOrders = () => {
   const [allOrders, setAllOrders] = useState([]);
@@ -62,7 +63,7 @@ const MyOrders = () => {
   
   return (
     <>
-      <p className={styles.breadcrumb}>Home / My Order</p>
+      <Breadcrumb currentPage="My Order" />
       <div className={styles.container}>
         <h2 className={styles.title}>ĐƠN HÀNG CỦA TÔI ({filteredOrders.length} ĐƠN HÀNG)</h2>
         <div className={styles.tabs}>

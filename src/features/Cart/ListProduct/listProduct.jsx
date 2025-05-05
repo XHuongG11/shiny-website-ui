@@ -157,18 +157,6 @@ const CartItemlist = () => {
                 return total + price * (item.quantity || 1);
             }, 0);
 
-
-    // Add a function to select/deselect all items
-    const toggleSelectAll = () => {
-        if (selectedItems.length === cartItems.length) {
-            // If all are selected, unselect all
-            setSelectedItems([]);
-        } else {
-            // Otherwise select all
-            setSelectedItems(cartItems.map(item => item.id));
-        }
-    };
-
     // Thêm log này ngay trước return để kiểm tra dữ liệu trước khi render
     console.log("CartItems trước khi render:", cartItems);
     console.log("Số lượng sản phẩm:", cartItems.length);

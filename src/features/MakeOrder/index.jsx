@@ -12,10 +12,12 @@ import orderApi from '../../api/orderApi';
 import voucherApi from '../../api/voucherApi';
 import customerAddressApi from '../../api/customerAddressApi';
 import { Autocomplete } from '@mui/material';
+import userApi from '../../api/userApi'; // Đảm bảo bạn đã tạo API này
 
 function MakeOrder() {
     const [checkoutItems, setCheckoutItems] = useState([]);
     const [addresses, setAddresses] = useState([]);
+    const [userData, setUserData] = useState(null);
     const [shouldRedirect, setShouldRedirect] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState('MOMO');
     const [momoQrUrl, setMomoQrUrl] = useState(null);
@@ -35,6 +37,18 @@ function MakeOrder() {
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [applyLimitFreeShip, setApplyLimitFreeShip] = useState(0);
     const [applyLimitPromotion, setApplyLimitPromotion] = useState(0);
+    useEffect(() => {
+        async function fetchUserData() {
+            try {
+                const res = await userApi.getInfo();
+                console.log("Thông tin người dùng:", res.data);
+                setUserData(res.data);
+            } catch (error) {
+                console.error("Lỗi khi lấy thông tin người dùng:", error);
+            }
+        }
+        fetchUserData();
+    }, []);
     const handleVoucherFocus = async () => {
         try {
             const res = await voucherApi.getValidVouchers({ data: { totalProductPrice: subtotal }, page: 1, size: 30 });
@@ -339,10 +353,21 @@ function MakeOrder() {
             <Grid2 xs={11} sm={5}>
                 <div className="payment-info">
                     <div className="user-header">
-                        <img src="https://icons.veryicon.com/png/o/miscellaneous/standard/avatar-15.png" alt="User Avatar" className="user-avatar" />
+                        <img 
+                            src="https://icons.veryicon.com/png/o/miscellaneous/standard/avatar-15.png" 
+                            alt="User Avatar" 
+                            className="user-avatar" 
+                        />
                         <div className="user-details">
-                            <p className="user-name">Xuan Huong (22110156@student.hcmute.edu.vn)</p>
-                            <Link href="#" className="logout">Đăng xuất</Link>
+                            {userData ? (
+                                <>
+                                    <p className="user-name">{userData.fullName} ({userData.email})</p>
+                                </>
+                            ) : (
+                                <>
+                                    <p className="user-name">Đang tải...</p>
+                                </>
+                            )}
                         </div>
                     </div>
                     <UserInfoForm
