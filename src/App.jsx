@@ -21,6 +21,7 @@ import OrderDetail from "./features/MyOrder/OrderDetail/OrderDetails";
 import RecoverPassword from "./features/RecoverPassword";
 import OAuth2RedirectHandler from "./features/LoginSignin/OAuth2Redirect";
 import Register from "./features/LoginSignin/Register";
+import WishListPage from "./features/WishListPage/WishlistPage";
 function App() {
   const location = useLocation();
   const hideLayoutRoutes = ["/recover-password"];
@@ -47,6 +48,7 @@ function App() {
         <Route path="/thankyou-review" element={<ThankYou />} />
         <Route path="/thankyou-return" element={<ThankYouReturn />} />
         <Route path="/recover-password" element={<RecoverPassword />} />
+        <Route path="/wishlist" element={<WishListPage />}></Route>
         <Route path="/error/:statusCode" element={<HandleError />}></Route>
         <Route
           path="/auth/oauth2/redirect"

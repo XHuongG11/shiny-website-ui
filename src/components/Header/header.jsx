@@ -109,6 +109,9 @@ export default function Header() {
       handleSearch();
     }
   };
+  const handleWishlistClick = () => {
+    navigate("/wishlist");
+  };
 
   return (
     <nav>
@@ -151,7 +154,7 @@ export default function Header() {
           </a>
         </div>
         <div className={styles.icons}>
-          <FavoriteBorderRoundedIcon className={styles.icon} />
+          <FavoriteBorderRoundedIcon onClick={handleWishlistClick}/>
           <PlaceOutlinedIcon className={styles.icon}/>
           <ReceiptLongOutlinedIcon className={styles.icon} onClick={handleOrder} />
           <NotificationsOutlinedIcon className={styles.icon}

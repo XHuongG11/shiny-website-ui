@@ -1,0 +1,15 @@
+.pageContainer {
+  max-width: 1450px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.content {
+  margin-top: 20px;
+}
+.breadcrumbWrapper {
+  margin-bottom: 16px;
+  text-align: left; /* Đảm bảo canh trái */
+  padding-left: 0;  /* Xóa padding trái nếu có */
+}
