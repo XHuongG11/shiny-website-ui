@@ -3,7 +3,8 @@ import styles from "./WishlistItems.module.css";
 import { useState } from "react";
 import ProductCard from "../../../components/ProductCard/ProductCard";
 import userApi from "../../../api/userApi";
-import Notification from "../../../components/Alert"; // Nhập component Notification
+import Notification from "../../../components/Alert";
+import PropTypes from "prop-types"; // Nhập PropTypes
 
 const WishlistItems = ({ wishlist, loading, error, updateWishlistState }) => {
   const [notification, setNotification] = useState({
@@ -17,11 +18,11 @@ const WishlistItems = ({ wishlist, loading, error, updateWishlistState }) => {
       if (action !== "remove") {
         throw new Error("Chỉ hỗ trợ xóa sản phẩm trong danh sách yêu thích");
       }
-      await userApi.removeWishList(product.id); // Gọi API để xóa sản phẩm
-      updateWishlistState(product.id); // Cập nhật state wishlist
+      await userApi.removeWishList(product.id);
+      updateWishlistState(product.id);
       setNotification({
         open: true,
-        message: "Đã xóa sản phẩm khỏi danh sách yêu thích", // Sửa thông điệp
+        message: "Đã xóa sản phẩm khỏi danh sách yêu thích",
         severity: "success",
       });
     } catch (error) {
@@ -74,6 +75,33 @@ const WishlistItems = ({ wishlist, loading, error, updateWishlistState }) => {
       )}
     </div>
   );
+};
+
+// Thêm PropTypes để xác thực props
+WishlistItems.propTypes = {
+  wishlist: PropTypes.arrayOf(
+    PropTypes.shape({
+      product: PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        title: PropTypes.string,
+        images: PropTypes.arrayOf(
+          PropTypes.shape({
+            url: PropTypes.string,
+          })
+        ),
+        productSizes: PropTypes.arrayOf(
+          PropTypes.shape({
+            discountRate: PropTypes.number,
+            price: PropTypes.number,
+            discountPrice: PropTypes.number,
+          })
+        ),
+      }).isRequired,
+    })
+  ).isRequired,
+  loading: PropTypes.bool.isRequired,
+  error: PropTypes.string,
+  updateWishlistState: PropTypes.func.isRequired,
 };
 
 export default WishlistItems;
