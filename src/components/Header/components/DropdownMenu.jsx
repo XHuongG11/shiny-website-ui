@@ -1,39 +1,59 @@
-import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
-import styles from './DropdownMenu.module.css';
+import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
+import styles from "./DropdownMenu.module.css";
+import { useEffect, useState } from "react";
+import categoryApi from "../../../api/categoryApi";
 
 export default function DropdownMenu() {
+  const [parentCategories, setParentCatgories] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const getParentCategories = async () => {
+    try {
+      const resp = await categoryApi.getAllCategories();
+      setCategories(resp.data);
+      const parentCategories = resp.data.filter((cat) => cat.parent === null);
+      console.log(resp.data);
+      setParentCatgories(parentCategories);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getParentCategories();
+  }, []);
 
   return (
     <div className={styles.dropdown}>
       <div className={styles.dropdownMenu}>
-        <a href="/products" style={{ fontWeight: "bold" }}>Products <ChevronRightRoundedIcon/></a>
-        <a href="#">Collections <ChevronRightRoundedIcon/></a>
-        <a href="#">Gift ideas <ChevronRightRoundedIcon/></a>
+        <a href="/products" style={{ fontWeight: "bold" }}>
+          Products <ChevronRightRoundedIcon />
+        </a>
+        <a href="#">
+          Collections <ChevronRightRoundedIcon />
+        </a>
       </div>
-      <div className={styles.dropdownColumn}>
-        <h4>Rings</h4>
-        <a href="#">All rings</a>
-        <a href="#">Heart & Promise Rings</a>
-        <a href="#">Ring Sets</a>
-        <a href="#">Best Seller Rings</a>
-      </div>
-      <div className={styles.dropdownColumn}>
-        <h4>Earrings</h4>
-        <a href="#">All earrings</a>
-        <a href="#">Drop earrings</a>
-      </div>
-      <div className={styles.dropdownColumn}>
-        <h4>Necklaces</h4>
-        <a href="#">Chain necklaces</a>
-        <a href="#">Pendant necklaces</a>
-        <a href="#">Initial necklaces</a>
-        <a href="#">Charm Pendants</a>
-      </div>
-      <div className={styles.dropdownColumn}>
-        <h4>Charms & Bracelets</h4>
-        <a href="#">Charm Bracelets</a>
-        <a href="#">Bangles</a>
-        <a href="#">Chain Bracelets</a>
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <div className={styles.subDropdownWrapper}>
+          {parentCategories.map((category) => {
+            // Tìm danh mục con
+            const childCategory = categories.filter(
+              (cat) => cat.parent?.id === category.id
+            );
+            console.log("childCategory", childCategory);
+
+            return (
+              <div key={category.id} className={styles.subDropdownColumn}>
+                <h4>{category.name}</h4>
+                {childCategory.length > 0
+                  ? childCategory.map((element) => (
+                      <a href="#" key={element.id}>
+                        {element.name}
+                      </a>
+                    ))
+                  : null}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

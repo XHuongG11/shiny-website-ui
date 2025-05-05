@@ -34,7 +34,13 @@ const AddressModal = ({ onClose = () => { }, action, address, onUpdate }) => {
 
   const schema = yup.object().shape({
     receiver: yup.string().required("Please enter value."),
-    phonenumber: yup.string().required("Please enter value."),
+    phonenumber: yup
+      .string()
+      .required("Please enter value.")
+      .matches(
+        /(84|0[2|3|5|7|8|9])+([0-9]{8})\b/,
+        "Số điện thoại không hợp lệ"
+      ),
     houseNumber: yup.string().required("Please enter value."),
     city: yup.string().required("Please select value."),
     district: yup.string().required("Please select value."),
@@ -88,14 +94,15 @@ const AddressModal = ({ onClose = () => { }, action, address, onUpdate }) => {
         .addAddress(request)
         .then((response) => {
           console.log("Them thanh cong:", response.data);
-          onUpdate(response.data);
+          onUpdate(response.data, false);
+          const newAddress = response.data;
           if (values.isDefault === true) {
-            console.log(response);
             userApi
-              .setDefaultAddress(response.data.id)
+              .setDefaultAddress(response.data?.id)
               .then(() => {
-                address.default = true;
-                onUpdate(address);
+                newAddress.default = true;
+                console.log("default address ", newAddress);
+                onUpdate(newAddress, false);
                 onClose();
               })
               .catch((error) => {
@@ -111,14 +118,14 @@ const AddressModal = ({ onClose = () => { }, action, address, onUpdate }) => {
         .updateAddress(address.id, request)
         .then((response) => {
           console.log("Sua thanh cong:", response.data);
-          onUpdate(response.data);
+          onUpdate(response.data, false);
+          const newAddress = response.data;
           if (values.isDefault === true) {
-            console.log(response);
             userApi
-              .setDefaultAddress(response.data.id)
+              .setDefaultAddress(response.data?.id)
               .then(() => {
-                address.default = true;
-                onUpdate(address);
+                newAddress.default = true;
+                onUpdate(newAddress, false);
                 onClose();
               })
               .catch((error) => {
@@ -129,7 +136,6 @@ const AddressModal = ({ onClose = () => { }, action, address, onUpdate }) => {
         })
         .catch((error) => console.error("Sua that bai:", error));
     }
-
   };
   return (
     <form
@@ -278,8 +284,7 @@ const AddressModal = ({ onClose = () => { }, action, address, onUpdate }) => {
                   <Checkbox
                     {...field}
                     checked={field.value}
-                    onChange={(event) => field.onChange(event.target.checked)} // Update the value on change
-                    disabled={field.value}
+                    onChange={(event) => field.onChange(event.target.checked)}
                   />
                 )}
               />

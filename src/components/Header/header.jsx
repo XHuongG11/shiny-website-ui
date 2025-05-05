@@ -20,6 +20,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import ContactPageIcon from "@mui/icons-material/ContactPage";
 import Notification from "../Alert";
+import { SERVER_URL } from "../../constants/app-config";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -78,6 +79,8 @@ export default function Header() {
     const notification = notifications[index];
     try {
       await notificationApi.toggleReadStatus(notification.id);
+
+      // Cập nhật trạng thái trong state
       setNotifications((prevNotifications) => {
         const updatedNotifications = [...prevNotifications];
         updatedNotifications[index].status = "READ";
@@ -117,6 +120,7 @@ export default function Header() {
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
+      // Chuyển hướng đến trang tìm kiếm với query
       navigate(`/products?query=${encodeURIComponent(searchQuery)}`);
     }
   };
@@ -181,8 +185,8 @@ export default function Header() {
           <a className={styles.link} href="#">
             Collections
           </a>
-          <a className={styles.link} href="#">
-            Gift ideas
+          <a className={styles.link} href={`${SERVER_URL}/privacy-and-term`}>
+            Privacy & Term
           </a>
           <a className={styles.link} href="#">
             Contact Us
