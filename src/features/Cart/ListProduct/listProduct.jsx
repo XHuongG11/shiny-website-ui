@@ -4,9 +4,9 @@ import { Grid2 } from "@mui/material";
 import Breadcrumb from "../../../components/Breadcrumb/breadcrum";
 import cartApi from "../../../api/cartApi"; // Import API for fetching products
 import { useNavigate } from 'react-router-dom';
-import orderApi from "../../../api/orderApi";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { FavoriteBorder, Delete, Edit } from '@mui/icons-material';
 
 
 const CartItemlist = () => {
@@ -15,7 +15,6 @@ const CartItemlist = () => {
     const [selectedItems, setSelectedItems] = useState([]);
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState("");
-    const [errorMessages, setErrorMessages] = useState({});
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -246,14 +245,12 @@ const CartItemlist = () => {
                                     <button onClick={() => increaseQuantity(item.id)}>+</button>
                                 </div>
                                 <div className={styles.icons}>
-                                    <img src="/imgCart/heart.png" alt="Heart" className={styles.icon} />
-                                    <img
-                                        src="/imgCart/trash.png"
-                                        alt="Delete"
-                                        className={styles.icon}
+                                    <FavoriteBorder className={styles.icon} />
+                                    <Delete 
+                                        className={styles.icon} 
                                         onClick={() => removeItem(item.id)}
                                     />
-                                    <img src="/imgCart/edit.png" alt="Edit" className={styles.icon} />
+                                    <Edit className={styles.icon} />
                                 </div>
                             </Grid2>
 

@@ -68,16 +68,20 @@
 }
 
 .checkbox {
-  /* margin-right: 20px;
-  margin-left: 20px; */
   width: 20px;
   height: 20px;
 }
 
-/* .itemDetails { */
-  /* margin-right: 120px; */
-/* } */
+.icon {
+  cursor: pointer;
+  margin: 0 5px;
+  color: #333; /* Màu mặc định */
+  transition: color 0.3s;
+}
 
+.icon:hover {
+  color: #f06292; /* Màu khi hover */
+}
 .itemDetails p {
   margin: 5px 0;
 }
