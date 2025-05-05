@@ -21,15 +21,55 @@ function MakeOrder() {
     const [momoQrUrl, setMomoQrUrl] = useState(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const [orderId, setOrderId] = useState(null);
-    const [deliveryMethod, setDeliveryMethod] = useState('standard');
+    const [deliveryMethod, setDeliveryMethod] = useState('STANDARD');
     const [voucherOptions, setVoucherOptions] = useState([]);
     const [promotionInput, setPromotionInput] = useState('');
     const [freeshipInput, setFreeshipInput] = useState('');
-    const [promotionDiscount, setPromotionDiscount] = useState(0); // %
-    const [freeShipDiscount, setFreeShipDiscount] = useState(0);   // %
-    const [finalTotal, setFinalTotal] = useState(0);
-    const [discount, setDiscount] = useState(0);                   // số tiền giảm
+    const [promotionDiscount, setPromotionDiscount] = useState(0);
+    const [freeShipDiscount, setFreeShipDiscount] = useState(0);
+    const [totalPrice, setFinalTotal] = useState(0);
+    const [discount, setDiscount] = useState(0);                   
+    const [resolvedAddress, setResolvedAddress] = useState(null);
+    const [shippingFee, setShippingFee] = useState(0); 
 
+
+    const fetchShippingFee = async (resolvedAddress, deliveryMethod) => {
+        console.log("Đang gọi API lấy phí ship...");
+        console.log("Địa chỉ:", resolvedAddress);
+        console.log("Phương thức vận chuyển:", deliveryMethod);
+    
+        try {
+            const res = await orderApi.getEstimateShippingFee(resolvedAddress, deliveryMethod);
+            console.log("Kết quả trả về từ API:", res.data);  // Log dữ liệu trả về từ API
+            setShippingFee(res.data?.fee || 0);
+        } catch (error) {
+            setShippingFee(0);
+            console.error("Lỗi khi lấy phí ship:", error);
+        } 
+    };
+    
+    useEffect(() => {
+        if (resolvedAddress && deliveryMethod) {
+          console.log("Calling fetchShippingFee with:", resolvedAddress, deliveryMethod);
+          fetchShippingFee(resolvedAddress, deliveryMethod);
+        }
+    }, [resolvedAddress, deliveryMethod]);
+      
+    
+    useEffect(() => {
+        const fetchResolvedAddress = async () => {
+          try {
+            const shippingAddress = await resolveShippingAddress(addresses);
+            setResolvedAddress(shippingAddress); // Gán vào state
+          } catch (error) {
+            console.error("❌ Lỗi khi resolve địa chỉ:", error);
+            setResolvedAddress(null);
+          }
+        };
+      
+        fetchResolvedAddress();
+    }, [addresses]);
+      
     const handleVoucherFocus = async () => {
         try {
             const res = await voucherApi.getValidVouchers(1, 30); 
@@ -39,39 +79,10 @@ function MakeOrder() {
             console.error("❌ Lỗi khi lấy voucher:", error);
         }
     };
-
-    const handlePromotionSelect = (event, newValue) => {
-        if (newValue && newValue.code) {
-            setPromotionInput(newValue.code);
-            setPromotionDiscount(newValue.discountRate || 0);
-        } else {
-            setPromotionInput('');
-            setPromotionDiscount(0);
-        }
-    };
-
-    const handleFreeshipSelect = (event, newValue) => {
-        if (newValue && newValue.code) {
-            setFreeshipInput(newValue.code);
-            setfreeShipDiscount(newValue.discountRate || 0);
-        } else {
-            setFreeshipInput('');
-            setfreeShipDiscount(0);
-        }
-    };
     const subtotal = checkoutItems.reduce((total, item) => {
         const price = item.productSize?.price || item.product?.price || 0;
         return total + price * (item.quantity || 1);
     }, 0);
-
-    const calculateShippingFee = (method) => {
-        switch (method) {
-            case 'express': return 40000;
-            case 'standard':
-            default: return 15000;
-        }
-    };
-    const rawShippingFee = calculateShippingFee(deliveryMethod);
     const applyVoucher = async () => {
         try {
             const voucherCodes = [promotionInput, freeshipInput].filter(Boolean);
@@ -96,8 +107,8 @@ function MakeOrder() {
                 console.log("✅ Voucher hợp lệ");
     
                 const discountedSubtotal = subtotal * (1 - promotionDiscount / 100);
-                const discountedShippingFee = rawShippingFee * (1 - freeShipDiscount / 100);
-                const calculatedDiscount = subtotal * promotionDiscount / 100 + rawShippingFee * freeShipDiscount / 100;
+                const discountedShippingFee = shippingFee * (1 - freeShipDiscount / 100);
+                const calculatedDiscount = subtotal * promotionDiscount / 100 + shippingFee * freeShipDiscount / 100;
                 const total = discountedSubtotal + discountedShippingFee;
     
                 setDiscount(calculatedDiscount);
@@ -107,7 +118,7 @@ function MakeOrder() {
                 setPromotionDiscount(0);
                 setFreeShipDiscount(0);
                 setDiscount(0);
-                setFinalTotal(subtotal + rawShippingFee);
+                setFinalTotal(subtotal + shippingFee);
                 alert('Voucher không hợp lệ hoặc đã hết hạn.');
             }
         } catch (error) {
@@ -115,7 +126,7 @@ function MakeOrder() {
             setPromotionDiscount(0);
             setFreeShipDiscount(0);
             setDiscount(0);
-            setFinalTotal(subtotal + rawShippingFee);
+            setFinalTotal(subtotal + shippingFee);
             alert('Voucher không hợp lệ hoặc đã hết hạn.');
         }
     };
@@ -139,15 +150,19 @@ function MakeOrder() {
 
     useEffect(() => {
         async function fetchAddresses() {
+            console.log('Fetching addresses...');
             try {
                 const res = await customerAddressApi.getCustomerAddresses();
-                setAddresses(res.data.content || []);
+                console.log('Fetched addresses:', res.data.content); // Log giá trị địa chỉ lấy từ API
+                setAddresses(res.content || []);
             } catch (e) {
+                console.error('Error fetching addresses:', e); // Log lỗi nếu có
                 setAddresses([]);
             }
         }
         fetchAddresses();
     }, []);
+    
 
     const handlePaymentMethodChange = (method) => {
         setPaymentMethod(method);
@@ -167,11 +182,20 @@ function MakeOrder() {
     }
 
     async function resolveShippingAddress(value) {
+        console.log('Resolving shipping address with value:', value); // Log giá trị input vào
+
         if (value.addressId) {
+            console.log('AddressId exists, trying to find it in addresses list...');
             const address = addresses.find(addr => String(addr.id) === String(value.addressId));
+            
+            console.log('Resolved address from addresses list:', address); // Log giá trị địa chỉ tìm thấy
+
+            setResolvedAddress(address);
             if (address) return address;
+            console.error('Selected address does not exist');
             throw new Error('Địa chỉ đã chọn không tồn tại');
         }
+
         const addressData = {
             recipientName: value.userName,
             recipientPhone: value.phoneNumber,
@@ -180,13 +204,23 @@ function MakeOrder() {
             district: value.district,
             province: value.city,
         };
-        const res = await customerAddressApi.addAddress(addressData);
-        let newAddress = res?.data?.data || res?.data;
-        if (Array.isArray(newAddress)) newAddress = newAddress[0];
-        if (newAddress?.content) newAddress = newAddress.content;
-        if (!newAddress?.id) throw new Error('Không nhận được ID địa chỉ từ server');
-        return newAddress;
+
+        console.log('Address data to be added:', addressData); // Log dữ liệu địa chỉ mới
+
+        try {
+            const res = await customerAddressApi.addAddress(addressData);
+            console.log('New address added:', res.data); // Log kết quả trả về khi thêm địa chỉ
+            let newAddress = res?.data?.data || res?.data;
+            if (Array.isArray(newAddress)) newAddress = newAddress[0];
+            if (newAddress?.content) newAddress = newAddress.content;
+            if (!newAddress?.id) throw new Error('Không nhận được ID địa chỉ từ server');
+            return newAddress;
+        } catch (error) {
+            console.error('Error adding new address:', error);
+            throw error; // Log lỗi nếu có
+        }
     }
+
 
     async function handleFormSubmit(value) {
         setIsProcessing(true);
@@ -198,8 +232,6 @@ function MakeOrder() {
                 setIsProcessing(false);
                 return;
             }
-
-            console.log("🏠 Đang xử lý địa chỉ giao hàng...");
             const shippingAddress = await resolveShippingAddress(value);
             console.log("✅ Địa chỉ giao hàng:", shippingAddress);
 
@@ -210,9 +242,9 @@ function MakeOrder() {
                 cartItems: prepareCartItems(checkoutItems),
                 totalProductPrice: subtotal,
                 shippingFee,
-                totalPrice: total,
+                totalPrice,
                 voucherCodes: [promotionInput, freeshipInput].filter(Boolean),
-                freeShipDiscount: 0,
+                freeShipDiscount,
                 promotionDiscount: discount,
                 note: value.note || "",
             };
@@ -292,7 +324,7 @@ function MakeOrder() {
                             <Link href="#" className="logout">Đăng xuất</Link>
                         </div>
                     </div>
-                    <UserInfoForm addresses={addresses} onSubmit={handleFormSubmit} ref={formRef} />
+                    <UserInfoForm addresses={addresses} onSubmit={handleFormSubmit} ref={formRef}/>
                     <DeliveryMethod onChange={(method) => setDeliveryMethod(method)} />
                     <PaymentMethod onChange={handlePaymentMethodChange} />
                     {momoQrUrl && (
@@ -439,12 +471,12 @@ function MakeOrder() {
                         </div>
                         <div className="delivery-cost">
                             <span className="text">Phí vận chuyển</span>
-                            <span className="value">{rawShippingFee.toLocaleString()}đ</span>
+                            <span className="value">{shippingFee.toLocaleString()}đ</span>
                         </div>
                         <div className="line"></div>
                         <div className="overall">
                             <span className="text total">Tổng cộng</span>
-                            <span className="value total">{finalTotal.toLocaleString()}đ</span>
+                            <span className="value total">{totalPrice.toLocaleString()}đ</span>
                         </div>
                     </div>
                 </div>

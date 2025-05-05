@@ -23,13 +23,32 @@ const UserInfoForm = forwardRef(({ onSubmit }, ref) => {
     const fetchAddresses = async () => {
       try {
         const response = await customerAddressApi.getCustomerAddresses();
-        setAddresses(response.data.content || []);
+        const fetchedAddresses = response.data.content || [];
+        setAddresses(fetchedAddresses);
+  
+        // 🔍 Tìm địa chỉ mặc định
+        const defaultAddress = fetchedAddresses.find((addr) => addr.default);
+        if (defaultAddress) {
+          setSelectedAddress(defaultAddress.id);
+          setValue("addressId", defaultAddress.id);
+  
+          // 🧠 Đặt các giá trị vào form
+          setValue("userName", defaultAddress.recipientName || "");
+          setValue("phoneNumber", defaultAddress.recipientPhone || "");
+          setValue("houseNumber", defaultAddress.address || "");
+          setValue("city", defaultAddress.province || "");
+          await handleProvinceChange(defaultAddress.province);
+          setValue("district", defaultAddress.district || "");
+          await handleDistrictChange(defaultAddress.district);
+          setValue("ward", defaultAddress.village || "");
+        }
       } catch (error) {
         console.error("Failed to fetch addresses:", error);
       }
     };
+  
     fetchAddresses();
-  }, []);
+  }, []);  
   const {
     provinces,
     districts,
@@ -72,11 +91,25 @@ const UserInfoForm = forwardRef(({ onSubmit }, ref) => {
   });
 
   const handleChangeAddress = async (event) => {
-    const addressId = Number(event.target.value);
-    setSelectedAddress(addressId);
-    setValue("addressId", addressId);
-
-    const selectedAddr = addresses.find((addr) => addr.id === addressId);
+    const addressId = event.target.value;
+  
+    if (!addressId) {
+      // 👇 Nếu chọn "Thêm địa chỉ mới", clear form
+      setSelectedAddress("");
+      setValue("userName", "");
+      setValue("phoneNumber", "");
+      setValue("houseNumber", "");
+      setValue("city", "");
+      setValue("district", "");
+      setValue("ward", "");
+      return;
+    }
+  
+    const id = Number(addressId);
+    setSelectedAddress(id);
+    setValue("addressId", id);
+  
+    const selectedAddr = addresses.find((addr) => addr.id === id);
     if (selectedAddr) {
       setValue("userName", selectedAddr.recipientName || "");
       setValue("phoneNumber", selectedAddr.recipientPhone || "");
@@ -84,15 +117,13 @@ const UserInfoForm = forwardRef(({ onSubmit }, ref) => {
       setValue("city", selectedAddr.province || "");
       setValue("district", selectedAddr.district || "");
       setValue("ward", selectedAddr.village || "");
-      console.log("addressId", selectedAddr.village || "");
-
-      // Cập nhật danh sách quận/huyện và phường/xã tương ứng
+  
       await handleProvinceChange(selectedAddr.province);
       await handleDistrictChange(selectedAddr.district);
       setValue("ward", selectedAddr.village || "");
-
     }
   };
+  
 
 
 

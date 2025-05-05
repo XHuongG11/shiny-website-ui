@@ -17,18 +17,15 @@ const orderApi = {
     });
   },
 
-  getEstimateShippingFee(address, method) {
-    // address: { district, province }
-    return axiosClient.get(`/orders/shipping-fee`, {
-      params: { method },
-      data: address // tuỳ backend, nếu không hỗ trợ GET with body, đổi sang POST
-    });
-  },
-
   placeOrder(orderRequest) {
     return axiosClient.post('/orders/place', orderRequest);
   },
-
+  getEstimateShippingFee(address, method) {
+    return axiosClient.post('/orders/shipping-fee', address, {
+      params: { method }
+    });
+  },
+  
   // ✅ API cập nhật trạng thái đơn hàng
   updateOrderStatus(id, status) {
     return axiosClient.put(`/orders/${id}/status`, null, {
