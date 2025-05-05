@@ -19,6 +19,7 @@ import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import ContactPageIcon from "@mui/icons-material/ContactPage";
+import Notification from "../Alert";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -29,92 +30,126 @@ export default function Header() {
   const [notificationAnchor, setNotificationAnchor] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [notification, setNotification] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleOrder = () => {
     navigate("/myorder");
   };
+
   const handleNotificationClick = async (event) => {
     if (!userInfo || !userInfo.id) {
-      alert("Bạn cần đăng nhập để có thể nhận thông báo!");
+      setNotification({
+        open: true,
+        message: "Bạn cần đăng nhập để có thể nhận thông báo!",
+        severity: "warning",
+      });
       return;
     }
     setNotificationAnchor(event.currentTarget);
     try {
       const response = await notificationApi.getAllNotifications();
-      const notificationsData = response?.data?.content || []; // Kiểm tra an toàn
-      setNotifications(notificationsData); // Gán danh sách thông báo vào state
+      const notificationsData = response?.data?.content || [];
+      setNotifications(notificationsData);
     } catch (error) {
       console.error("Lỗi khi lấy danh sách thông báo:", error);
     }
   };
+
   const handleNotificationClose = () => {
-    setNotificationAnchor(null); // Đóng popup
+    setNotificationAnchor(null);
   };
+
   const handleToggleReadStatus = async (index) => {
     const notification = notifications[index];
     try {
-      // Gọi API để cập nhật trạng thái
       await notificationApi.toggleReadStatus(notification.id);
-  
-      // Cập nhật trạng thái trong state
       setNotifications((prevNotifications) => {
         const updatedNotifications = [...prevNotifications];
-        updatedNotifications[index].status = "READ"; // Đặt trạng thái thành "Đã xem"
+        updatedNotifications[index].status = "READ";
         return updatedNotifications;
       });
     } catch (error) {
       console.error("Lỗi khi thay đổi trạng thái thông báo:", error);
     }
   };
+
   const isNotificationOpen = Boolean(notificationAnchor);
-  const notificationId = isNotificationOpen
-    ? "notification-popover"
-    : undefined;
+  const notificationId = isNotificationOpen ? "notification-popover" : undefined;
+
   const handleGoToCart = () => {
     navigate("/cart");
   };
+
   const handleLogout = () => {
     dispatch(logout());
     navigate("/");
     setAnchorEl(null);
   };
+
   const handleLogin = () => {
     navigate("/login");
     setAnchorEl(null);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const handleProfileClick = () => {
     navigate("/infocus");
     setAnchorEl(null);
   };
+
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      // Chuyển hướng đến trang tìm kiếm với query
-
       navigate(`/products?query=${encodeURIComponent(searchQuery)}`);
     }
   };
+
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       handleSearch();
     }
   };
+
   const handleWishlistClick = () => {
+    if (!userInfo || Object.keys(userInfo).length === 0) {
+      setNotification({
+        open: true,
+        message: "Bạn cần đăng nhập để xem danh sách yêu thích!",
+        severity: "warning",
+      });
+      return;
+    }
     navigate("/wishlist");
   };
 
   return (
     <nav>
+      {notification.open && (
+        <Notification
+          severity={notification.severity}
+          message={notification.message}
+          open={notification.open}
+          setOpen={() => setNotification({ ...notification, open: false })}
+          variant="filled"
+        />
+      )}
       <div className={styles.on}>
         <div className={styles.logo}>
           <a href="/">
@@ -125,10 +160,10 @@ export default function Header() {
           <input
             type="text"
             placeholder="Search products..."
-            className={styles.searchInput} // Thêm class để style
+            className={styles.searchInput}
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)} // Cập nhật state khi nhập
-            onKeyPress={handleKeyPress} // Xử lý khi nhấn Enter
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyPress={handleKeyPress}
           />
           <SearchRoundedIcon fontSize="large" onClick={handleSearch} />
           <MenuOpenRoundedIcon fontSize="large" />
@@ -141,7 +176,7 @@ export default function Header() {
             <a className={styles.link} href="#">
               Products
             </a>
-            {isOpen && <DropdownMenu />} {/* Hiển thị menu khi hover */}
+            {isOpen && <DropdownMenu />}
           </div>
           <a className={styles.link} href="#">
             Collections
@@ -154,20 +189,14 @@ export default function Header() {
           </a>
         </div>
         <div className={styles.icons}>
-          <FavoriteBorderRoundedIcon onClick={handleWishlistClick}/>
-          <PlaceOutlinedIcon className={styles.icon}/>
+          <FavoriteBorderRoundedIcon onClick={handleWishlistClick} />
+          <PlaceOutlinedIcon className={styles.icon} />
           <ReceiptLongOutlinedIcon className={styles.icon} onClick={handleOrder} />
-          <NotificationsOutlinedIcon className={styles.icon}
+          <NotificationsOutlinedIcon
+            className={styles.icon}
             aria-describedby={notificationId}
-            onClick={(event) => {
-              if (!userInfo || Object.keys(userInfo).length === 0) {
-                alert("Bạn cần đăng nhập để có thể nhận thông báo!"); // Hiển thị thông báo yêu cầu đăng nhập
-                return;
-              }
-              handleNotificationClick(event); // Gọi hàm mở popup nếu đã đăng nhập
-            }}
+            onClick={handleNotificationClick}
           />
-
           <Popover
             id={notificationId}
             open={isNotificationOpen}
@@ -250,7 +279,7 @@ export default function Header() {
                     <LoginIcon sx={{ marginRight: "5px" }} />
                     Đăng nhập
                   </MenuItem>,
-                  <MenuItem key="login" onClick={handleLogin}>
+                  <MenuItem key="register" onClick={handleLogin}>
                     <AppRegistrationIcon sx={{ marginRight: "5px" }} />
                     Đăng ký
                   </MenuItem>,
