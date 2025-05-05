@@ -142,8 +142,8 @@ const MyOrders = () => {
           );
         })}
       </div>
-      <div className={styles.backToShop}>
-        <button onClick={() => navigate('/')}>Tiếp Tục Mua Hàng</button>
+      <div className={styles.backToShop} onClick={() => navigate('/')}>
+          &lt; Tiếp Tục Mua Hàng
       </div>
     </>
   );

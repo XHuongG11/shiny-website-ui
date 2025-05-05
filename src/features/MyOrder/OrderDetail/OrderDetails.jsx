@@ -78,7 +78,7 @@ const OrderDetail = () => {
   return (
     <div className={styles.orderDetailPage}>
       <div className={styles.breadcrumb}>
-        <Link to="/">Home</Link> > <Link to="/myorder/">My Order</Link>
+      <Link to="/">Home</Link> > <Link to="/myorder/">My Order</Link>
       </div>
       <div className={styles.orderDetail}>
         <h2 className={styles.title}>CHI TIẾT ĐƠN HÀNG</h2>
