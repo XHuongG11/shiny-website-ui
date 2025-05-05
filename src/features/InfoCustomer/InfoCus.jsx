@@ -12,6 +12,7 @@ import SubscribedBanner from "./components/Subscribed/Subscribed";
 import ModalChangePassword from "./components/ChangePassword";
 import { logout } from "../LoginSignin/store/authSlice";
 import { useNavigate } from "react-router-dom";
+import MemberShipRank from "./components/CustomerInfo/MemberShipRank";
 
 const InfoCustomer = () => {
   const infocus = useSelector((state) => state.user.current);
@@ -134,8 +135,18 @@ const InfoCustomer = () => {
         spacing={3}
         sx={{ justifyContent: "center" }}
       >
-        <Grid2 size={{ md: 5, xs: 11 }}>
-          <CustomerInfo infoCus={infocus} />
+        <Grid2
+          container
+          size={{ md: 5, xs: 11 }}
+          direction="column"
+          spacing={3}
+        >
+          <Grid2 size={12}>
+            <CustomerInfo infoCus={infocus} />
+          </Grid2>
+          <Grid2 size={12}>
+            <MemberShipRank infoCus={infocus} />
+          </Grid2>
         </Grid2>
         <Grid2
           container
