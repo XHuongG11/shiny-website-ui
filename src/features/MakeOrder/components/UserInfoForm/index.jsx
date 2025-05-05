@@ -16,7 +16,7 @@ import useAddress from "../../../../utils/hooks/address";
 import customerAddressApi from "../../../../api/customerAddressApi"; // Đảm bảo đúng đường dẫn API
 
 
-const UserInfoForm = forwardRef(({ onSubmit }, ref) => {
+const UserInfoForm = forwardRef(({ onSubmit, onAddressChange }, ref) => {
   const [addresses, setAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState("");
   useEffect(() => {
@@ -41,6 +41,12 @@ const UserInfoForm = forwardRef(({ onSubmit }, ref) => {
           setValue("district", defaultAddress.district || "");
           await handleDistrictChange(defaultAddress.district);
           setValue("ward", defaultAddress.village || "");
+        
+          // Thông báo cho component cha về địa chỉ mặc định
+          if (onAddressChange) {
+            console.log("Gửi địa chỉ mặc định lên component cha:", defaultAddress);
+            onAddressChange(defaultAddress);
+          }
         }
       } catch (error) {
         console.error("Failed to fetch addresses:", error);
@@ -102,6 +108,11 @@ const UserInfoForm = forwardRef(({ onSubmit }, ref) => {
       setValue("city", "");
       setValue("district", "");
       setValue("ward", "");
+      
+      // Thông báo cho component cha rằng không có địa chỉ được chọn
+      if (onAddressChange) {
+        onAddressChange(null);
+      }
       return;
     }
   
@@ -121,6 +132,11 @@ const UserInfoForm = forwardRef(({ onSubmit }, ref) => {
       await handleProvinceChange(selectedAddr.province);
       await handleDistrictChange(selectedAddr.district);
       setValue("ward", selectedAddr.village || "");
+      
+      // Thông báo cho component cha về địa chỉ đã chọn
+      if (onAddressChange) {
+        onAddressChange(selectedAddr);
+      }
     }
   };
   
@@ -150,7 +166,7 @@ const UserInfoForm = forwardRef(({ onSubmit }, ref) => {
       ref={ref}
       className="user-form"
       onSubmit={handleSubmit(onSubmitHandler)}
-    >
+    > 
       <FormControl fullWidth>
         <InputLabel id="address-label">Chọn địa chỉ</InputLabel>
         <Select
@@ -298,6 +314,7 @@ UserInfoForm.displayName = "UserInfoForm";
 UserInfoForm.propTypes = {
   addresses: PropTypes.array.isRequired,
   onSubmit: PropTypes.func.isRequired,
+  onAddressChange: PropTypes.func, // Thêm prop type mới
 };
 
 export default UserInfoForm;

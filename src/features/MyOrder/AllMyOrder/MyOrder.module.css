@@ -86,12 +86,15 @@ p {
 
 .itemDetails p:first-child {
   font-size: 1.1rem;
-  font-weight: 600;
+  font-weight: bold;
+  text-shadow: none;
 }
 
 .itemDetails p:last-child {
   font-size: 1rem;
   color: #555;
+  text-shadow: none;
+  font-weight: bold;
 }
 
 .price {

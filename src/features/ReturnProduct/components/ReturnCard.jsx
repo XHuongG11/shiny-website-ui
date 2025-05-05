@@ -14,16 +14,15 @@ const ReturnCard = ({ product, quantity, price, discountPrice, onReturnChange })
 
   // Chỉ gọi onReturnChange khi dữ liệu thực sự thay đổi
   useEffect(() => {
-    const isFormComplete = returnQuantity > 0 && reason && reasonDescription && bank && images.length > 0;
+    const isFormComplete = returnQuantity > 0 && reason && reasonDescription && images.length > 0;
     onReturnChange(product.id, {
       quantity: returnQuantity,
       reason,
       reasonDescription,
-      bank,
       images,
       isFormComplete,
     });
-  }, [returnQuantity, reason, reasonDescription, bank, images.length, product.id, onReturnChange]); // Dùng images.length thay vì images
+  }, [returnQuantity, reason, reasonDescription,  images.length, product.id, onReturnChange]); // Dùng images.length thay vì images
 
   const handleQuantityChange = (e) => {
     const qty = parseInt(e.target.value, 10) || 0;
@@ -139,17 +138,7 @@ const ReturnCard = ({ product, quantity, price, discountPrice, onReturnChange })
                 />
               </div>
             </div>
-          </div>
-          <div className={styles.reasonHeader}>
-            <p className={styles.titleReason}>Thông tin tài khoản nhận hoàn trả<span className={styles.batbuoc}> *</span>:</p>
-          </div>
-          <textarea
-            className={styles.bankText}
-            placeholder="Hãy nhập thông tin tài khoản nhận hoàn trả"
-            value={bank}
-            onChange={handleBankChange}
-            rows={1}
-          />
+          </div>        
           <div className={styles.reasonHeader}>
             <p className={styles.titleReason}>Mô tả lý do<span className={styles.batbuoc}> *</span>:</p>
             <p className={styles.charCount}>

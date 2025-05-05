@@ -2,7 +2,19 @@ import axiosClient from "./axiosClient";
 
 const orderApi = {
   getOrder(id) {
-    return axiosClient.get(`/orders/${id}`);
+    return new Promise((resolve, reject) => {
+      axiosClient.get(`/orders/${id}`)
+        .then(response => {
+          if (response && response.code === "1000") {
+            window.location.href = "/error/404";
+            return;
+          }
+          resolve(response);
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
   },
 
   getMyOrders(page = 1, size = 30) {

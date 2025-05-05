@@ -13,7 +13,8 @@ const ProductCard = ({ product, isInWishlist, updateWishlist }) => {
     const isLoggedIn = !!user?.email;
     const [notification, setNotification] = useState({ open: false, message: "", severity: "success" });
 
-    const handleClick = () => navigate(`/product/${product.id}`, { state: { product, isInWishlist } });
+    const handleClick = () => navigate(`/product/${product.id}`, { state: { productId: product.id, isInWishlist } });
+
 
     const handleToggleWishlist = async (e) => {
         e.stopPropagation();

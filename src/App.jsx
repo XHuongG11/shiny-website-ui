@@ -30,11 +30,11 @@ function App() {
     <div className="App">
       {!shouldHideLayout && <Header />}
       <Routes>
-        <Route path="/checkouts/*" element={<MakeOrder />}></Route>
+        <Route path="/checkouts" element={<MakeOrder />}></Route>
         <Route path="/myorder/" element={<MyOrder />}></Route>
-        <Route path="/myorder/orderdetail" element={<OrderDetail />}></Route>
+        <Route path="/myorder/orderdetail/:id" element={<OrderDetail />}></Route>
         <Route path="/login" element={<LoginRegister />}></Route>
-        <Route path="/checkouts/thank-you" element={<CompleteOrder />}></Route>
+        <Route path="/checkouts/thank-you/:orderId" element={<CompleteOrder />}></Route>
         <Route path="/" element={<Home />}></Route>
         <Route path="/products" element={<AllProduct />}></Route>
         <Route path="/infocus" element={<InfoCustomer />}></Route>

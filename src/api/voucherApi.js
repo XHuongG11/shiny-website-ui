@@ -14,9 +14,9 @@ const voucherApi = {
   },
 
   // Lấy các voucher hợp lệ
-  getValidVouchers(page = 1, size = 30) {
-    const url = `/vouchers/valid?page=${page}&size=${size}`;
-    return axiosClient.get(url);
+  getValidVouchers({data, page, size}) {
+    const url = `/vouchers/valid-for-order`;
+    return axiosClient.post(url, data, {params: {page, size},});
   },  
 
   // Lấy voucher theo loại

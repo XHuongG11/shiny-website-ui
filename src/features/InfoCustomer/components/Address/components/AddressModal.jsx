@@ -21,7 +21,7 @@ import InputField from "../../../../../components/InputField";
 import styles from "./AddressModal.module.css"; // Import CSS cho modal
 import userApi from "../../../../../api/userApi";
 
-const AddressModal = ({ onClose = () => {}, action, address, onUpdate }) => {
+const AddressModal = ({ onClose = () => { }, action, address, onUpdate }) => {
   const {
     provinces,
     districts,
@@ -89,6 +89,19 @@ const AddressModal = ({ onClose = () => {}, action, address, onUpdate }) => {
         .then((response) => {
           console.log("Them thanh cong:", response.data);
           onUpdate(response.data);
+          if (values.isDefault === true) {
+            console.log(response);
+            userApi
+              .setDefaultAddress(response.data.id)
+              .then(() => {
+                address.default = true;
+                onUpdate(address);
+                onClose();
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          }
           onClose();
         })
         .catch((error) => console.error("Them that bai:", error));
@@ -99,23 +112,24 @@ const AddressModal = ({ onClose = () => {}, action, address, onUpdate }) => {
         .then((response) => {
           console.log("Sua thanh cong:", response.data);
           onUpdate(response.data);
+          if (values.isDefault === true) {
+            console.log(response);
+            userApi
+              .setDefaultAddress(response.data.id)
+              .then(() => {
+                address.default = true;
+                onUpdate(address);
+                onClose();
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          }
           onClose();
         })
         .catch((error) => console.error("Sua that bai:", error));
     }
-    if (values.isDefault === true) {
-      console.log(values);
-      userApi
-        .setDefaultAddress(address.id)
-        .then(() => {
-          address.default = true;
-          onUpdate(address);
-          onClose();
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+
   };
   return (
     <form
