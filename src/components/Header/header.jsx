@@ -92,7 +92,9 @@ export default function Header() {
   };
 
   const isNotificationOpen = Boolean(notificationAnchor);
-  const notificationId = isNotificationOpen ? "notification-popover" : undefined;
+  const notificationId = isNotificationOpen
+    ? "notification-popover"
+    : undefined;
 
   const handleGoToCart = () => {
     navigate("/cart");
@@ -106,6 +108,10 @@ export default function Header() {
 
   const handleLogin = () => {
     navigate("/login");
+    setAnchorEl(null);
+  };
+  const handleSignIn = () => {
+    navigate("/register");
     setAnchorEl(null);
   };
 
@@ -157,7 +163,12 @@ export default function Header() {
       <div className={styles.on}>
         <div className={styles.logo}>
           <a href="/">
-            <img src="../image/logo/logo.jpg" height="90" width="150" alt="Logo"></img>
+            <img
+              src="../image/logo/logo.jpg"
+              height="90"
+              width="150"
+              alt="Logo"
+            ></img>
           </a>
         </div>
         <div className={styles.navIcons}>
@@ -195,7 +206,10 @@ export default function Header() {
         <div className={styles.icons}>
           <FavoriteBorderRoundedIcon onClick={handleWishlistClick} />
           <PlaceOutlinedIcon className={styles.icon} />
-          <ReceiptLongOutlinedIcon className={styles.icon} onClick={handleOrder} />
+          <ReceiptLongOutlinedIcon
+            className={styles.icon}
+            onClick={handleOrder}
+          />
           <NotificationsOutlinedIcon
             className={styles.icon}
             aria-describedby={notificationId}
@@ -283,7 +297,7 @@ export default function Header() {
                     <LoginIcon sx={{ marginRight: "5px" }} />
                     Đăng nhập
                   </MenuItem>,
-                  <MenuItem key="register" onClick={handleLogin}>
+                  <MenuItem key="register" onClick={handleSignIn}>
                     <AppRegistrationIcon sx={{ marginRight: "5px" }} />
                     Đăng ký
                   </MenuItem>,

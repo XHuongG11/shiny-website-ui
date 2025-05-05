@@ -96,8 +96,18 @@ function ModalResetPassword(props) {
                 const role = "CUSTOMER";
 
                 if (!code) fieldErrors.code = "Vui lòng nhập mã xác nhận.";
-                if (!newPassword)
+                if (!newPassword) {
                   fieldErrors.newPassword = "Vui lòng nhập mật khẩu mới.";
+                } else if (newPassword.length < 8) {
+                  fieldErrors.newPassword = "Mật khẩu phải có ít nhất 8 ký tự";
+                } else if (
+                  !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$#!%*?&])[A-Za-z\d@$#!%*?&]/.test(
+                    newPassword
+                  )
+                ) {
+                  fieldErrors.newPassword =
+                    "Mật khẩu phải có chữ hoa, chữ thường, số, ký tự đặc biệt và dài ít nhất 8 ký tự.";
+                }
                 if (!confirmPassword)
                   fieldErrors.confirmPassword = "Vui lòng xác nhận mật khẩu.";
                 if (

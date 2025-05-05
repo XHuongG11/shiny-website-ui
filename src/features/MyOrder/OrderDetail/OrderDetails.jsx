@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import styles from './OrderDetail.module.css';
-import orderApi from '../../../api/orderApi';
+import styles from "./OrderDetail.module.css";
+import orderApi from "../../../api/orderApi";
 
 const OrderDetail = () => {
   const { id } = useParams(); // Changed from orderId to id to match route :id
@@ -69,7 +69,9 @@ const OrderDetail = () => {
     return (
       <div className={styles.orderDetailPage}>
         <div>{error || "Không tìm thấy đơn hàng"}</div>
-        <Link to="/myorder/" className={styles.backLink}>Quay lại danh sách đơn hàng</Link>
+        <Link to="/myorder/" className={styles.backLink}>
+          Quay lại danh sách đơn hàng
+        </Link>
       </div>
     );
   }
@@ -89,10 +91,12 @@ const OrderDetail = () => {
           </div>
           <div className={styles.address}>
             <div>
-              <strong>{order.shippingAddress.recipientName}</strong> ({order.shippingAddress.recipientPhone})
+              <strong>{order.shippingAddress.recipientName}</strong> (
+              {order.shippingAddress.recipientPhone})
             </div>
             <div>
-              {order.shippingAddress.address}, {order.shippingAddress.village}, {order.shippingAddress.district}, {order.shippingAddress.province}
+              {order.shippingAddress.address}, {order.shippingAddress.village},{" "}
+              {order.shippingAddress.district}, {order.shippingAddress.province}
             </div>
           </div>
         </div>
@@ -101,7 +105,9 @@ const OrderDetail = () => {
           {order.orderItems.map((item, index) => (
             <div key={index} className={styles.productItem}>
               <img
-                src={item.product?.images?.[0]?.url || "/earring-placeholder.png"}
+                src={
+                  item.product?.images?.[0]?.url || "/earring-placeholder.png"
+                }
                 alt={item.product?.title || "Sản phẩm"}
                 className={styles.productImage}
               />
@@ -110,7 +116,7 @@ const OrderDetail = () => {
                 <div className={styles.productQuantity}>x{item.quantity}</div>
               </div>
               <div className={styles.productPrice}>
-                {(item.price * item.quantity).toLocaleString('vi-VN')}đ
+                {(item.price * item.quantity).toLocaleString("vi-VN")}đ
               </div>
             </div>
           ))}
@@ -147,19 +153,21 @@ const OrderDetail = () => {
             <h3>Tổng quan đơn hàng</h3>
             <div className={styles.overviewRow}>
               <span>Tổng sản phẩm</span>
-              <span>{order.totalProductPrice?.toLocaleString('vi-VN')}đ</span>
+              <span>{order.totalProductPrice?.toLocaleString("vi-VN")}đ</span>
             </div>
             <div className={styles.overviewRow}>
               <span>Phí vận chuyển</span>
-              <span>{order.shippingFee?.toLocaleString('vi-VN')}đ</span>
+              <span>{order.shippingFee?.toLocaleString("vi-VN")}đ</span>
             </div>
             <div className={styles.overviewRow}>
               <span>Giảm giá</span>
-              <span>{order.promotionDiscount?.toLocaleString('vi-VN') || "0"}đ</span>
+              <span>
+                {order.promotionDiscount?.toLocaleString("vi-VN") || "0"}đ
+              </span>
             </div>
             <div className={styles.overviewRow}>
               <strong>Tổng cộng</strong>
-              <strong>{order.totalPrice?.toLocaleString('vi-VN')}đ</strong>
+              <strong>{order.totalPrice?.toLocaleString("vi-VN")}đ</strong>
             </div>
           </div>
 
@@ -172,14 +180,14 @@ const OrderDetail = () => {
             <div className={styles.detailRow}>
               <span>Ngày đặt hàng</span>
               <span>
-                {new Date(order.orderDate).toLocaleString('vi-VN', {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  hour: 'numeric',
-                  minute: 'numeric',
-                  second: 'numeric',
+                {new Date(order.orderDate).toLocaleString("vi-VN", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  hour: "numeric",
+                  minute: "numeric",
+                  second: "numeric",
                   hour12: true,
                 })}
               </span>
