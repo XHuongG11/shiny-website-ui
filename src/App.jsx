@@ -21,6 +21,7 @@ import OrderDetail from "./features/MyOrder/OrderDetail/OrderDetails";
 import RecoverPassword from "./features/RecoverPassword";
 import OAuth2RedirectHandler from "./features/LoginSignin/OAuth2Redirect";
 import Register from "./features/LoginSignin/Register";
+import PriavcyAndTerm from "./components/PrivacyAndTerm";
 function App() {
   const location = useLocation();
   const hideLayoutRoutes = ["/recover-password"];
@@ -32,7 +33,10 @@ function App() {
       <Routes>
         <Route path="/checkouts/*" element={<MakeOrder />}></Route>
         <Route path="/myorder/" element={<MyOrder />}></Route>
-        <Route path="/myorder/orderdetail/:id" element={<OrderDetail />}></Route>
+        <Route
+          path="/myorder/orderdetail/:id"
+          element={<OrderDetail />}
+        ></Route>
         <Route path="/login" element={<LoginRegister />}></Route>
         <Route path="/checkouts/thank-you" element={<CompleteOrder />}></Route>
         <Route path="/" element={<Home />}></Route>
@@ -53,6 +57,7 @@ function App() {
           element={<OAuth2RedirectHandler />}
         />
         <Route path="/register" element={<Register />} />
+        <Route path="/privacy-and-term" element={<PriavcyAndTerm />} />
         <Route path="*" element={<Navigate to="/error/404" replace />} />
       </Routes>
       {!shouldHideLayout && <Footer />}
