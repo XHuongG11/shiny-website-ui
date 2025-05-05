@@ -45,16 +45,18 @@
 }
 
 
-.filterMaterial{
+.filterItem{
     display: flex;
     align-items: center;
     gap: 12px;
     width: 100%;
     border-radius: 8px;
-    padding: 0px 12px;
+    padding: 0px 8px;
     cursor: pointer;
     transition: background-color 0.2s ease, transform 0.05s ease;
+    cursor: pointer;
 }
+
 
 .productMaterial{
     width: 30px;  
@@ -72,7 +74,7 @@
     font-weight: bold;
     background-color: var(--gray-color);
 }
-.filterMaterial:active {
+.filterItem:active {
     background-color: var(--gray-color);
     transform: scale(0.97);
     transition: transform 0.05s ease, background-color 0.1s ease;
@@ -84,7 +86,7 @@
     transition: transform 0.1s ease, background-color 0.2s ease;
   }
   
-  .filterMaterial:hover {
+  .filterItem:hover {
     transform: scale(1.01);
     transition: transform 0.1s ease, background-color 0.2s ease;
   }

@@ -114,7 +114,9 @@ export default function Header() {
     <nav>
       <div className={styles.on}>
         <div className={styles.logo}>
-          <img src="../image/logo/logo.jpg" height="90" width="150"></img>
+          <a href="/">
+            <img src="../image/logo/logo.jpg" height="90" width="150" alt="Logo"></img>
+          </a>
         </div>
         <div className={styles.navIcons}>
           <input
@@ -149,10 +151,10 @@ export default function Header() {
           </a>
         </div>
         <div className={styles.icons}>
-          <FavoriteBorderRoundedIcon />
-          <PlaceOutlinedIcon />
-          <ReceiptLongOutlinedIcon onClick={handleOrder} />
-          <NotificationsOutlinedIcon
+          <FavoriteBorderRoundedIcon className={styles.icon} />
+          <PlaceOutlinedIcon className={styles.icon}/>
+          <ReceiptLongOutlinedIcon className={styles.icon} onClick={handleOrder} />
+          <NotificationsOutlinedIcon className={styles.icon}
             aria-describedby={notificationId}
             onClick={(event) => {
               if (!userInfo || Object.keys(userInfo).length === 0) {
