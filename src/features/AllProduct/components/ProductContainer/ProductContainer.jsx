@@ -47,9 +47,6 @@ const ProductContainer = ({ products }) => {
             throw error; // Để ProductCard hiển thị thông báo lỗi
         }
     };
-
-    console.log("ProductContainer product list successfully:", productList);
-
     return (
         <div className={styles.productContainer}>
             {productList.length > 0 ? (

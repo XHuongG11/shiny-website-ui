@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import styles from "./ProductInfo.module.css";
 import PropTypes from "prop-types";
 import CartApi from "../../../../api/cartApi";
@@ -52,10 +52,16 @@ const dropdownData = [
 function ProductInfo({ product, isInWishlist, updateWishlist }) {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
+  const [stockQuantity, setStockQuantity] = useState(0);
   const [notification, setNotification] = useState({ open: false, message: "", severity: "success" });
   const navigate = useNavigate();
   const isLoggedIn = !!useSelector((state) => state.user.current)?.email;
-
+  useEffect(() => {
+    if (product.productSizes.length > 0) {
+      const totalStock = product.productSizes.reduce((acc, sizeObj) => acc + sizeObj.stock, 0);
+      setStockQuantity(totalStock);
+    }
+  }, [product]);
   const handleToggleWishlist = async () => {
 
     if (!isLoggedIn) {
@@ -127,6 +133,14 @@ function ProductInfo({ product, isInWishlist, updateWishlist }) {
 
   };
 
+  const handleSelectSize = (size) => {
+    setSelectedSize(size);
+    const selectedSizeObj = product.productSizes.find((s) => s.size === size);
+    if (selectedSizeObj) {
+      setStockQuantity(selectedSizeObj.stock); 
+    }
+  };
+
   return (
     <div className={styles.infoProduct}>
       {notification.open && (
@@ -155,7 +169,7 @@ function ProductInfo({ product, isInWishlist, updateWishlist }) {
             {product.productSizes.map((sizeObj, i) => (
               <button
                 key={i}
-                onClick={() => setSelectedSize(sizeObj.size)}
+                onClick={() => handleSelectSize(sizeObj.size)}
                 className={`${styles.sizeButton} ${selectedSize === sizeObj.size ? styles.selected : ""}`}
               >
                 {sizeObj.size === "No size" ? "One size" : sizeObj.size}
@@ -168,7 +182,11 @@ function ProductInfo({ product, isInWishlist, updateWishlist }) {
               <span>{product.material}</span>
             </button>
           </div>
-          <label className={styles.stockQuantity}>Chỉ còn 1 sản phẩm</label>
+          {stockQuantity < 5 && (
+            <label className={styles.stockQuantity}>
+              Số lượng còn lại : {stockQuantity} sản phẩm
+            </label>
+          )}
           <button className={styles.btnAddToCart} onClick={handleAddToCart}>Thêm vào giỏ hàng</button>
           <button className={styles.btnBuyNow} onClick={handleBuyNow}>Mua ngay</button>
           <button

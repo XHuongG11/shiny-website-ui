@@ -7,14 +7,33 @@ import { useLocation } from "react-router-dom";
 import ProductReviews from './components/ProductReviews/ProductReviews';
 import userApi from "../../api/userApi";
 import { useSelector } from "react-redux";
+import productApi from "../../api/productApi";
 
 const ProductDetail = () => {
   const location = useLocation();
-  const { product, isInWishlist: initialIsInWishlist = false } = location.state || {};
+  const { productId, isInWishlist: initialIsInWishlist = false } = location.state || {};
   const [wishlist, setWishlist] = useState([]);
+  const [product, setProduct] = useState(null);
   const user = useSelector((state) => state.user.current);
   const isLoggedIn = !!(user && user.email);
 
+    // Lấy thông tin sản phẩm từ API
+    useEffect(() => {
+      const fetchProduct = async () => {
+        try {
+          const response = await productApi.getProductById(productId); 
+          setProduct(response.data);  // Lưu dữ liệu sản phẩm vào state
+        } catch (error) {
+          console.error("Lỗi khi tải thông tin sản phẩm:", error);
+        }
+      };
+  
+      if (productId) {
+        fetchProduct();
+      }
+    }, [productId]);
+
+    
   // Lấy danh sách wishlist
   useEffect(() => {
     const fetchWishlist = async () => {
