@@ -29,6 +29,10 @@ const userApi = {
     const url = `/addresses/update/${id}`;
     return axiosClient.put(url, data);
   },
+  deleteAddress(id) {
+    const url = `/addresses/delete/${id}`;
+    return axiosClient.delete(url, id);
+  },
   setDefaultAddress(addressId) {
     const url = `/addresses/setDefault/${addressId}`;
     return axiosClient.put(url);

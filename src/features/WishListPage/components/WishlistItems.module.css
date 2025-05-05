@@ -1,0 +1,77 @@
+.wishlistContainer {
+    width: 100%;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    padding: 20px;
+    border-radius: 4px;
+  }
+  
+  .wishlistHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .wishlistHeader h2 {
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+  }
+  .wishlistHeader svg {
+    margin-right: 15px;
+    font-size: 25px;
+  }
+  
+  .clearAllBtn {
+    color: #333;
+    text-transform: none;
+    font-size: 14px;
+  }
+  
+  .clearAllBtn:hover {
+    color: #ff0000;
+  }
+  
+  .wishlistItems {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    width: 100%; /* đảm bảo chiếm đủ chiều ngang */
+  }
+  
+  .wishlistItem {
+    width: calc(33.33% - 13.33px); /* Ba card mỗi hàng */
+    box-sizing: border-box;
+  }
+  
+  .emptyMessage {
+    text-align: center;
+    font-size: 18px;
+    color: #666;
+    margin-top: 50px;
+  }
+  
+  .loadingMessage {
+    text-align: center;
+    font-size: 18px;
+    color: #333;
+    margin-top: 50px;
+  }
+  
+  .errorMessage {
+    text-align: center;
+    font-size: 18px;
+    color: #ff0000;
+    margin-top: 50px;
+  }
+  
+  .loginLink {
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  
+  .loginLink:hover {
+    color: #0056b3;
+  }

@@ -19,7 +19,7 @@ const InfoCustomer = () => {
   const navigate = useNavigate();
 
   const [subscribedForNews, setSubscribedForNews] = useState(false);
-  
+
   console.log("Thông tin người dùng: ", infocus);
   const [addresses, setAddresses] = useState([]);
   const [wishlist, setWishlist] = useState([]);
@@ -80,9 +80,16 @@ const InfoCustomer = () => {
       alert("Không thể kết nối đến máy chủ. Vui lòng thử lại sau.");
     }
   };
-  const updateAddresses = (newAddress) => {
+
+  const updateAddresses = (newAddress, isDelete = false) => {
     console.log("Địa chỉ mới: ", newAddress);
     setAddresses((prev) => {
+      if (isDelete) {
+        const newList = prev.filter((addr) => addr.id !== newAddress.id);
+        console.log("Danh sách sau khi xoá: ", newList);
+        return newList;
+      }
+
       const exists = prev.some((addr) => addr.id === newAddress.id);
       let newAddresses = exists
         ? prev.map((addr) => (addr.id === newAddress.id ? newAddress : addr))
@@ -116,7 +123,10 @@ const InfoCustomer = () => {
     <div className={styles.infoCus}>
       <Banner fullName={infocus?.fullName} />
       <Breadcrumb currentPage="Thông tin tài khoản" />
-      <SubscribedBanner onSubscribe={handleSubscribe} isSubscribed={subscribedForNews}/>
+      <SubscribedBanner
+        onSubscribe={handleSubscribe}
+        isSubscribed={subscribedForNews}
+      />
       {/* <div className={styles.container}> */}
       <Grid2
         container

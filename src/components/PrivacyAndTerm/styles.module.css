@@ -1,0 +1,17 @@
+.policyContainer p {
+  font-size: 16px;
+  line-height: 1.6;
+  text-shadow: none;
+}
+
+.policyContainer strong {
+  font-weight: bold;
+}
+
+.policyContainer ul {
+  margin-left: 20px;
+}
+
+.policyContainer li {
+  margin-bottom: 8px;
+}
