@@ -157,7 +157,7 @@ const AllProduct = () => {
             <Grid2 size={10}>
                 <Category onCategorySelect={handleCategorySelect} />
             </Grid2>
-            <Grid2 container size={9}>
+            <Grid2 container size={10}>
                 <Grid2 size={{ xs: 12, md: 3 }}>
                     <FilterContainer
                         selectedCategoryId={selectedCategoryId}
