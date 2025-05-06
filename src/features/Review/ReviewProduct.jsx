@@ -53,7 +53,7 @@ function ReviewProduct() {
         const review = reviews[productId] || {};
         return {
           productId,
-          rating: review.rating || 5, // Mặc định rating là 0 nếu không có
+          rating: review.rating || 5, // Mặc định rating là 5 nếu không có
           content: review.comment?.trim() || null, // Lưu null nếu không có nội dung
         };
       });
