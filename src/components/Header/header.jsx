@@ -48,6 +48,14 @@ export default function Header() {
   };
 
   const handleOrder = () => {
+    if (!userInfo || Object.keys(userInfo).length === 0) {
+      setNotification({
+        open: true,
+        message: "Bạn cần đăng nhập để xem đơn hàng!",
+        severity: "warning",
+      });
+      return;
+    }
     navigate("/myorder");
   };
 
@@ -92,6 +100,14 @@ export default function Header() {
   const notificationId = isNotificationOpen ? "notification-popover" : undefined;
 
   const handleGoToCart = () => {
+    if (!userInfo || Object.keys(userInfo).length === 0) {
+      setNotification({
+        open: true,
+        message: "Bạn cần đăng nhập để xem giỏ hàng!",
+        severity: "warning",
+      });
+      return;
+    }
     navigate("/cart");
   };
 
