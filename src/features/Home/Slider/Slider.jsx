@@ -1,12 +1,20 @@
 import { useState, useEffect } from 'react';
 import bannerApi from '../../../api/bannerApi';
-import styles from './Slider.module.css'; // Import CSS Module
+import styles from './Slider.module.css';
+
+const DEFAULT_SLIDES = [
+    { img: 'img/sliderImg/imga.png', title: 'Discover the World', desc: 'Explore amazing destinations around the globe' },
+    { img: 'img/sliderImg/imgb.png', title: 'Adventure Awaits', desc: 'Experience the thrill of the great outdoors' },
+    { img: 'img/sliderImg/imgc.png', title: 'Relax and Enjoy', desc: 'Find peace and tranquility in breathtaking locations' },
+    { img: 'img/sliderImg/imgd.png', title: 'Unforgettable Journeys', desc: 'Make memories that last a lifetime' }
+];
 
 const Slider = () => {
     const [slideIndex, setSlideIndex] = useState(0);
     const [slides, setSlides] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
     const titles = [
         'Discover the World',
         'Adventure Awaits',
@@ -14,26 +22,26 @@ const Slider = () => {
         'Unforgettable Journeys'
     ];
 
-    // Gọi API để lấy banners với position = 'home'
     useEffect(() => {
         const fetchBanners = async () => {
             try {
-                setLoading(true);
                 const response = await bannerApi.getBannersByPosition('home');
                 const banners = Array.isArray(response.data) ? response.data : [];
-                console.log('Banners:', banners); // Debug dữ liệu
 
-                // Chuyển đổi dữ liệu banners thành định dạng slides
-                const formattedSlides = banners.map((banner, index) => ({
-                    img: banner.url || 'https://via.placeholder.com/1200x600?text=No+Image',
-                    title: titles[index % titles.length], // Gán title từ danh sách titles, lặp lại nếu cần
-                    desc: 'Explore our exclusive collection', // Giá trị mặc định
-                }));
-
-                setSlides(formattedSlides);
+                if (banners.length === 0) {
+                    setSlides(DEFAULT_SLIDES);
+                } else {
+                    const formatted = banners.map((banner, index) => ({
+                        img: banner.url || 'https://via.placeholder.com/1200x600?text=No+Image',
+                        title: titles[index % titles.length],
+                        desc: 'Explore our exclusive collection',
+                    }));
+                    setSlides(formatted);
+                }
             } catch (err) {
-                setError('Failed to load banners');
                 console.error('Error fetching banners:', err);
+                setSlides(DEFAULT_SLIDES); // fallback nếu lỗi
+                setError('Không thể tải banner. Đang dùng dữ liệu mặc định.');
             } finally {
                 setLoading(false);
             }
@@ -42,38 +50,21 @@ const Slider = () => {
         fetchBanners();
     }, []);
 
-    // Tự động chuyển slide
     useEffect(() => {
         if (slides.length === 0) return;
-
         const autoSlide = setInterval(() => {
             setSlideIndex((prevIndex) => (prevIndex + 1) % slides.length);
         }, 5000);
-
         return () => clearInterval(autoSlide);
-    }, [slides.length]);
+    }, [slides]);
 
     const showSlide = (index) => {
-        if (index >= slides.length) {
-            setSlideIndex(0);
-        } else if (index < 0) {
-            setSlideIndex(slides.length - 1);
-        } else {
-            setSlideIndex(index);
-        }
+        if (index >= slides.length) setSlideIndex(0);
+        else if (index < 0) setSlideIndex(slides.length - 1);
+        else setSlideIndex(index);
     };
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <div>{error}</div>;
-    }
-
-    if (slides.length === 0) {
-        return <div>No banners available</div>;
-    }
+    if (loading) return <div>Loading banners...</div>;
 
     return (
         <div className={styles.slider}>

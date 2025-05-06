@@ -20,7 +20,6 @@ const InfoCustomer = () => {
 
   const [subscribedForNews, setSubscribedForNews] = useState(false);
 
-  console.log("Thông tin người dùng: ", infocus);
   const [addresses, setAddresses] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [openModalChangePass, setOpenModalChangePass] = useState(false);
@@ -39,24 +38,14 @@ const InfoCustomer = () => {
   };
 
   const fetchAddress = async () => {
-    try {
-      const addressResponse = await userApi.getAddresses();
-      console.log("Danh sách địa chỉ: ", addressResponse.data.content);
-      setAddresses(addressResponse.data.content);
-    } catch (error) {
-      console.log("Lỗi lấy dữ liệu: ", error);
-    }
+    const addressResponse = await userApi.getAddresses();
+    setAddresses(addressResponse.data.content);
   };
   const fetchWishlist = async () => {
-    try {
-      const wishlistResponse = await userApi.getWishList({
-        params: { page: 1, size: 10 },
-      }); // Gọi API để lấy danh sách wishlist
-      console.log("Danh sách wishlist: ", wishlistResponse.data.content); // Log danh sách wishlist
-      setWishlist(wishlistResponse.data.content); // Lưu danh sách wishlist vào state
-    } catch (error) {
-      console.log("Lỗi lấy wishlist: ", error);
-    }
+    const wishlistResponse = await userApi.getWishList({
+      params: { page: 1, size: 10 },
+    }); // Gọi API để lấy danh sách wishlist
+    setWishlist(wishlistResponse.data.content); // Lưu danh sách wishlist vào state
   };
   useEffect(() => {
     setSubscribedForNews(infocus?.subscribedForNews || false);
@@ -82,14 +71,11 @@ const InfoCustomer = () => {
   };
 
   const updateAddresses = (newAddress, isDelete = false) => {
-    console.log("Địa chỉ mới: ", newAddress);
     setAddresses((prev) => {
       if (isDelete) {
         const newList = prev.filter((addr) => addr.id !== newAddress.id);
-        console.log("Danh sách sau khi xoá: ", newList);
         return newList;
       }
-
       const exists = prev.some((addr) => addr.id === newAddress.id);
       let newAddresses = exists
         ? prev.map((addr) => (addr.id === newAddress.id ? newAddress : addr))
@@ -102,8 +88,6 @@ const InfoCustomer = () => {
             : addr
         );
       }
-
-      console.log("list update: ", newAddresses);
       return newAddresses;
     });
   };
