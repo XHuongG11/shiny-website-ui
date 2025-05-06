@@ -23,6 +23,7 @@ import OAuth2RedirectHandler from "./features/LoginSignin/OAuth2Redirect";
 import Register from "./features/LoginSignin/Register";
 import WishListPage from "./features/WishListPage/WishlistPage";
 import PriavcyAndTerm from "./components/PrivacyAndTerm";
+import ContactUs from "./components/ContactUs";
 function App() {
   const location = useLocation();
   const hideLayoutRoutes = ["/recover-password"];
@@ -60,6 +61,7 @@ function App() {
         />
         <Route path="/register" element={<Register />} />
         <Route path="/privacy-and-term" element={<PriavcyAndTerm />} />
+        <Route path="/contact-us" element={<ContactUs />} />
         <Route path="*" element={<Navigate to="/error/404" replace />} />
       </Routes>
       {!shouldHideLayout && <Footer />}

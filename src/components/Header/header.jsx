@@ -207,7 +207,7 @@ export default function Header() {
           <a className={styles.link} href={`${SERVER_URL}/privacy-and-term`}>
             Privacy & Term
           </a>
-          <a className={styles.link} href="#">
+          <a className={styles.link} href={`${SERVER_URL}/contact-us`}>
             Contact Us
           </a>
         </div>
