@@ -213,18 +213,24 @@ function ProductInfo({ product, isInWishlist, updateWishlist }) {
               <span>{product.material}</span>
             </button>
           </div>
-          {stockQuantity < 5 && (
-            <label className={styles.stockQuantity}>
-              Chỉ còn lại : {stockQuantity} sản phẩm
-            </label>
+          <label className={styles.stockQuantity}>
+            {stockQuantity === 0
+              ? 'Hết hàng!!!'
+              : stockQuantity < 5
+              ? `Chỉ còn lại: ${stockQuantity} sản phẩm`
+              : `Số lượng: ${stockQuantity} sản phẩm`}
+          </label>
+
+          {stockQuantity > 0 && (
+            <>
+              <button className={styles.btnAddToCart} onClick={handleAddToCart}>
+                Thêm vào giỏ hàng
+              </button>
+              <button className={styles.btnBuyNow} onClick={handleBuyNow}>
+                Mua ngay
+              </button>
+            </>
           )}
-          {stockQuantity >= 5 && (
-            <label className={styles.stockQuantity}>
-              Số lượng: {stockQuantity} sản phẩm
-            </label>
-          )}
-          <button className={styles.btnAddToCart} onClick={handleAddToCart}>Thêm vào giỏ hàng</button>
-          <button className={styles.btnBuyNow} onClick={handleBuyNow}>Mua ngay</button>
           <button
             className={`${styles.favoriteBtn} ${isInWishlist ? styles.added : ""}`}
             onClick={handleToggleWishlist}
