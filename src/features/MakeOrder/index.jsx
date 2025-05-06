@@ -37,6 +37,7 @@ function MakeOrder() {
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [applyLimitFreeShip, setApplyLimitFreeShip] = useState(0);
     const [applyLimitPromotion, setApplyLimitPromotion] = useState(0);
+    const [subTotal, setSubTotal] = useState(0);
     useEffect(() => {
         async function fetchUserData() {
             try {
@@ -194,7 +195,15 @@ function MakeOrder() {
     useEffect(() => {
         const storedItems = localStorage.getItem('checkoutItems');
         if (storedItems) {
-            setCheckoutItems(JSON.parse(storedItems));
+            const items = JSON.parse(storedItems);
+            setCheckoutItems(items);
+            
+            // Tính toán và cập nhật subTotal mỗi khi checkoutItems thay đổi
+            const calculatedSubTotal = checkoutItems.reduce((total, item) => {
+                const price = item.productSize?.price || item.product?.price || 0;
+                return total + price * (item.quantity || 1);
+            }, 0);
+            setSubTotal(calculatedSubTotal);
         }
     }, []);
 
@@ -232,29 +241,6 @@ function MakeOrder() {
             quantity: item.quantity || 1
         }));
     }
-
-    async function resolveShippingAddress(value) {
-        if (value.addressId) {
-            const address = addresses.find(addr => String(addr.id) === String(value.addressId));
-            if (address) return address;
-            throw new Error('Địa chỉ đã chọn không tồn tại');
-        }
-        const addressData = {
-            recipientName: value.userName,
-            recipientPhone: value.phoneNumber,
-            address: value.houseNumber,
-            village: value.ward,
-            district: value.district,
-            province: value.city,
-        };
-        const res = await customerAddressApi.addAddress(addressData);
-        let newAddress = res?.data?.data || res?.data;
-        if (Array.isArray(newAddress)) newAddress = newAddress[0];
-        if (newAddress?.content) newAddress = newAddress.content;
-        if (!newAddress?.id) throw new Error('Không nhận được ID địa chỉ từ server');
-        return newAddress;
-    }
-
     async function handleFormSubmit(value) {
         setIsProcessing(true);
         try {
@@ -265,13 +251,8 @@ function MakeOrder() {
                 setIsProcessing(false);
                 return;
             }
-
-            console.log("🏠 Đang xử lý địa chỉ giao hàng...");
-            const shippingAddress = await resolveShippingAddress(value);
-            console.log("✅ Địa chỉ giao hàng:", shippingAddress);
-
             const orderRequest = {
-                shippingAddress: { id: shippingAddress.id },
+                shippingAddress: { id: selectedAddress.id },
                 shippingMethod: deliveryMethod.toUpperCase(),
                 paymentMethod,
                 cartItems: prepareCartItems(checkoutItems),

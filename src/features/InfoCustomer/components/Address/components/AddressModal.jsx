@@ -89,11 +89,9 @@ const AddressModal = ({ onClose = () => { }, action, address, onUpdate }) => {
       address: values.houseNumber,
     };
     if (action === "ADD") {
-      console.log("Thêm địa chỉ");
       userApi
         .addAddress(request)
         .then((response) => {
-          console.log("Them thanh cong:", response.data);
           onUpdate(response.data, false);
           const newAddress = response.data;
           if (values.isDefault === true) {
@@ -101,7 +99,6 @@ const AddressModal = ({ onClose = () => { }, action, address, onUpdate }) => {
               .setDefaultAddress(response.data?.id)
               .then(() => {
                 newAddress.default = true;
-                console.log("default address ", newAddress);
                 onUpdate(newAddress, false);
                 onClose();
               })
@@ -113,11 +110,9 @@ const AddressModal = ({ onClose = () => { }, action, address, onUpdate }) => {
         })
         .catch((error) => console.error("Them that bai:", error));
     } else {
-      console.log("Chỉnh sửa địa chỉ");
       userApi
         .updateAddress(address.id, request)
         .then((response) => {
-          console.log("Sua thanh cong:", response.data);
           onUpdate(response.data, false);
           const newAddress = response.data;
           if (values.isDefault === true) {

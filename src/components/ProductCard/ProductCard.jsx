@@ -32,7 +32,6 @@ const ProductCard = ({ product, isInWishlist, updateWishlist }) => {
                 severity: "success",
             });
         } catch (error) {
-            console.error("Lỗi khi cập nhật wishlist:", error);
             setNotification({ open: true, message: "Có lỗi xảy ra. Vui lòng thử lại!", severity: "error" });
         }
     };

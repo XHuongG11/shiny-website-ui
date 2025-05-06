@@ -15,16 +15,13 @@ const ProductContainer = ({ products }) => {
     useEffect(() => {
         const fetchWishlist = async () => {
             if (!isLoggedIn) {
-                console.log("Người dùng chưa đăng nhập, không tải danh sách wishlist.");
                 setWishlist([]);
                 return;
             }
-
             try {
                 const response = await userApi.getWishList({ params: { page: 1, size: 100 } });
                 setWishlist(response.data.content || []);
             } catch (error) {
-                console.error("Lỗi khi tải danh sách wishlist:", error);
                 setWishlist([]);
             }
         };
@@ -44,7 +41,7 @@ const ProductContainer = ({ products }) => {
             }
         } catch (error) {
             console.error("Lỗi khi xử lý wishlist:", error);
-            throw error; // Để ProductCard hiển thị thông báo lỗi
+            throw error;
         }
     };
     return (

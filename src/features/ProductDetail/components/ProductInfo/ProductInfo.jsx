@@ -112,6 +112,7 @@ function ProductInfo({ product, isInWishlist, updateWishlist }) {
     }
   };
 
+  const [loading, setLoading] = useState(false);
 
   const handleBuyNow = async () => {
     if (!isLoggedIn) {
@@ -133,9 +134,11 @@ function ProductInfo({ product, isInWishlist, updateWishlist }) {
       setNotification({ open: true, message: "Kích thước không hợp lệ.", severity: "error" });
       return;
     }
+    setLoading(true);
 
     try {
       // Thêm sản phẩm vào giỏ hàng
+      await CartApi.removeItemFromCart(selectedProductSize.id);
       await CartApi.addItemToCart(selectedProductSize.id, 1); // 1 là số lượng
 
       // Tạo đơn hàng tạm thời để lưu vào localStorage
@@ -160,6 +163,8 @@ function ProductInfo({ product, isInWishlist, updateWishlist }) {
     } catch (error) {
       console.error("Lỗi khi thêm vào giỏ hàng:", error.response?.data || error.message);
       setNotification({ open: true, message: "Thêm vào giỏ hàng thất bại. Vui lòng thử lại sau.", severity: "error" });
+    } finally {
+      setLoading(false);
     }
   };
 

@@ -189,12 +189,19 @@ function Register() {
               <InputField control={control} name="username" label="Username" />
               <InputField control={control} name="email" label="Email" />
               <InputField control={control} name="phone" label="Phone" />
-              <InputField control={control} name="password" label="Password" />
+              <InputField
+                control={control}
+                name="password"
+                label="Password"
+                type="password"
+              />
               <InputField
                 control={control}
                 name="confirmPassword"
                 label="Confirm password"
+                type="password"
               />
+
               <Button
                 variant="contained"
                 sx={{

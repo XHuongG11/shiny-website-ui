@@ -5,13 +5,9 @@ import styles from "./styles.module.css";
 function PriavcyAndTerm() {
   const [privacy, setPrivacy] = useState("");
   const getPrivacyAndTerm = async () => {
-    try {
-      const resp = await privacyAndTermApi.getPrivacyAndTerm();
-      setPrivacy(resp.data.content.replace(/\\n/g, "\n"));
-      console.log(resp.data.content);
-    } catch (error) {
-      console.log(error);
-    }
+
+    const resp = await privacyAndTermApi.getPrivacyAndTerm();
+    setPrivacy(resp.data.content.replace(/\\n/g, "\n"));
   };
   useEffect(() => {
     getPrivacyAndTerm();

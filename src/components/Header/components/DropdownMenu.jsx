@@ -7,15 +7,12 @@ export default function DropdownMenu() {
   const [parentCategories, setParentCatgories] = useState([]);
   const [categories, setCategories] = useState([]);
   const getParentCategories = async () => {
-    try {
+
       const resp = await categoryApi.getAllCategories();
       setCategories(resp.data);
       const parentCategories = resp.data.filter((cat) => cat.parent === null);
-      console.log(resp.data);
       setParentCatgories(parentCategories);
-    } catch (error) {
-      console.log(error);
-    }
+
   };
   useEffect(() => {
     getParentCategories();
@@ -38,7 +35,6 @@ export default function DropdownMenu() {
             const childCategory = categories.filter(
               (cat) => cat.parent?.id === category.id
             );
-            console.log("childCategory", childCategory);
 
             return (
               <div key={category.id} className={styles.subDropdownColumn}>

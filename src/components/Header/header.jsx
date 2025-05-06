@@ -62,13 +62,9 @@ export default function Header() {
       return;
     }
     setNotificationAnchor(event.currentTarget);
-    try {
       const response = await notificationApi.getAllNotifications();
       const notificationsData = response?.data?.content || [];
       setNotifications(notificationsData);
-    } catch (error) {
-      console.error("Lỗi khi lấy danh sách thông báo:", error);
-    }
   };
 
   const handleNotificationClose = () => {
@@ -77,7 +73,6 @@ export default function Header() {
 
   const handleToggleReadStatus = async (index) => {
     const notification = notifications[index];
-    try {
       await notificationApi.toggleReadStatus(notification.id);
 
       // Cập nhật trạng thái trong state
@@ -86,9 +81,6 @@ export default function Header() {
         updatedNotifications[index].status = "READ";
         return updatedNotifications;
       });
-    } catch (error) {
-      console.error("Lỗi khi thay đổi trạng thái thông báo:", error);
-    }
   };
 
   const isNotificationOpen = Boolean(notificationAnchor);
