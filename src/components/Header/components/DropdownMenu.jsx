@@ -31,7 +31,7 @@ export default function DropdownMenu() {
           Collections <ChevronRightRoundedIcon />
         </a>
       </div>
-      <div style={{ display: "flex", justifyContent: "center" }}>
+      <div className={styles.dropdownMenuChild}>
         <div className={styles.subDropdownWrapper}>
           {parentCategories.map((category) => {
             // Tìm danh mục con
