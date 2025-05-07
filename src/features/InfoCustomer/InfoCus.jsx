@@ -12,6 +12,38 @@ import SubscribedBanner from "./components/Subscribed/Subscribed";
 import ModalChangePassword from "./components/ChangePassword";
 import { logout } from "../LoginSignin/store/authSlice";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+// CSS tùy chỉnh cho react-toastify
+const toastStyles = `
+  .Toastify__toast {
+    font-size: 18px;
+    padding: 20px 30px;
+    min-height: 80px;
+    min-width: 400px;
+    border-radius: 8px;
+  }
+  .Toastify__toast-body {
+    line-height: 1.5;
+  }
+  .Toastify__toast--success {
+    background-color: #f0f9f4;
+    color: #2d3436;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  .Toastify__toast--error {
+    background-color: #fef2f2;
+    color: #2d3436;
+    font-size: 16px;
+    animation: shake 0.4s ease-in-out;
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-10px); }
+    40%, 80% { transform: translateX(10px); }
+  }
+`;
 
 const InfoCustomer = () => {
   const infocus = useSelector((state) => state.user.current);
@@ -19,7 +51,6 @@ const InfoCustomer = () => {
   const navigate = useNavigate();
 
   const [subscribedForNews, setSubscribedForNews] = useState(false);
-
   const [addresses, setAddresses] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [openModalChangePass, setOpenModalChangePass] = useState(false);
@@ -41,32 +72,44 @@ const InfoCustomer = () => {
     const addressResponse = await userApi.getAddresses();
     setAddresses(addressResponse.data.content);
   };
+
   const fetchWishlist = async () => {
     const wishlistResponse = await userApi.getWishList({
       params: { page: 1, size: 10 },
-    }); // Gọi API để lấy danh sách wishlist
-    setWishlist(wishlistResponse.data.content); // Lưu danh sách wishlist vào state
+    });
+    setWishlist(wishlistResponse.data.content);
   };
+
   useEffect(() => {
     setSubscribedForNews(infocus?.subscribedForNews || false);
   }, [infocus]);
+
   useEffect(() => {
     fetchAddress();
     fetchWishlist();
   }, []);
+
   const handleSubscribe = async () => {
     try {
-      const response = await userApi.registerForNews(!subscribedForNews); // Gửi trạng thái ngược lại
-      if (response) {
-        const message = subscribedForNews
-          ? "Bạn đã hủy đăng ký nhận thông báo!"
-          : "Bạn đã đăng ký nhận thông báo thành công!";
-        alert(message);
-        setSubscribedForNews(!subscribedForNews); // Cập nhật trạng thái
+      const response = await userApi.registerForNews(!subscribedForNews);
+      // Kiểm tra response nếu cần (giả định API trả về { success: true } hoặc tương tự)
+      if (response?.success !== false) {
+        setSubscribedForNews(!subscribedForNews);
+        toast.success(
+          subscribedForNews
+            ? "Đã hủy theo dõi thông báo!"
+            : "Đã đăng ký nhận thông báo về sản phẩm mới!",
+          { autoClose: 3000 }
+        );
+      } else {
+        throw new Error("API trả về không thành công");
       }
     } catch (error) {
       console.error("Lỗi khi gọi API:", error);
-      alert("Không thể kết nối đến máy chủ. Vui lòng thử lại sau.");
+      toast.error(
+        error.message || "Không thể kết nối đến máy chủ. Vui lòng thử lại sau. ❌",
+        { autoClose: 2000 }
+      );
     }
   };
 
@@ -91,27 +134,38 @@ const InfoCustomer = () => {
       return newAddresses;
     });
   };
+
   const RemoveWishlist = async (id) => {
     try {
-      await userApi.removeWishList(id); // Gọi API để xóa sản phẩm khỏi wishlist
+      await userApi.removeWishList(id);
       setWishlist((prevWishlist) =>
         prevWishlist.filter((item) => item.id !== id)
-      ); // Cập nhật state
+      );
     } catch (error) {
       console.error("Lỗi khi xóa sản phẩm khỏi wishlist:", error);
     }
-    await fetchWishlist(); // Gọi lại API để lấy danh sách wishlist mới
+    await fetchWishlist();
   };
 
   return (
     <div className={styles.infoCus}>
+      <style>{toastStyles}</style>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <Banner fullName={infocus?.fullName} />
       <Breadcrumb currentPage="Thông tin tài khoản" />
       <SubscribedBanner
         onSubscribe={handleSubscribe}
         isSubscribed={subscribedForNews}
       />
-      {/* <div className={styles.container}> */}
       <Grid2
         container
         direction="row"
@@ -156,8 +210,6 @@ const InfoCustomer = () => {
           </Grid2>
         </Grid2>
       </Grid2>
-
-      {/* Notification */}
       <ModalChangePassword
         handleCloseModal={handleCloseModal}
         openDialog={openModalChangePass}
@@ -165,4 +217,5 @@ const InfoCustomer = () => {
     </div>
   );
 };
+
 export default InfoCustomer;

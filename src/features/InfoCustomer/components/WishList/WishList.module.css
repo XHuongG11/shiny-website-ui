@@ -53,3 +53,10 @@
     padding-top: 15px;
     padding-bottom: 15px;
   }
+  .emptyMessage{
+    text-align: center;
+    font-size: 18px;
+    color: #504f4f;
+    text-shadow: none;
+    font-style: italic;
+  }
