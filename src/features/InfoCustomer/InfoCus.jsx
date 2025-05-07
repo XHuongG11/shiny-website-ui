@@ -12,46 +12,16 @@ import SubscribedBanner from "./components/Subscribed/Subscribed";
 import ModalChangePassword from "./components/ChangePassword";
 import { logout } from "../LoginSignin/store/authSlice";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import {toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import MemberShipRank from "./components/CustomerInfo/MemberShipRank";
 import DeleteAccount from "./components/DeleteAccount";
 
-// CSS tùy chỉnh cho react-toastify
-const toastStyles = `
-  .Toastify__toast {
-    font-size: 18px;
-    padding: 20px 30px;
-    min-height: 80px;
-    min-width: 400px;
-    border-radius: 8px;
-  }
-  .Toastify__toast-body {
-    line-height: 1.5;
-  }
-  .Toastify__toast--success {
-    background-color: #f0f9f4;
-    color: #2d3436;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-  .Toastify__toast--error {
-    background-color: #fef2f2;
-    color: #2d3436;
-    font-size: 16px;
-    animation: shake 0.4s ease-in-out;
-  }
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    20%, 60% { transform: translateX(-10px); }
-    40%, 80% { transform: translateX(10px); }
-  }
-`;
 const InfoCustomer = () => {
   const [infocus, setInfoCus] = useState();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const [subscribedForNews, setSubscribedForNews] = useState(false);
   const [addresses, setAddresses] = useState([]);
   const [wishlist, setWishlist] = useState([]);
@@ -85,14 +55,11 @@ const InfoCustomer = () => {
     try {
       const resp = await userApi.getInfo();
       setInfoCus(resp.data);
+      setSubscribedForNews(resp.data.isSubscribedForNews || false);
     } catch (error) {
       console.log(error);
     }
   };
-  useEffect(() => {
-    setSubscribedForNews(infocus?.subscribedForNews || false);
-  }, [infocus]);
-
   useEffect(() => {
     fetchInfoCus();
     fetchAddress();
@@ -109,7 +76,7 @@ const InfoCustomer = () => {
           subscribedForNews
             ? "Đã hủy theo dõi thông báo!"
             : "Đã đăng ký nhận thông báo về sản phẩm mới!",
-          { autoClose: 3000 }
+          { autoClose: 3000, toastId: "subscribe-success"}
         );
       } else {
         throw new Error("API trả về không thành công");
@@ -159,17 +126,7 @@ const InfoCustomer = () => {
 
   return (
     <div className={styles.infoCus}>
-      <style>{toastStyles}</style>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
+      <style>{styles.toastStyles}</style>
       <Banner fullName={infocus?.fullName} />
       <Breadcrumb currentPage="Thông tin tài khoản" />
       <SubscribedBanner
