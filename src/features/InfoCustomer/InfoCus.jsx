@@ -1,6 +1,6 @@
 import { Button, Grid2 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import userApi from "../../api/userApi";
 import Breadcrumb from "../../components/Breadcrumb/breadcrum";
 import styles from "./InfoCus.module.css";
@@ -12,9 +12,12 @@ import SubscribedBanner from "./components/Subscribed/Subscribed";
 import ModalChangePassword from "./components/ChangePassword";
 import { logout } from "../LoginSignin/store/authSlice";
 import { useNavigate } from "react-router-dom";
+import MemberShipRank from "./components/CustomerInfo/MemberShipRank";
+import DeleteAccount from "./components/DeleteAccount";
 
 const InfoCustomer = () => {
-  const infocus = useSelector((state) => state.user.current);
+  const [infocus, setInfoCus] = useState();
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -47,13 +50,24 @@ const InfoCustomer = () => {
     }); // Gọi API để lấy danh sách wishlist
     setWishlist(wishlistResponse.data.content); // Lưu danh sách wishlist vào state
   };
+  const fetchInfoCus = async () => {
+    try {
+      const resp = await userApi.getInfo();
+      setInfoCus(resp.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     setSubscribedForNews(infocus?.subscribedForNews || false);
   }, [infocus]);
+
   useEffect(() => {
+    fetchInfoCus();
     fetchAddress();
     fetchWishlist();
   }, []);
+
   const handleSubscribe = async () => {
     try {
       const response = await userApi.registerForNews(!subscribedForNews); // Gửi trạng thái ngược lại
@@ -118,8 +132,18 @@ const InfoCustomer = () => {
         spacing={3}
         sx={{ justifyContent: "center" }}
       >
-        <Grid2 size={{ md: 5, xs: 11 }}>
-          <CustomerInfo infoCus={infocus} />
+        <Grid2
+          container
+          size={{ md: 5, xs: 11 }}
+          direction="column"
+          spacing={3}
+        >
+          <Grid2 size={12}>
+            <CustomerInfo infoCus={infocus} />
+          </Grid2>
+          <Grid2 size={12}>
+            <MemberShipRank infoCus={infocus} />
+          </Grid2>
         </Grid2>
         <Grid2
           container
@@ -139,6 +163,7 @@ const InfoCustomer = () => {
             direction="row"
             sx={{ justifyContent: "flex-end" }}
           >
+            <DeleteAccount />
             <Button
               variant="outlined"
               sx={{ textTransform: "none" }}
