@@ -14,12 +14,18 @@ const MemberShipRank = ({ infoCus }) => {
       <div className={styles.cardBody}>
         <div className={styles.inputBox} style={{ marginLeft: "0px" }}>
           <input
-            style={{ fontWeight: "bold", marginLeft: "10px" }}
+            style={{ fontWeight: "bold", marginLeft: "10px", color: "black" }}
             type="text"
             disabled
-            value={`${
-              "Hạng thành viên của bạn là: " + infoCus?.membershipRank
-            }`}
+            value={`${"Hạng thành viên: " + infoCus?.membershipRank}`}
+          />
+        </div>
+        <div className={styles.inputBox} style={{ marginLeft: "0px" }}>
+          <input
+            style={{ fontWeight: "bold", marginLeft: "10px", color: "black" }}
+            type="text"
+            disabled
+            value={`${"Tổng chi tiêu: " + infoCus?.totalSpent}`}
           />
         </div>
       </div>

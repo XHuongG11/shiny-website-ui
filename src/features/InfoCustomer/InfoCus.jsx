@@ -1,6 +1,6 @@
 import { Button, Grid2 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import userApi from "../../api/userApi";
 import Breadcrumb from "../../components/Breadcrumb/breadcrum";
 import styles from "./InfoCus.module.css";
@@ -13,15 +13,15 @@ import ModalChangePassword from "./components/ChangePassword";
 import { logout } from "../LoginSignin/store/authSlice";
 import { useNavigate } from "react-router-dom";
 import MemberShipRank from "./components/CustomerInfo/MemberShipRank";
+import DeleteAccount from "./components/DeleteAccount";
 
 const InfoCustomer = () => {
-  const infocus = useSelector((state) => state.user.current);
+  const [infocus, setInfoCus] = useState();
+  const [subscribedForNews, setSubscribedForNews] = useState(false);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [subscribedForNews, setSubscribedForNews] = useState(false);
-
-  console.log("Thông tin người dùng: ", infocus);
   const [addresses, setAddresses] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [openModalChangePass, setOpenModalChangePass] = useState(false);
@@ -39,6 +39,14 @@ const InfoCustomer = () => {
     navigate("/");
   };
 
+  const fetchInfoCus = async () => {
+    try {
+      const resp = await userApi.getInfo();
+      setInfoCus(resp.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const fetchAddress = async () => {
     try {
       const addressResponse = await userApi.getAddresses();
@@ -59,13 +67,17 @@ const InfoCustomer = () => {
       console.log("Lỗi lấy wishlist: ", error);
     }
   };
+
   useEffect(() => {
     setSubscribedForNews(infocus?.subscribedForNews || false);
   }, [infocus]);
+
   useEffect(() => {
+    fetchInfoCus();
     fetchAddress();
     fetchWishlist();
   }, []);
+
   const handleSubscribe = async () => {
     try {
       const response = await userApi.registerForNews(!subscribedForNews); // Gửi trạng thái ngược lại
@@ -166,6 +178,7 @@ const InfoCustomer = () => {
             direction="row"
             sx={{ justifyContent: "flex-end" }}
           >
+            <DeleteAccount />
             <Button
               variant="outlined"
               sx={{ textTransform: "none" }}

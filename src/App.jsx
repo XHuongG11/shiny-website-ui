@@ -23,9 +23,10 @@ import OAuth2RedirectHandler from "./features/LoginSignin/OAuth2Redirect";
 import Register from "./features/LoginSignin/Register";
 import WishListPage from "./features/WishListPage/WishlistPage";
 import PriavcyAndTerm from "./components/PrivacyAndTerm";
+import ConfirmDeleteAcccount from "./features/ConfirmDeleteAcount";
 function App() {
   const location = useLocation();
-  const hideLayoutRoutes = ["/recover-password"];
+  const hideLayoutRoutes = ["/recover-password", "/confirm-delete"];
 
   const shouldHideLayout = hideLayoutRoutes.includes(location.pathname);
   return (
@@ -39,7 +40,10 @@ function App() {
           element={<OrderDetail />}
         ></Route>
         <Route path="/login" element={<LoginRegister />}></Route>
-        <Route path="/checkouts/thank-you/:orderId" element={<CompleteOrder />}></Route>
+        <Route
+          path="/checkouts/thank-you/:orderId"
+          element={<CompleteOrder />}
+        ></Route>
         <Route path="/" element={<Home />}></Route>
         <Route path="/products" element={<AllProduct />}></Route>
         <Route path="/infocus" element={<InfoCustomer />}></Route>
@@ -60,6 +64,7 @@ function App() {
         />
         <Route path="/register" element={<Register />} />
         <Route path="/privacy-and-term" element={<PriavcyAndTerm />} />
+        <Route path="/confirm-delete" element={<ConfirmDeleteAcccount />} />
         <Route path="*" element={<Navigate to="/error/404" replace />} />
       </Routes>
       {!shouldHideLayout && <Footer />}
