@@ -166,3 +166,29 @@ nav {
   transform: scale(1.2); /* Phóng to icon khi hover */
   color: #56a6f1; /* Đổi màu khi hover (tùy chỉnh màu sắc bạn muốn) */
 }
+.customTooltip {
+  background-color: rgba(55, 145, 230, 0.8) !important;  /* Màu xanh mờ (70% độ đậm) */
+  color: #ffffff !important;
+  font-size: 14px !important;
+  font-weight: 550 !important;
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(86, 166, 241, 0.3) !important; /* Box shadow màu xanh mờ */
+  transition: 
+    opacity 0.3s ease,
+    transform 0.3s ease !important;
+}
+
+.customTooltipArrow {
+  color: rgba(55, 145, 230, 0.8) !important; /* Màu xanh mờ cho mũi tên */
+}
+
+
+
+
+
+
+
+
+
+

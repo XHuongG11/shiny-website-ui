@@ -50,6 +50,7 @@
     font-size: 18px;
     color: #666;
     margin-top: 50px;
+    text-shadow: none;
   }
   
   .loadingMessage {

@@ -41,6 +41,7 @@
 
 .ratingBreakdown {
   flex: 1;
+  font-weight: bold;
 }
 
 .breakdownRow {
@@ -54,14 +55,16 @@
   font-size: 14px;
   color: #2d3436;
 }
+
 .fullStar {
-  color: #ff6f91; /* Pink color to match the image */
+  color: #ff6f91;
   font-size: 50px;
   margin-right: 4px;
 }
+
 .breakdownStar,
 .breakdownEmptyStar {
-  color: #ff6f91; /* Pink color to match the image */
+  color: #ff6f91;
   font-size: 20px;
   margin-right: 4px;
 }
@@ -71,7 +74,7 @@
 }
 
 .progressBar {
-  width: 200px !important; /* Đảm bảo chiều rộng cố định */
+  width: 200px !important;
   height: 10px;
   background: #d1d5db;
   border-radius: 4px;
@@ -81,8 +84,8 @@
 
 .progressFill {
   height: 100%;
-  background-color: #ff6f91; /* Màu thanh tiến trình */
-  transition: width 0.3s ease; /* Hiệu ứng mượt */
+  background-color: #ff6f91;
+  transition: width 0.3s ease;
 }
 
 .breakdownRow span:last-child {
@@ -101,7 +104,7 @@
   padding: 0px;
   background: #ffffff;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border-bottom: 1px solid #b8b7b7; /* Thêm đường gạch dưới màu đen, độ dày 1px */
+  border-bottom: 1px solid #b8b7b7;
 }
 
 .reviewItem:hover {
@@ -126,7 +129,7 @@
 }
 
 .filledStar {
-  color: #ff6f91; /* Pink color to match the image */
+  color: #ff6f91;
   font-size: 25px;
   transition: transform 0.2s ease;
 }
@@ -144,12 +147,14 @@
 .emptyStar:hover {
   transform: scale(1.2);
 }
-.reviewDate{
+
+.reviewDate {
   font-size: 18px;
   color: #6b7280;
   font-weight: bold;
   text-shadow: none;
 }
+
 .reviewContent {
   font-size: 20px;
   color: #4b5563;
@@ -157,6 +162,70 @@
   font-weight: bold;
   margin: 10px;
   text-shadow: none;
+}
+
+.reviewResponse {
+  padding: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background: #e1e0e0;
+  border-radius: 5px;
+}
+
+.responseHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.responseBy {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2d3436;
+}
+
+.responseToggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.responseDate {
+  font-size: 18px;
+  color: #6b7280;
+  font-weight: bold;
+  text-shadow: none;
+}
+
+.toggleButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ff6f91;
+  font-size: 18px;
+  transition: transform 0.2s ease;
+}
+
+.toggleButton:hover {
+  transform: scale(1.2);
+}
+
+.responseContent {
+  font-size: 20px;
+  color: #4b5563;
+  line-height: 1.6;
+  font-weight: bold;
+  margin: 10px;
+  text-shadow: none;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+}
+
+.responseContent.show {
+  max-height: 300px;
+  opacity: 1;
 }
 
 .noReviews {
@@ -177,16 +246,13 @@
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
-.ratingBreakdown{
-  font-weight: bold;
-}
 
 .loadingContainer {
   gap: 12px;
 }
 
 .loadingIcon {
-  color: #ff6f91; /* Pink color to match the image */
+  color: #ff6f91;
   font-size: 24px;
   animation: spin 1s linear infinite;
 }
@@ -251,6 +317,18 @@
   }
 
   .reviewContent {
+    font-size: 14px;
+  }
+
+  .responseBy {
+    font-size: 14px;
+  }
+
+  .responseDate {
+    font-size: 12px;
+  }
+
+  .responseContent {
     font-size: 14px;
   }
 }
