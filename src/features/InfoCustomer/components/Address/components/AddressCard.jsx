@@ -27,8 +27,7 @@ const AddressCard = ({ address, onUpdate }) => {
     if (!address?.id) return;
     userApi
       .deleteAddress(address.id)
-      .then((response) => {
-        console.log("Xoa thanh cong:", response);
+      .then(() => {
         onUpdate(address, true);
       })
       .catch((error) => console.error("Xoa that bai:", error));

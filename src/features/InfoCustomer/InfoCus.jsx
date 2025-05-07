@@ -17,10 +17,11 @@ import DeleteAccount from "./components/DeleteAccount";
 
 const InfoCustomer = () => {
   const [infocus, setInfoCus] = useState();
-  const [subscribedForNews, setSubscribedForNews] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [subscribedForNews, setSubscribedForNews] = useState(false);
 
   const [addresses, setAddresses] = useState([]);
   const [wishlist, setWishlist] = useState([]);
@@ -39,6 +40,16 @@ const InfoCustomer = () => {
     navigate("/");
   };
 
+  const fetchAddress = async () => {
+    const addressResponse = await userApi.getAddresses();
+    setAddresses(addressResponse.data.content);
+  };
+  const fetchWishlist = async () => {
+    const wishlistResponse = await userApi.getWishList({
+      params: { page: 1, size: 10 },
+    }); // Gọi API để lấy danh sách wishlist
+    setWishlist(wishlistResponse.data.content); // Lưu danh sách wishlist vào state
+  };
   const fetchInfoCus = async () => {
     try {
       const resp = await userApi.getInfo();
@@ -47,27 +58,6 @@ const InfoCustomer = () => {
       console.log(error);
     }
   };
-  const fetchAddress = async () => {
-    try {
-      const addressResponse = await userApi.getAddresses();
-      console.log("Danh sách địa chỉ: ", addressResponse.data.content);
-      setAddresses(addressResponse.data.content);
-    } catch (error) {
-      console.log("Lỗi lấy dữ liệu: ", error);
-    }
-  };
-  const fetchWishlist = async () => {
-    try {
-      const wishlistResponse = await userApi.getWishList({
-        params: { page: 1, size: 10 },
-      }); // Gọi API để lấy danh sách wishlist
-      console.log("Danh sách wishlist: ", wishlistResponse.data.content); // Log danh sách wishlist
-      setWishlist(wishlistResponse.data.content); // Lưu danh sách wishlist vào state
-    } catch (error) {
-      console.log("Lỗi lấy wishlist: ", error);
-    }
-  };
-
   useEffect(() => {
     setSubscribedForNews(infocus?.subscribedForNews || false);
   }, [infocus]);
@@ -95,14 +85,11 @@ const InfoCustomer = () => {
   };
 
   const updateAddresses = (newAddress, isDelete = false) => {
-    console.log("Địa chỉ mới: ", newAddress);
     setAddresses((prev) => {
       if (isDelete) {
         const newList = prev.filter((addr) => addr.id !== newAddress.id);
-        console.log("Danh sách sau khi xoá: ", newList);
         return newList;
       }
-
       const exists = prev.some((addr) => addr.id === newAddress.id);
       let newAddresses = exists
         ? prev.map((addr) => (addr.id === newAddress.id ? newAddress : addr))
@@ -115,8 +102,6 @@ const InfoCustomer = () => {
             : addr
         );
       }
-
-      console.log("list update: ", newAddresses);
       return newAddresses;
     });
   };

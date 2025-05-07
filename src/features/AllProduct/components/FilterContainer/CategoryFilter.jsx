@@ -9,34 +9,30 @@ const CategoryFilter = ({ selectedCategoryId, onCategoryChange }) => {
   const [selectedCategories, setSelectedCategories] = useState([])
   useEffect(() => {
     const fetchCategories = async () => {
-      try {
-        const response = await categoryApi.getAllCategories();
-        let filtered;
-        if (selectedCategoryId) {
-          filtered = response.data.filter(cat => cat.parent?.id === selectedCategoryId);
-        } else {
-          filtered = response.data.filter(cat => cat.parent === null);
-        }
-        setCategories(filtered);
-      } catch (error) {
-        console.error("Lỗi khi tải category:", error);
+      const response = await categoryApi.getAllCategories();
+      let filtered;
+      if (selectedCategoryId) {
+        filtered = response.data.filter(cat => cat.parent?.id === selectedCategoryId);
+      } else {
+        filtered = response.data.filter(cat => cat.parent === null);
       }
+      setCategories(filtered);
     };
 
     fetchCategories();
   }, [selectedCategoryId]);
 
   const handleCategoryClick = (id) => {
-    if(selectedCategories.includes(id)){
+    if (selectedCategories.includes(id)) {
       setSelectedCategories(selectedCategories.filter(i => i !== id))
     }
-    else{
+    else {
       setSelectedCategories(prev => [...prev, id])
     }
 
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     onCategoryChange(selectedCategories)
   }, [selectedCategories])
   return (

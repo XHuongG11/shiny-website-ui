@@ -31,7 +31,6 @@ const AllProduct = () => {
     // Lấy từ khóa tìm kiếm từ URL
     useEffect(() => {
         const query = new URLSearchParams(location.search).get("query");
-        console.log("Search query from URL:", query);
         setSearchQuery(query || "");
         setPage(1);
         setProductList([]);
@@ -66,8 +65,6 @@ const AllProduct = () => {
             if (filterSizes.length > 0) {
                 params.productSizes = filterSizes;
             }
-
-            console.log("API params:", params);
             // Luôn gọi API search-and-filter để hỗ trợ cả tìm kiếm và lọc
             const response = await productApi.searchAndFilterProducts({ params });
 
@@ -77,10 +74,8 @@ const AllProduct = () => {
             delete newParams.size;
           
             const queryString = new URLSearchParams(newParams).toString();
-            console.log(queryString)
             // navigate(`?${queryString}`, { replace: true });
 
-            console.log("Dữ liệu API trả về:", response.data);
             const products = response.data.content || [];
             setProductList(prev => [...prev, ...products]);
             setTotalPages(response.data.totalPages || 1);
@@ -88,7 +83,6 @@ const AllProduct = () => {
                 setError("Không tìm thấy sản phẩm nào.");
             }
         } catch (error) {
-            console.error("Error fetching products:", error);
             setError("Đã xảy ra lỗi khi tải sản phẩm.");
         } finally {
             setLoading(false);
@@ -101,7 +95,6 @@ const AllProduct = () => {
     }, [page, selectedCategoryId, searchQuery, filterCategories, filterMaterial, filterMinPrice, filterMaxPrice, filterSizes]);
 
     const handleCategorySelect = (categoryId) => {
-        console.log("Đã chọn category có ID:", categoryId);
         setSelectedCategoryId(categoryId);
 
         setFilterCategories([categoryId])

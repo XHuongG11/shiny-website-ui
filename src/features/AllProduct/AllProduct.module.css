@@ -10,6 +10,16 @@
     cursor: pointer;
     transition: all 0.3s ease;
 }
+.outOfStock {
+    color: red;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
 
 .productShowmore:hover {
     background-color: var(--text-color);

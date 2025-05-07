@@ -30,6 +30,20 @@
   margin: 0;
 }
 
+/* Cart header with title and clear button */
+.cartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.clearCartBtn {
+  height: 36px;
+  font-size: 13px !important;
+  font-weight: bold !important;
+}
+
 .cartItem {
   display: flex;
   align-items: center;
@@ -104,6 +118,20 @@
   margin-left: 15px;
 }
 
+/* Size selector styling */
+.sizeSelector {
+  margin: 8px 0;
+}
+
+.sizeFormControl {
+  min-width: 120px;
+}
+
+.sizeSelect {
+  height: 36px;
+  font-size: 13px !important;
+}
+
 .quantity {
   display: flex;
   align-items: center;
@@ -172,6 +200,11 @@
   background-color: #333;
 }
 
+.disabledButton {
+  background-color: #ccc !important;
+  cursor: not-allowed !important;
+}
+
 .continueShopping {
   font-size: 14px;
   font-weight: bold;
@@ -179,4 +212,43 @@
 
 .continueShopping a {
   color: black;
+}
+
+/* Modal Styles */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.hideModal {
+  display: none;
+}
+
+.confirmModal {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.confirmModal h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.modalButtons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
 }

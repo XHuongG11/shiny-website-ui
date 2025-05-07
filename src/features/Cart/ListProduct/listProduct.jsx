@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import styles from "./listProduct.module.css"; // Import CSS Module
-import { Grid2 } from "@mui/material";
+import { Grid2, Button, MenuItem, Select, FormControl } from "@mui/material";
 import Breadcrumb from "../../../components/Breadcrumb/breadcrum";
 import cartApi from "../../../api/cartApi"; // Import API for fetching products
 import { useNavigate } from 'react-router-dom';
@@ -16,55 +16,107 @@ const CartItemlist = () => {
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState("");
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await cartApi.getMyCart({
-                    params: {
-                        _page: 1,
-                        _limit: 10,
-                        _t: new Date().getTime() // Thêm timestamp để tránh cache
-                    }
-                });
-                console.log("Toàn bộ response:", response);
-
-                // Log chi tiết hơn về cấu trúc dữ liệu
-                if (response && response.cartItems) {
-                    console.log("Chi tiết từng cartItem:");
-                    response.cartItems.forEach((item, index) => {
-                        console.log(`Item ${index + 1}:`, JSON.stringify(item, null, 2));
-                        console.log(`ID: ${item.id}, Product ID: ${item.product?.id}, Product Title: ${item.product?.title}`);
-                    });
+    const loadCartData = async () => {
+        setLoading(true);
+        try {
+            const response = await cartApi.getMyCart({
+                params: {
+                    _page: 1,
+                    _limit: 10,
+                    _t: new Date().getTime() // Thêm timestamp để tránh cache
                 }
+            });
 
-                // Phần code xử lý dữ liệu giữ nguyên
-                if (response) {
-                    if (response.cartItems && Array.isArray(response.cartItems)) {
-                        setCartItems(response.cartItems);
-                    }
-                    else if (response.id && response.cartItems) {
-                        setCartItems(response.cartItems);
-                    }
-                    else if (Array.isArray(response)) {
-                        setCartItems(response);
-                    }
-                    else {
-                        console.log("Không tìm thấy mảng cartItems, thử truy cập trực tiếp response");
-                        setCartItems([]);
-                    }
-                } else {
+            if (response) {
+                if (response.cartItems && Array.isArray(response.cartItems)) {
+                    setCartItems(response.cartItems);
+                }
+                else if (response.id && response.cartItems) {
+                    setCartItems(response.cartItems);
+                }
+                else if (Array.isArray(response)) {
+                    setCartItems(response);
+                }
+                else {
                     setCartItems([]);
                 }
-            } catch (error) {
-                console.error("Lỗi khi lấy danh sách sản phẩm:", error);
+            } else {
                 setCartItems([]);
-            } finally {
-                setLoading(false);
             }
-        };
+        } catch (error) {
+            setCartItems([]);
+            toast.error("Không thể tải thông tin giỏ hàng");
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        fetchProducts();
+    useEffect(() => {
+        loadCartData();
     }, []);
+    
+    // Hàm xử lý đổi size sản phẩm
+    const handleSizeChange = async (cartItemId, oldSizeId, newSizeId) => {
+        if (oldSizeId === newSizeId) return;
+        
+        try {
+            await cartApi.changeSize(oldSizeId, newSizeId);
+            toast.success("Đổi kích thước thành công ✅");
+            // Tải lại dữ liệu giỏ hàng sau khi đổi size
+            loadCartData();
+        } catch (error) {
+            toast.error(error?.response?.data?.message || "Lỗi khi đổi kích thước ❌");
+        }
+    };
+    
+    // Hàm xóa tất cả sản phẩm trong giỏ hàng
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+    const clearCart = () => {
+        setShowConfirmModal(true);
+    };
+
+    const handleConfirmClearCart = async () => {
+        try {
+            await cartApi.clearMyCart();
+            toast.success("Đã xóa tất cả sản phẩm khỏi giỏ hàng ✅");
+            loadCartData();
+            setSelectedItems([]);
+        } catch (error) {
+            toast.error("Lỗi khi xóa giỏ hàng ❌");
+        } finally {
+            setShowConfirmModal(false);
+        }
+    };
+
+    const handleCancelClearCart = () => {
+        setShowConfirmModal(false);
+    };
+
+    // Modal component for confirmation
+    const ConfirmModal = () => (
+        <div className={showConfirmModal ? styles.modalOverlay : styles.hideModal}>
+            <div className={styles.confirmModal}>
+                <h3>Xác nhận xóa giỏ hàng</h3>
+                <p>Bạn có chắc chắn muốn xóa tất cả sản phẩm khỏi giỏ hàng?</p>
+                <div className={styles.modalButtons}>
+                    <Button 
+                        variant="contained" 
+                        color="error" 
+                        onClick={handleConfirmClearCart}
+                    >
+                        Xóa tất cả
+                    </Button>
+                    <Button 
+                        variant="outlined"
+                        onClick={handleCancelClearCart}
+                    >
+                        Hủy
+                    </Button>
+                </div>
+            </div>
+        </div>
+    );
 
     // Tăng số lượng
     const increaseQuantity = async (id) => {
@@ -82,7 +134,6 @@ const CartItemlist = () => {
             );
             setErrorMessage(""); // Xóa lỗi nếu thành công
         } catch (error) {
-            console.error("Lỗi khi tăng số lượng:", error);
             const message = error?.response?.data?.message || "Đã xảy ra lỗi khi cập nhật số lượng";
             setErrorMessage(message);
         }
@@ -105,7 +156,6 @@ const CartItemlist = () => {
             );
             setErrorMessage(""); // Reset lỗi nếu có
         } catch (error) {
-            console.error("Lỗi khi giảm số lượng:", error);
             const message = error?.response?.data?.message || "Đã xảy ra lỗi khi giảm số lượng";
             setErrorMessage(message);
         }
@@ -114,8 +164,14 @@ const CartItemlist = () => {
 
 
     // Xóa sản phẩm
-    const removeItem = (id) => {
-        setCartItems(cartItems.filter((item) => item.id !== id));
+    const removeItem = async (id, productSizeId) => {
+        try {
+            await cartApi.removeItemFromCart(productSizeId);
+            toast.success("Đã xóa sản phẩm khỏi giỏ hàng ✅");
+            loadCartData(); // Tải lại dữ liệu giỏ hàng
+        } catch (error) {
+            toast.error("Lỗi khi xóa sản phẩm ❌");
+        }
     };
 
     const handleQuantityChange = async (id, newQuantity, productSizeId) => {
@@ -133,9 +189,6 @@ const CartItemlist = () => {
             toast.error(message, { autoClose: 5000 });
         }
     };
-
-
-
 
     // Tính tổng tiền - đảm bảo quantity và price tồn tại
     // Add this function to toggle item selection
@@ -156,10 +209,6 @@ const CartItemlist = () => {
                 const price = item.productSize?.price || item.product?.price || 0;
                 return total + price * (item.quantity || 1);
             }, 0);
-
-    // Thêm log này ngay trước return để kiểm tra dữ liệu trước khi render
-    console.log("CartItems trước khi render:", cartItems);
-    console.log("Số lượng sản phẩm:", cartItems.length);
     // Update the handleCheckout function to pass selected items data
     const handleCheckout = () => {
         // Filter only the selected items
@@ -178,8 +227,24 @@ const CartItemlist = () => {
             {/* Breadcrumb */}
             <Breadcrumb currentPage="Cart" />
             <div className={styles.cartContainer}>
-                {/* Tiêu đề */}
-                <h2 className={styles.line}>GIỎ HÀNG ({cartItems.length} SẢN PHẨM)</h2>
+                {/* Tiêu đề và nút Clear Cart */}
+                <div className={styles.cartHeader}>
+                    <h2 className={styles.title}>GIỎ HÀNG ({cartItems.length} SẢN PHẨM)</h2>
+                    {cartItems.length > 0 && (
+                        <Button 
+                            variant="contained" 
+                            color="error" 
+                            className={styles.clearCartBtn}
+                            onClick={clearCart}
+                        >
+                            Xóa tất cả
+                        </Button>
+                    )}
+                </div>
+                <div className={styles.line}></div>
+
+                {/* Modal xác nhận xóa giỏ hàng */}
+                <ConfirmModal />
 
                 {loading ? (
                     <p>Đang tải...</p>
@@ -205,7 +270,25 @@ const CartItemlist = () => {
                                 />
                                 <div className={styles.itemDetails}>
                                     <p className={styles.nameItem}>{item.product?.title || "Sản phẩm không tên"}</p>
-                                    <p className={styles.size}>{item.productSize?.size || "No size"}</p>
+                                    
+                                    {/* Size selector */}
+                                    <div className={styles.sizeSelector}>
+                                        <FormControl size="small" className={styles.sizeFormControl}>
+                                            <Select
+                                                value={item.productSize?.id || ""}
+                                                onChange={(e) => handleSizeChange(item.id, item.productSize?.id, e.target.value)}
+                                                displayEmpty
+                                                className={styles.sizeSelect}
+                                            >
+                                                {item.product?.productSizes?.map((size) => (
+                                                    <MenuItem key={size.id} value={size.id} disabled={size.stock <= 0}>
+                                                        {size.size} {size.stock <= 0 ? "(Hết hàng)" : ""}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    </div>
+                                    
                                     {item.product?.discountPrice && (
                                         <span className={styles.oldPrice}>
                                             {(item.product.price).toLocaleString()}đ
@@ -236,9 +319,8 @@ const CartItemlist = () => {
                                     <FavoriteBorder className={styles.icon} />
                                     <Delete 
                                         className={styles.icon} 
-                                        onClick={() => removeItem(item.id)}
+                                        onClick={() => removeItem(item.id, item.productSize?.id)}
                                     />
-                                    <Edit className={styles.icon} />
                                 </div>
                             </Grid2>
 
