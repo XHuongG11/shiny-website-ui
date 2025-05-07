@@ -1,6 +1,6 @@
 import { Button, Grid2 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import userApi from "../../api/userApi";
 import Breadcrumb from "../../components/Breadcrumb/breadcrum";
 import styles from "./InfoCus.module.css";
@@ -14,6 +14,8 @@ import { logout } from "../LoginSignin/store/authSlice";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import MemberShipRank from "./components/CustomerInfo/MemberShipRank";
+import DeleteAccount from "./components/DeleteAccount";
 
 // CSS tùy chỉnh cho react-toastify
 const toastStyles = `
@@ -44,9 +46,9 @@ const toastStyles = `
     40%, 80% { transform: translateX(10px); }
   }
 `;
-
 const InfoCustomer = () => {
-  const infocus = useSelector((state) => state.user.current);
+  const [infocus, setInfoCus] = useState();
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -79,12 +81,20 @@ const InfoCustomer = () => {
     });
     setWishlist(wishlistResponse.data.content);
   };
-
+  const fetchInfoCus = async () => {
+    try {
+      const resp = await userApi.getInfo();
+      setInfoCus(resp.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     setSubscribedForNews(infocus?.subscribedForNews || false);
   }, [infocus]);
 
   useEffect(() => {
+    fetchInfoCus();
     fetchAddress();
     fetchWishlist();
   }, []);
@@ -172,8 +182,18 @@ const InfoCustomer = () => {
         spacing={3}
         sx={{ justifyContent: "center" }}
       >
-        <Grid2 size={{ md: 5, xs: 11 }}>
-          <CustomerInfo infoCus={infocus} />
+        <Grid2
+          container
+          size={{ md: 5, xs: 11 }}
+          direction="column"
+          spacing={3}
+        >
+          <Grid2 size={12}>
+            <CustomerInfo infoCus={infocus} />
+          </Grid2>
+          <Grid2 size={12}>
+            <MemberShipRank infoCus={infocus} />
+          </Grid2>
         </Grid2>
         <Grid2
           container
@@ -193,6 +213,7 @@ const InfoCustomer = () => {
             direction="row"
             sx={{ justifyContent: "flex-end" }}
           >
+            <DeleteAccount />
             <Button
               variant="outlined"
               sx={{ textTransform: "none" }}

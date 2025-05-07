@@ -1,5 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Box, Button, Grid2, Paper } from "@mui/material";
+import { Box, Button, Grid2, Paper, IconButton } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -26,6 +27,7 @@ function Register() {
   const loading = useSelector((state) => state.email.loading);
   const location = useLocation();
   const state = location.state;
+  const [showPassword, setShowPassword] = useState(false);
 
   const sendEmail = async () => {
     const resultAction = await dispatch(sendEmailRegister(customer.email));
@@ -193,13 +195,33 @@ function Register() {
                 control={control}
                 name="password"
                 label="Password"
-                type="password"
+                type={showPassword ? "text" : "password"}
+                InputProps={{
+                  endAdornment: (
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  ),
+                }}
               />
               <InputField
                 control={control}
                 name="confirmPassword"
                 label="Confirm password"
-                type="password"
+                type={showPassword ? "text" : "password"}
+                InputProps={{
+                  endAdornment: (
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  ),
+                }}
               />
 
               <Button

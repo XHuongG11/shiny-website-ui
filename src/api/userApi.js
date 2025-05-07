@@ -13,6 +13,14 @@ const userApi = {
     const url = `/users/update`;
     return axiosClient.put(url, data);
   },
+  deleteAccount() {
+    const url = `/users/customer/delete-my-account`;
+    return axiosClient.post(url);
+  },
+  confirmDeleteAccount(params) {
+    const url = `/auth/confirm-delete-my-account`;
+    return axiosClient.put(url, null, { params });
+  },
   changePassword(params) {
     const url = `/users/change-password`;
     return axiosClient.post(url, null, { params });
