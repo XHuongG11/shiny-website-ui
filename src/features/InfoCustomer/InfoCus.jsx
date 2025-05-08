@@ -1,6 +1,6 @@
 import { Button, Grid2 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import userApi from "../../api/userApi";
 import Breadcrumb from "../../components/Breadcrumb/breadcrum";
 import styles from "./InfoCus.module.css";
@@ -12,14 +12,17 @@ import SubscribedBanner from "./components/Subscribed/Subscribed";
 import ModalChangePassword from "./components/ChangePassword";
 import { logout } from "../LoginSignin/store/authSlice";
 import { useNavigate } from "react-router-dom";
+import {toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import MemberShipRank from "./components/CustomerInfo/MemberShipRank";
+import DeleteAccount from "./components/DeleteAccount";
 
 const InfoCustomer = () => {
-  const infocus = useSelector((state) => state.user.current);
+  const [infocus, setInfoCus] = useState();
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const [subscribedForNews, setSubscribedForNews] = useState(false);
-
   const [addresses, setAddresses] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [openModalChangePass, setOpenModalChangePass] = useState(false);
@@ -41,32 +44,49 @@ const InfoCustomer = () => {
     const addressResponse = await userApi.getAddresses();
     setAddresses(addressResponse.data.content);
   };
+
   const fetchWishlist = async () => {
     const wishlistResponse = await userApi.getWishList({
       params: { page: 1, size: 10 },
-    }); // Gọi API để lấy danh sách wishlist
-    setWishlist(wishlistResponse.data.content); // Lưu danh sách wishlist vào state
+    });
+    setWishlist(wishlistResponse.data.content);
+  };
+  const fetchInfoCus = async () => {
+    try {
+      const resp = await userApi.getInfo();
+      setInfoCus(resp.data);
+      setSubscribedForNews(resp.data.isSubscribedForNews || false);
+    } catch (error) {
+      console.log(error);
+    }
   };
   useEffect(() => {
-    setSubscribedForNews(infocus?.subscribedForNews || false);
-  }, [infocus]);
-  useEffect(() => {
+    fetchInfoCus();
     fetchAddress();
     fetchWishlist();
   }, []);
+
   const handleSubscribe = async () => {
     try {
-      const response = await userApi.registerForNews(!subscribedForNews); // Gửi trạng thái ngược lại
-      if (response) {
-        const message = subscribedForNews
-          ? "Bạn đã hủy đăng ký nhận thông báo!"
-          : "Bạn đã đăng ký nhận thông báo thành công!";
-        alert(message);
-        setSubscribedForNews(!subscribedForNews); // Cập nhật trạng thái
+      const response = await userApi.registerForNews(!subscribedForNews);
+      // Kiểm tra response nếu cần (giả định API trả về { success: true } hoặc tương tự)
+      if (response?.success !== false) {
+        setSubscribedForNews(!subscribedForNews);
+        toast.success(
+          subscribedForNews
+            ? "Đã hủy theo dõi thông báo!"
+            : "Đã đăng ký nhận thông báo về sản phẩm mới!",
+          { autoClose: 3000, toastId: "subscribe-success"}
+        );
+      } else {
+        throw new Error("API trả về không thành công");
       }
     } catch (error) {
       console.error("Lỗi khi gọi API:", error);
-      alert("Không thể kết nối đến máy chủ. Vui lòng thử lại sau.");
+      toast.error(
+        error.message || "Không thể kết nối đến máy chủ. Vui lòng thử lại sau. ❌",
+        { autoClose: 2000 }
+      );
     }
   };
 
@@ -91,35 +111,46 @@ const InfoCustomer = () => {
       return newAddresses;
     });
   };
+
   const RemoveWishlist = async (id) => {
     try {
-      await userApi.removeWishList(id); // Gọi API để xóa sản phẩm khỏi wishlist
+      await userApi.removeWishList(id);
       setWishlist((prevWishlist) =>
         prevWishlist.filter((item) => item.id !== id)
-      ); // Cập nhật state
+      );
     } catch (error) {
       console.error("Lỗi khi xóa sản phẩm khỏi wishlist:", error);
     }
-    await fetchWishlist(); // Gọi lại API để lấy danh sách wishlist mới
+    await fetchWishlist();
   };
 
   return (
     <div className={styles.infoCus}>
+      <style>{styles.toastStyles}</style>
       <Banner fullName={infocus?.fullName} />
       <Breadcrumb currentPage="Thông tin tài khoản" />
       <SubscribedBanner
         onSubscribe={handleSubscribe}
         isSubscribed={subscribedForNews}
       />
-      {/* <div className={styles.container}> */}
       <Grid2
         container
         direction="row"
         spacing={3}
         sx={{ justifyContent: "center" }}
       >
-        <Grid2 size={{ md: 5, xs: 11 }}>
-          <CustomerInfo infoCus={infocus} />
+        <Grid2
+          container
+          size={{ md: 5, xs: 11 }}
+          direction="column"
+          spacing={3}
+        >
+          <Grid2 size={12}>
+            <CustomerInfo infoCus={infocus} />
+          </Grid2>
+          <Grid2 size={12}>
+            <MemberShipRank infoCus={infocus} />
+          </Grid2>
         </Grid2>
         <Grid2
           container
@@ -139,6 +170,7 @@ const InfoCustomer = () => {
             direction="row"
             sx={{ justifyContent: "flex-end" }}
           >
+            <DeleteAccount />
             <Button
               variant="outlined"
               sx={{ textTransform: "none" }}
@@ -156,8 +188,6 @@ const InfoCustomer = () => {
           </Grid2>
         </Grid2>
       </Grid2>
-
-      {/* Notification */}
       <ModalChangePassword
         handleCloseModal={handleCloseModal}
         openDialog={openModalChangePass}
@@ -165,4 +195,5 @@ const InfoCustomer = () => {
     </div>
   );
 };
+
 export default InfoCustomer;

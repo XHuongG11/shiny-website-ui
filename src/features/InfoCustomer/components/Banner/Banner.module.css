@@ -1,8 +1,4 @@
 
-/* .nen{
-    padding-top: 20px;
-} */
-
 .menu{
     padding-left: 30px;
 }
@@ -35,10 +31,11 @@
   .textOverlay p {
     font-size: 26px;
     font-style: italic;
-    margin-top: 270px;
-    margin-left: 50vw; /* Điều chỉnh theo tỉ lệ màn hình */
+    margin-top: 300px;
+    margin-left: 54vw; /* Điều chỉnh theo tỉ lệ màn hình */
     transition: margin-left 0.3s ease; /* Hiệu ứng mượt */
     color: rgb(72, 69, 69);
+    text-shadow: none;
   }
   .imgContainer {
     width: 100%; /* Độ rộng của container bằng toàn bộ trang */

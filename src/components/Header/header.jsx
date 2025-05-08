@@ -1,7 +1,6 @@
 import MenuOpenRoundedIcon from "@mui/icons-material/MenuOpenRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
-import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import PermIdentityOutlinedIcon from "@mui/icons-material/PermIdentityOutlined";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
@@ -21,6 +20,7 @@ import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import ContactPageIcon from "@mui/icons-material/ContactPage";
 import Notification from "../Alert";
 import { SERVER_URL } from "../../constants/app-config";
+import Tooltip from "@mui/material/Tooltip"; // Import Tooltip
 
 export default function Header() {
   const navigate = useNavigate();
@@ -207,22 +207,42 @@ export default function Header() {
           <a className={styles.link} href={`${SERVER_URL}/privacy-and-term`}>
             Privacy & Term
           </a>
-          <a className={styles.link} href="#">
+          <a className={styles.link} href={`${SERVER_URL}/contact-us`}>
             Contact Us
           </a>
         </div>
         <div className={styles.icons}>
-          <FavoriteBorderRoundedIcon onClick={handleWishlistClick} />
-          <PlaceOutlinedIcon className={styles.icon} />
-          <ReceiptLongOutlinedIcon
-            className={styles.icon}
-            onClick={handleOrder}
-          />
-          <NotificationsOutlinedIcon
-            className={styles.icon}
-            aria-describedby={notificationId}
-            onClick={handleNotificationClick}
-          />
+        <Tooltip
+            title="Danh sách yêu thích"
+            classes={{ tooltip: styles.customTooltip, arrow: styles.customTooltipArrow }}
+            placement="bottom"
+            arrow
+          >
+            <FavoriteBorderRoundedIcon onClick={handleWishlistClick} />
+          </Tooltip>
+          <Tooltip
+            title="Đơn hàng của tôi"
+            classes={{ tooltip: styles.customTooltip, arrow: styles.customTooltipArrow }}
+            placement="bottom"
+            arrow
+          >
+            <ReceiptLongOutlinedIcon
+              className={styles.icon}
+              onClick={handleOrder}
+            />
+          </Tooltip>
+          <Tooltip
+            title="Thông báo"
+            classes={{ tooltip: styles.customTooltip, arrow: styles.customTooltipArrow }}
+            placement="bottom"
+            arrow
+          >
+            <NotificationsOutlinedIcon
+              className={styles.icon}
+              aria-describedby={notificationId}
+              onClick={handleNotificationClick}
+            />
+          </Tooltip>
           <Popover
             id={notificationId}
             open={isNotificationOpen}
@@ -288,7 +308,14 @@ export default function Header() {
               )}
             </div>
           </Popover>
-          <PermIdentityOutlinedIcon onClick={handleClick} />
+          <Tooltip
+            title="Thông tin cá nhân"
+            classes={{ tooltip: styles.customTooltip, arrow: styles.customTooltipArrow }}
+            placement="bottom"
+            arrow
+          >
+            <PermIdentityOutlinedIcon onClick={handleClick} />
+          </Tooltip>
           <Menu
             id="user-menu"
             anchorEl={anchorEl}
@@ -321,7 +348,14 @@ export default function Header() {
                   </MenuItem>,
                 ]}
           </Menu>
-          <ShoppingBagOutlinedIcon onClick={handleGoToCart} />
+          <Tooltip
+            title="Giỏ hàng"
+            classes={{ tooltip: styles.customTooltip, arrow: styles.customTooltipArrow }}
+            placement="bottom"
+            arrow
+          >
+            <ShoppingBagOutlinedIcon onClick={handleGoToCart} />
+          </Tooltip>
         </div>
       </div>
     </nav>
