@@ -136,7 +136,19 @@ function MakeOrder() {
         try {
             const voucherCodes = [promotionInput, freeshipInput].filter(Boolean);
             if (voucherCodes.length === 0) {
-                alert("Vui lòng nhập mã voucher!");
+                // Khi không có mã giảm giá, đặt lại các giá trị giảm giá về 0
+                setPromotionDiscount(0);
+                setFreeShipDiscount(0);
+                setPromotionDiscountFee(0);
+                setFreeShipDiscountFee(0);
+                setApplyLimitPromotion(0);
+                setApplyLimitFreeShip(0);
+                
+                // Cập nhật lại tổng tiền không có giảm giá
+                const total = subtotal + shippingFee;
+                setTotalPrice(total);
+                setDiscount(0);
+                
                 return;
             }
 
@@ -170,10 +182,13 @@ function MakeOrder() {
                 console.log("Tổng tiền sau khi áp dụng voucher:", total);
 
                 setTotalPrice(total);
+                setDiscount(applyLimitPromotion + applyLimitFreeShip);
             } else {
                 console.log("❌ API trả về lỗi:", res.data?.message);
                 setPromotionDiscount(0);
                 setFreeShipDiscount(0);
+                setPromotionDiscountFee(0);
+                setFreeShipDiscountFee(0);
                 setDiscount(0);
                 setTotalPrice(subtotal + shippingFee);
                 alert('Voucher không hợp lệ hoặc đã hết hạn.');
@@ -182,6 +197,8 @@ function MakeOrder() {
             console.error("❌ Lỗi khi áp dụng voucher:", error);
             setPromotionDiscount(0);
             setFreeShipDiscount(0);
+            setPromotionDiscountFee(0);
+            setFreeShipDiscountFee(0);
             setDiscount(0);
             setTotalPrice(subtotal + shippingFee);
             alert('Voucher không hợp lệ hoặc đã hết hạn.');

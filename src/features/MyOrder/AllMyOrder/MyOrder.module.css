@@ -195,3 +195,37 @@ p {
   transition: none;
   transform: none;
 }
+
+.otherItems {
+  display: flex;
+  margin-top: 8px;
+}
+
+.thumbnailContainer {
+  position: relative;
+  margin-right: 5px;
+}
+
+.thumbnailImage {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.moreItems {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+}
