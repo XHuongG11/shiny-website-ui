@@ -94,10 +94,6 @@ function LoginRegister() {
               onChange={(event) => setPasswordLogin(event.target.value)}
             />
             <div className={styles.content}>
-              <div className={styles.checkbox}>
-                <input type="checkbox" id="checkbox" />
-                <label htmlFor="checkbox">Remember me</label>
-              </div>
               <div className={styles["pass-link"]}>
                 <Link href="" onClick={handleClickForgot}>
                   Forgot password?

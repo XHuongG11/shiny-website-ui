@@ -9,13 +9,10 @@ import {
   Input,
   InputAdornment,
   InputLabel,
-  MenuItem,
   Paper,
-  Select,
-  TextField,
 } from "@mui/material";
 import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useSearchParams } from "react-router-dom";
 import * as yup from "yup";
 import authApi from "../../api/authApi";
@@ -29,7 +26,6 @@ function RecoverPassword() {
   const [message, setMessage] = useState();
   const [openNotification, setOpenNotification] = useState(false);
   const [loading, setLoading] = useState(false);
-  const roles = ["CUSTOMER", "STAFF", "ADMIN"];
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -45,25 +41,25 @@ function RecoverPassword() {
   const token = searchParams.get("token");
 
   const schema = yup.object().shape({
-    email: yup
+    newPassword: yup
       .string()
-      .email("Email không hợp lệ.")
-      .required("Vui lòng nhập email."),
-    newPassword: yup.string().required("Vui lòng nhập mật khẩu mới."),
+      .required("Vui lòng nhập mật khẩu mới.")
+      .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$#!%*?&])[A-Za-z\d@$#!%*?&]/,
+        "Mật khẩu phải có chữ hoa, chữ thường, số, ký tự đặc biệt và dài ít nhất 8 ký tự."
+      ),
     confirmPassword: yup
       .string()
-      .oneOf([yup.ref("newPassword")], "Mật khẩu xác nhận không khớp.")
-      .required("Vui lòng xác nhận mật khẩu."),
+      .required("Vui lòng nhập xác nhận mật khẩu.")
+      .oneOf([yup.ref("newPassword")], "Mật khẩu mới và xác nhận không khớp."),
   });
   const {
-    control,
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      email: "",
-      role: "CUSTOMER",
       newPassword: "",
       confirmPassword: "",
     },
@@ -72,8 +68,6 @@ function RecoverPassword() {
   const handleResetPassSubmit = async (values) => {
     console.log(values);
     const request = {
-      email: values.email,
-      role: values.role,
       token: token,
       newPassword: values.newPassword,
     };
@@ -114,21 +108,6 @@ function RecoverPassword() {
             Nhập thông tin để đặt lại mật khẩu
           </h2>
           <Grid2 container direction="row" gap={3}>
-            <TextField
-              id="email"
-              {...register("email")}
-              label={
-                <>
-                  Email <span style={{ color: "red" }}>*</span>
-                </>
-              }
-              variant="standard"
-              fullWidth
-              type="email"
-              error={!!errors?.email}
-              helperText={errors?.email?.message}
-            />
-
             <FormControl sx={{ width: "100%" }} variant="standard">
               <InputLabel htmlFor="newPassword">
                 Mật khẩu mới <span style={{ color: "red" }}>*</span>
@@ -186,34 +165,6 @@ function RecoverPassword() {
               <FormHelperText sx={{ color: "red" }}>
                 {errors?.confirmPassword?.message}
               </FormHelperText>
-            </FormControl>
-            <FormControl error={!!errors?.role} fullWidth>
-              <InputLabel htmlFor="role">Role</InputLabel>
-              <Controller
-                name="role"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    fullWidth
-                    id="role"
-                    {...field}
-                    label="Role"
-                    labelId="role"
-                    value={field.value}
-                    variant="standard"
-                    onChange={(event) => {
-                      field.onChange(event.target.value);
-                    }}
-                  >
-                    {roles.map((role) => (
-                      <MenuItem key={role} value={role}>
-                        {role}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                )}
-              />
-              <FormHelperText>{errors?.role?.message}</FormHelperText>
             </FormControl>
             <Button
               loading={loading}
