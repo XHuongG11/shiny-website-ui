@@ -122,9 +122,9 @@ const CartItemlist = () => {
     const increaseQuantity = async (id) => {
         const item = cartItems.find(item => item.id === id);
         if (!item) return;
-
+    
         const newQuantity = (item.quantity || 1) + 1;
-
+    
         try {
             await cartApi.updateItemQuantity(item.productSize?.id, newQuantity);
             setCartItems((prevItems) =>
@@ -133,9 +133,11 @@ const CartItemlist = () => {
                 )
             );
             setErrorMessage(""); // Xóa lỗi nếu thành công
+            toast.success("Cập nhật số lượng thành công ✅", { autoClose: 2000 });
         } catch (error) {
             const message = error?.response?.data?.message || "Đã xảy ra lỗi khi cập nhật số lượng";
             setErrorMessage(message);
+            toast.error(message, { autoClose: 2000 });
         }
     };
 
@@ -143,10 +145,10 @@ const CartItemlist = () => {
     const decreaseQuantity = async (id) => {
         const item = cartItems.find(item => item.id === id);
         if (!item) return;
-
+    
         const currentQuantity = item.quantity || 1;
         const newQuantity = currentQuantity > 1 ? currentQuantity - 1 : 1;
-
+    
         try {
             await cartApi.updateItemQuantity(item.productSize?.id, newQuantity);
             setCartItems((prevItems) =>
@@ -155,9 +157,11 @@ const CartItemlist = () => {
                 )
             );
             setErrorMessage(""); // Reset lỗi nếu có
+            toast.success("Cập nhật số lượng thành công ✅", { autoClose: 2000 });
         } catch (error) {
             const message = error?.response?.data?.message || "Đã xảy ra lỗi khi giảm số lượng";
             setErrorMessage(message);
+            toast.error(message, { autoClose: 2000 });
         }
     };
 
@@ -325,7 +329,20 @@ const CartItemlist = () => {
                                         onChange={(e) => {
                                             const newQuantity = parseInt(e.target.value, 10);
                                             if (!isNaN(newQuantity) && newQuantity >= 0) {
-                                                handleQuantityChange(item.id, newQuantity, item.productSize?.id);
+                                                setCartItems((prevItems) =>
+                                                    prevItems.map((prevItem) =>
+                                                        prevItem.id === item.id ? { ...prevItem, quantity: newQuantity } : prevItem
+                                                    )
+                                                );
+                                            }
+                                        }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                e.preventDefault();
+                                                const newQuantity = parseInt(e.target.value, 10);
+                                                if (!isNaN(newQuantity) && newQuantity >= 0) {
+                                                    handleQuantityChange(item.id, newQuantity, item.productSize?.id);
+                                                }
                                             }
                                         }}
                                     />
