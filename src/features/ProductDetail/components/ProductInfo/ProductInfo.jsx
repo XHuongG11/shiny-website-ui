@@ -265,7 +265,7 @@ function ProductInfo({ product, isInWishlist, updateWishlist }) {
             onClick={handleToggleWishlist}
           >
             <span className={styles.icon}></span>
-            {isInWishlist ? "Đã thêm vào danh mục yêu thích" : "Lưu vào danh mục theo dõi"}
+            {isInWishlist ? "Đã theo dõi sản phẩm" : "Theo dõi sản phẩm"}
           </button>
           <div className={styles.dropdownContainer}>
             {dropdownData.map(({ title, content }, i) => (
