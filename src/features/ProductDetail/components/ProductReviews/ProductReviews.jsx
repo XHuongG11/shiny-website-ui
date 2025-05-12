@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { FaStar } from "react-icons/fa";
+import { FaStar, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import styles from "./ProductReviews.module.css";
 import reviewApi from "../../../../api/reviewApi";
 
@@ -16,6 +16,7 @@ const ProductReviews = ({ productId }) => {
     2: 0,
     1: 0,
   });
+  const [openResponses, setOpenResponses] = useState({});
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -27,12 +28,13 @@ const ProductReviews = ({ productId }) => {
         const fetchedReviews = response.data.content || [];
         console.log("Fetched Reviews:", fetchedReviews);
         setReviews(fetchedReviews);
-        
+
         // Calculate average rating
         const totalRatings = fetchedReviews.length;
         const sumRatings = fetchedReviews.reduce((sum, review) => sum + review.rating, 0);
         const avgRating = totalRatings > 0 ? (sumRatings / totalRatings).toFixed(1) : 0;
         setAverageRating(avgRating);
+
         // Calculate rating breakdown
         const breakdown = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
         fetchedReviews.forEach((review) => {
@@ -50,6 +52,14 @@ const ProductReviews = ({ productId }) => {
 
     fetchReviews();
   }, [productId]);
+
+  const toggleResponse = (index) => {
+    console.log(`Toggling response for index ${index}, current state:`, openResponses[index]);
+    setOpenResponses((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
 
   if (loading) {
     return (
@@ -75,12 +85,15 @@ const ProductReviews = ({ productId }) => {
         <>
           <div className={styles.ratingSummary}>
             <div className={styles.averageRating}>
-              <span className={styles.ratingNumber}><FaStar className={styles.fullStar} />{averageRating}</span>
+              <span className={styles.ratingNumber}>
+                <FaStar className={styles.fullStar} />
+                {averageRating}
+              </span>
               <span className={styles.reviewCount}>{reviews.length} đánh giá</span>
             </div>
             <div className={styles.ratingBreakdown}>
               {[5, 4, 3, 2, 1].map((star) => (
-                <div key={star} className={styles.breakdownRow}>          
+                <div key={star} className={styles.breakdownRow}>
                   {[...Array(star)].map((_, index) => (
                     <FaStar key={index} className={styles.breakdownStar} />
                   ))}
@@ -115,28 +128,61 @@ const ProductReviews = ({ productId }) => {
                     {review.reviewer?.fullName || "Người dùng ẩn danh"}
                   </span>
                   <p className={styles.reviewDate}>
-                  {new Date(review.createdAt).toLocaleString('vi-VN', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                  })}
-                </p>
+                    {new Date(review.createdAt).toLocaleString('vi-VN', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                    })}
+                  </p>
                 </header>
                 <div className={styles.reviewRating}>
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <FaStar
-                        key={star}
-                        className={
-                          star <= review.rating
-                            ? styles.filledStar
-                            : styles.emptyStar
-                        }
-                      />
-                    ))}
-                  </div>
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <FaStar
+                      key={star}
+                      className={
+                        star <= review.rating
+                          ? styles.filledStar
+                          : styles.emptyStar
+                      }
+                    />
+                  ))}
+                </div>
                 <p className={styles.reviewContent}>
                   {review.content || "Không có nội dung đánh giá."}
                 </p>
+                {/* Hiển thị phản hồi nếu có */}
+                {review.response && review.response.content && (
+                  <div className={styles.reviewResponse}>
+                    <header className={styles.responseHeader}>
+                      <span className={styles.responseBy}>
+                        Phản hồi từ Người bán
+                      </span>
+                      <div className={styles.responseToggle}>
+                        <p className={styles.responseDate}>
+                          {new Date(review.response.createdAt).toLocaleString('vi-VN', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </p>
+                        <button
+                          onClick={() => toggleResponse(index)}
+                          className={styles.toggleButton}
+                          aria-label={openResponses[index] ? "Ẩn phản hồi" : "Hiện phản hồi"}
+                        >
+                          {openResponses[index] ? <FaChevronUp /> : <FaChevronDown />}
+                        </button>
+                      </div>
+                    </header>
+                    {openResponses[index] && (
+                      <p className={`${styles.responseContent} ${openResponses[index] ? styles.show : ''}`}>
+                        {review.response.content}
+                      </p>
+                    )}
+                  </div>
+                )}
               </article>
             ))}
           </div>
@@ -145,39 +191,38 @@ const ProductReviews = ({ productId }) => {
         <>
           <div className={styles.ratingSummary}>
             <div className={styles.averageRating}>
-              <span className={styles.ratingNumber}><FaStar className={styles.fullStar} />0.0</span>
+              <span className={styles.ratingNumber}>
+                <FaStar className={styles.fullStar} />
+                0.0
+              </span>
               <span className={styles.reviewCount}>0 đánh giá</span>
             </div>
             <div className={styles.ratingBreakdown}>
-              {[5, 4, 3, 2, 1].map((star) => {
-                // Tính tỷ lệ phần trăm đánh giá cho mức sao này
-                const percentage =
-                  reviews.length > 0 ? (ratingBreakdown[star] / reviews.length) * 100 : 0;
-
-                return (
-                  <div key={star} className={styles.breakdownRow}>
-                    {[...Array(star)].map((_, index) => (
-                      <FaStar key={index} className={styles.breakdownStar} />
-                    ))}
-                    {[...Array(5 - star)].map((_, index) => (
-                      <FaStar
-                        key={index + star}
-                        className={styles.breakdownEmptyStar}
-                      />
-                    ))}
+              {[5, 4, 3, 2, 1].map((star) => (
+                <div key={star} className={styles.breakdownRow}>
+                  {[...Array(star)].map((_, index) => (
+                    <FaStar key={index} className={styles.breakdownStar} />
+                  ))}
+                  {[...Array(5 - star)].map((_, index) => (
+                    <FaStar
+                      key={index + star}
+                      className={styles.breakdownEmptyStar}
+                    />
+                  ))}
+                  <div className={styles.progressBar}>
                     <div
-                      className={styles.progressBar}
+                      className={styles.progressFill}
                       style={{
-                        background: `linear-gradient(to right, #ff6f91 ${percentage}%, #d1d5db ${percentage}%)`, // Đổ màu động
+                        width: '0%',
                       }}
                     />
-                    <span>{ratingBreakdown[star]}</span>
                   </div>
-                );
-              })}
+                  <span className={styles.ratingBreakdown}>{ratingBreakdown[star]}</span>
+                </div>
+              ))}
             </div>
           </div>
-          {/* <p className={styles.noReviews}>Chưa có đánh giá nào cho sản phẩm này.</p> */}
+          <p className={styles.noReviews}>Chưa có đánh giá nào cho sản phẩm này.</p>
         </>
       )}
     </section>

@@ -4,13 +4,40 @@ import PropTypes from "prop-types";
 import CartApi from "../../../../api/cartApi";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import Notification from "../../../../components/Alert";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import silverMaterial from "/image/allproduct/material_silver.png";
 import whiteGoldMaterial from "/image/allproduct/material_white_gold.png";
 import gold10KMaterial from "/image/allproduct/material_gold10k.png";
 import gold18KMaterial from "/image/allproduct/material_gold18k.png";
 import gold24KMaterial from "/image/allproduct/material_gold24k.png";
 import platinumKMaterial from "/image/allproduct/material_platinum.png";
+
+// CSS tùy chỉnh cho react-toastify
+const toastStyles = `
+  .Toastify__toast {
+    font-size: 18px;
+    padding: 20px 30px;
+    min-height: 80px;
+    min-width: 400px;
+    border-radius: 8px;
+  }
+  .Toastify__toast-body {
+    line-height: 1.5;
+  }
+  .Toastify__toast--success {
+    background-color: #f0f9f4;
+    color: #2d3436;
+  }
+  .Toastify__toast--error {
+    background-color: #fef2f2;
+    color: #2d3436;
+  }
+  .Toastify__toast--warning {
+    background-color: #fff7ed;
+    color: #2d3436;
+  }
+`;
 
 const formatPrice = (price) => new Intl.NumberFormat("vi-VN").format(price) + "₫";
 
@@ -53,7 +80,6 @@ function ProductInfo({ product, isInWishlist, updateWishlist }) {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [stockQuantity, setStockQuantity] = useState(0);
-  const [notification, setNotification] = useState({ open: false, message: "", severity: "success" });
   const navigate = useNavigate();
   const isLoggedIn = !!useSelector((state) => state.user.current)?.email;
 
@@ -66,49 +92,51 @@ function ProductInfo({ product, isInWishlist, updateWishlist }) {
 
   const handleToggleWishlist = async () => {
     if (!isLoggedIn) {
-      setNotification({ open: true, message: "Vui lòng đăng nhập để thêm vào danh sách yêu thích.", severity: "error" });
+      toast.error("Vui lòng đăng nhập để thêm vào danh sách yêu thích.", { autoClose: 2000 });
       return setTimeout(() => navigate("/login"), 2000);
     }
-    if (!product?.id) return setNotification({ open: true, message: "Sản phẩm không hợp lệ.", severity: "error" });
+    if (!product?.id) return toast.error("Sản phẩm không hợp lệ.", { autoClose: 2000 });
 
     try {
       const action = isInWishlist ? "remove" : "add";
       await updateWishlist(product, action);
-      setNotification({
-        open: true,
-        message: `Đã ${action === "add" ? "thêm" : "xóa"} sản phẩm ${action === "add" ? "vào" : "khỏi"} danh sách yêu thích!`,
-        severity: "success",
-      });
+      toast.success(
+        `Đã ${action === "add" ? "thêm" : "xóa"} sản phẩm ${action === "add" ? "vào" : "khỏi"} danh sách yêu thích!`,
+        { autoClose: 2000 }
+      );
     } catch (error) {
       console.error("Lỗi khi cập nhật wishlist:", error);
-      setNotification({ open: true, message: "Có lỗi xảy ra. Vui lòng thử lại!", severity: "error" });
+      toast.error("Có lỗi xảy ra. Vui lòng thử lại!", { autoClose: 2000 });
     }
   };
 
   const handleAddToCart = async () => {
-    if (!isLoggedIn) {
-      setNotification({ open: true, message: "Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.", severity: "error" });
-      setTimeout(() => navigate("/login"), 2000);
-      return;
-    }
 
     if (!selectedSize) {
-      setNotification({ open: true, message: "Vui lòng chọn kích thước trước khi thêm vào giỏ hàng.", severity: "warning" });
+      toast.warn("Vui lòng chọn kích thước trước khi thêm vào giỏ hàng.", { autoClose: 2000 });
       return;
     }
 
     const sizeObj = product.productSizes.find((s) => s.size === selectedSize);
     if (!sizeObj) {
-      setNotification({ open: true, message: "Kích thước không hợp lệ.", severity: "error" });
+      toast.error("Kích thước không hợp lệ.", { autoClose: 2000 });
       return;
     }
 
     try {
       await CartApi.addItemToCart(sizeObj.id, 1);
-      setNotification({ open: true, message: "Đã thêm sản phẩm vào giỏ hàng!", severity: "success" });
+      toast.success(
+        <span style={{ fontWeight: "bold"}}>
+          <p className={styles.tilteThem}>Thêm vào giỏ hàng thành công!</p>
+          <p style={{ textShadow: "none" , marginTop: "5px", fontSize: "16px" }}>
+            Ấn <a href="/cart" className={styles.thongbao}>vào đây</a> để tới trang giỏ hàng
+          </p>
+        </span>,
+        { autoClose: 5000 }
+      );
     } catch (error) {
       console.error("Lỗi khi thêm vào giỏ hàng:", error);
-      setNotification({ open: true, message: "Thêm vào giỏ hàng thất bại. Vui lòng thử lại sau.", severity: "error" });
+      toast.error(error?.response?.data?.message || "Thêm vào giỏ hàng thất bại. Vui lòng thử lại sau. ❌", { autoClose: 2000 });
     }
   };
 
@@ -116,13 +144,13 @@ function ProductInfo({ product, isInWishlist, updateWishlist }) {
 
   const handleBuyNow = async () => {
     if (!isLoggedIn) {
-      setNotification({ open: true, message: "Vui lòng đăng nhập để mua hàng.", severity: "error" });
+      toast.error("Vui lòng đăng nhập để mua hàng.", { autoClose: 2000 });
       setTimeout(() => navigate("/login"), 2000);
       return;
     }
 
     if (!selectedSize) {
-      setNotification({ open: true, message: "Vui lòng chọn kích thước trước khi mua.", severity: "warning" });
+      toast.warn("Vui lòng chọn kích thước trước khi mua.", { autoClose: 2000 });
       return;
     }
 
@@ -131,17 +159,15 @@ function ProductInfo({ product, isInWishlist, updateWishlist }) {
     );
 
     if (!selectedProductSize) {
-      setNotification({ open: true, message: "Kích thước không hợp lệ.", severity: "error" });
+      toast.error("Kích thước không hợp lệ.", { autoClose: 2000 });
       return;
     }
     setLoading(true);
 
     try {
-      // Thêm sản phẩm vào giỏ hàng
       await CartApi.removeItemFromCart(selectedProductSize.id);
-      await CartApi.addItemToCart(selectedProductSize.id, 1); // 1 là số lượng
+      await CartApi.addItemToCart(selectedProductSize.id, 1);
 
-      // Tạo đơn hàng tạm thời để lưu vào localStorage
       const tempOrder = {
         productId: product.id,
         title: product.title,
@@ -155,19 +181,15 @@ function ProductInfo({ product, isInWishlist, updateWishlist }) {
         productSize: selectedProductSize,
       };
 
-      // Lưu vào localStorage
       localStorage.setItem("checkoutItems", JSON.stringify([tempOrder]));
-
-      // Chuyển hướng đến trang thanh toán
       navigate("/checkouts");
     } catch (error) {
       console.error("Lỗi khi thêm vào giỏ hàng:", error.response?.data || error.message);
-      setNotification({ open: true, message: "Thêm vào giỏ hàng thất bại. Vui lòng thử lại sau.", severity: "error" });
+      toast.error(error?.response?.data?.message || "Thêm vào giỏ hàng thất bại. Vui lòng thử lại sau. ❌", { autoClose: 2000 });
     } finally {
       setLoading(false);
     }
   };
-
 
   const handleSelectSize = (size) => {
     setSelectedSize(size);
@@ -179,15 +201,17 @@ function ProductInfo({ product, isInWishlist, updateWishlist }) {
 
   return (
     <div className={styles.infoProduct}>
-      {notification.open && (
-        <Notification
-          severity={notification.severity}
-          message={notification.message}
-          open={notification.open}
-          setOpen={() => setNotification({ ...notification, open: false })}
-          variant="filled"
-        />
-      )}
+      <style>{toastStyles}</style>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <div className={styles.infoProductImage}>
         <img className={styles.productImageMain} src={product.images[0]?.url} alt="Ảnh sản phẩm" />
       </div>
@@ -241,7 +265,7 @@ function ProductInfo({ product, isInWishlist, updateWishlist }) {
             onClick={handleToggleWishlist}
           >
             <span className={styles.icon}></span>
-            {isInWishlist ? "Đã thêm vào danh mục yêu thích" : "Lưu vào danh mục theo dõi"}
+            {isInWishlist ? "Đã theo dõi sản phẩm" : "Theo dõi sản phẩm"}
           </button>
           <div className={styles.dropdownContainer}>
             {dropdownData.map(({ title, content }, i) => (

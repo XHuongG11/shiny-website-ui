@@ -16,6 +16,32 @@
     gap: 50px;
     width: 50%; /* Đảm bảo không bị co lại */
 }
+.Toastify__toast {
+    font-size: 18px;
+    padding: 20px 30px;
+    min-height: 80px;
+    min-width: 400px;
+    border-radius: 8px;
+  }
+  .Toastify__toast-body {
+    line-height: 1.5;
+  }
+  .Toastify__toast--success {
+    background-color: #f0f9f4;
+    color: #2d3436;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  .Toastify__toast--error {
+    background-color: #fef2f2;
+    color: #2d3436;
+    font-size: 16px;
+    animation: shake 0.4s ease-in-out;
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-10px); }
+    40%, 80% { transform: translateX(10px); }
+  }
 @media (max-width: 1000px) {
     .container {
         padding: 30px 50px;

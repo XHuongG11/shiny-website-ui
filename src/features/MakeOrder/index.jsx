@@ -19,7 +19,7 @@ function MakeOrder() {
     const [addresses, setAddresses] = useState([]);
     const [userData, setUserData] = useState(null);
     const [shouldRedirect, setShouldRedirect] = useState(false);
-    const [paymentMethod, setPaymentMethod] = useState('MOMO');
+    const [paymentMethod, setPaymentMethod] = useState('COD');
     const [momoQrUrl, setMomoQrUrl] = useState(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const [orderId, setOrderId] = useState(null);
@@ -136,7 +136,19 @@ function MakeOrder() {
         try {
             const voucherCodes = [promotionInput, freeshipInput].filter(Boolean);
             if (voucherCodes.length === 0) {
-                alert("Vui lòng nhập mã voucher!");
+                // Khi không có mã giảm giá, đặt lại các giá trị giảm giá về 0
+                setPromotionDiscount(0);
+                setFreeShipDiscount(0);
+                setPromotionDiscountFee(0);
+                setFreeShipDiscountFee(0);
+                setApplyLimitPromotion(0);
+                setApplyLimitFreeShip(0);
+                
+                // Cập nhật lại tổng tiền không có giảm giá
+                const total = subtotal + shippingFee;
+                setTotalPrice(total);
+                setDiscount(0);
+                
                 return;
             }
 
@@ -157,11 +169,9 @@ function MakeOrder() {
                 setPromotionDiscountFee(
                     Math.min(subtotal * (promotionDiscount / 100), applyLimitPromotion)
                 );
-
                 setFreeShipDiscountFee(
                     Math.min(shippingFee * (freeShipDiscount / 100), applyLimitFreeShip)
                 );
-
                 const discountedSubtotal = subtotal - applyLimitPromotion;
                 console.log("Giá trị giảm giá:", discountedSubtotal);
                 const discountedShippingFee = shippingFee - applyLimitFreeShip;
@@ -170,10 +180,13 @@ function MakeOrder() {
                 console.log("Tổng tiền sau khi áp dụng voucher:", total);
 
                 setTotalPrice(total);
+                setDiscount(applyLimitPromotion + applyLimitFreeShip);
             } else {
                 console.log("❌ API trả về lỗi:", res.data?.message);
                 setPromotionDiscount(0);
                 setFreeShipDiscount(0);
+                setPromotionDiscountFee(0);
+                setFreeShipDiscountFee(0);
                 setDiscount(0);
                 setTotalPrice(subtotal + shippingFee);
                 alert('Voucher không hợp lệ hoặc đã hết hạn.');
@@ -182,6 +195,8 @@ function MakeOrder() {
             console.error("❌ Lỗi khi áp dụng voucher:", error);
             setPromotionDiscount(0);
             setFreeShipDiscount(0);
+            setPromotionDiscountFee(0);
+            setFreeShipDiscountFee(0);
             setDiscount(0);
             setTotalPrice(subtotal + shippingFee);
             alert('Voucher không hợp lệ hoặc đã hết hạn.');
@@ -251,6 +266,14 @@ function MakeOrder() {
                 setIsProcessing(false);
                 return;
             }
+            
+            // Kiểm tra xem selectedAddress có tồn tại không
+            if (!selectedAddress) {
+                alert('Vui lòng chọn và xác nhận địa chỉ giao hàng');
+                setIsProcessing(false);
+                return;
+            }
+
             const orderRequest = {
                 shippingAddress: { id: selectedAddress.id },
                 shippingMethod: deliveryMethod.toUpperCase(),
@@ -265,7 +288,6 @@ function MakeOrder() {
                 note: value.note || "",
             };
             console.log("📦 Thông tin đơn hàng gửi lên:", orderRequest);
-
             console.log("🔄 Đang gửi yêu cầu đặt hàng...");
             const orderResponse = await orderApi.placeOrder(orderRequest);
             console.log("✅ Kết quả đặt hàng:", orderResponse);

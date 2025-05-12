@@ -153,70 +153,70 @@ const UserInfoForm = forwardRef(({ onSubmit, onAddressChange }, ref) => {
   // Hàm xác nhận địa chỉ mới
   // Hàm xác nhận địa chỉ mới
   const handleConfirmNewAddress = async () => {
-  try {
-  // Kiểm tra form hợp lệ trước khi submit
-  const formValues = getValues();
-  console.log("Giá trị form hiện tại:", formValues);
-  
-  // Kiểm tra thủ công các trường bắt buộc
-  if (!formValues.userName || !formValues.phoneNumber || !formValues.houseNumber || 
-  !formValues.city || !formValues.district || !formValues.ward) {
-  alert("Vui lòng điền đầy đủ thông tin địa chỉ.");
-  return;
-  }
-  
-  // Tạo đối tượng địa chỉ mới từ form
-  const newAddress = {
-  recipientName: formValues.userName,
-  recipientPhone: formValues.phoneNumber,
-  address: formValues.houseNumber,
-  province: formValues.city,
-  district: formValues.district,
-  village: formValues.ward,
-  default: false // Mặc định không phải địa chỉ mặc định
-  };
-  
-  console.log("Dữ liệu địa chỉ mới sẽ gửi lên:", newAddress);
-  
-  // Gọi API để lưu địa chỉ mới
-  const response = await customerAddressApi.addAddress(newAddress);
-  console.log("Kết quả từ API:", response);
-  
-  if (response && response.data) {
-  console.log("Dữ liệu trả về từ API:", response.data);
-  
-  // Cập nhật danh sách địa chỉ
-  const newAddressWithId = response.data;
-  setAddresses(prev => [...prev, newAddressWithId]);
-  
-  // Chọn địa chỉ mới tạo
-  setSelectedAddress(newAddressWithId.id);
-  setValue("addressId", newAddressWithId.id);
-  
-  // Vô hiệu hóa các trường
-  setIsFieldsDisabled(true);
-  setShowConfirmButton(false);
-  
-  // Thông báo cho component cha về địa chỉ mới
-  if (onAddressChange) {
-  onAddressChange(newAddressWithId);
-  }
-  
-  alert("Đã thêm địa chỉ mới thành công!");
-  } else {
-  throw new Error("API trả về dữ liệu không hợp lệ");
-  }
-  } catch (error) {
-  console.error("Lỗi khi thêm địa chỉ mới:", error);
-  console.error("Chi tiết lỗi:", error.response?.data || error.message);
-  
-  // Hiển thị thông báo lỗi cụ thể hơn
-  if (error.response?.data?.message) {
-  alert(`Không thể thêm địa chỉ mới: ${error.response.data.message}`);
-  } else {
-  alert(`Không thể thêm địa chỉ mới: ${error.message}`);
-  }
-  }
+    try {
+      // Kiểm tra form hợp lệ trước khi submit
+      const formValues = getValues();
+      console.log("Giá trị form hiện tại:", formValues);
+
+      // Kiểm tra thủ công các trường bắt buộc
+      if (!formValues.userName || !formValues.phoneNumber || !formValues.houseNumber ||
+        !formValues.city || !formValues.district || !formValues.ward) {
+        alert("Vui lòng điền đầy đủ thông tin địa chỉ.");
+        return;
+      }
+
+      // Tạo đối tượng địa chỉ mới từ form
+      const newAddress = {
+        recipientName: formValues.userName,
+        recipientPhone: formValues.phoneNumber,
+        address: formValues.houseNumber,
+        province: formValues.city,
+        district: formValues.district,
+        village: formValues.ward,
+        default: false // Mặc định không phải địa chỉ mặc định
+      };
+
+      console.log("Dữ liệu địa chỉ mới sẽ gửi lên:", newAddress);
+
+      // Gọi API để lưu địa chỉ mới
+      const response = await customerAddressApi.addAddress(newAddress);
+      console.log("Kết quả từ API:", response);
+
+      if (response && response.data) {
+        console.log("Dữ liệu trả về từ API:", response.data);
+
+        // Cập nhật danh sách địa chỉ
+        const newAddressWithId = response.data;
+        setAddresses(prev => [...prev, newAddressWithId]);
+
+        // Chọn địa chỉ mới tạo
+        setSelectedAddress(newAddressWithId.id);
+        setValue("addressId", newAddressWithId.id);
+
+        // Vô hiệu hóa các trường
+        setIsFieldsDisabled(true);
+        setShowConfirmButton(false);
+
+        // Thông báo cho component cha về địa chỉ mới
+        if (onAddressChange) {
+          onAddressChange(newAddressWithId);
+        }
+
+        alert("Đã thêm địa chỉ mới thành công!");
+      } else {
+        throw new Error("API trả về dữ liệu không hợp lệ");
+      }
+    } catch (error) {
+      console.error("Lỗi khi thêm địa chỉ mới:", error);
+      console.error("Chi tiết lỗi:", error.response?.data || error.message);
+
+      // Hiển thị thông báo lỗi cụ thể hơn
+      if (error.response?.data?.message) {
+        alert(`Không thể thêm địa chỉ mới: ${error.response.data.message}`);
+      } else {
+        alert(`Không thể thêm địa chỉ mới: ${error.message}`);
+      }
+    }
   };
 
   // Xử lý khi form được submit

@@ -1,13 +1,11 @@
 import MenuOpenRoundedIcon from "@mui/icons-material/MenuOpenRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
-import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import PermIdentityOutlinedIcon from "@mui/icons-material/PermIdentityOutlined";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import React, { useState } from "react";
-import DropdownMenu from "./components/DropdownMenu";
 import styles from "./Header.module.css";
 import { Menu, MenuItem } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,13 +19,13 @@ import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import ContactPageIcon from "@mui/icons-material/ContactPage";
 import Notification from "../Alert";
 import { SERVER_URL } from "../../constants/app-config";
+import Tooltip from "@mui/material/Tooltip"; // Import Tooltip
 
 export default function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const userInfo = useSelector((state) => state.user.current);
 
-  const [isOpen, setIsOpen] = useState(false);
   const [notificationAnchor, setNotificationAnchor] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -37,9 +35,6 @@ export default function Header() {
     severity: "success",
   });
 
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -195,14 +190,11 @@ export default function Header() {
       <div className={styles.duongke}></div>
       <div className={styles.below}>
         <div className={styles.items}>
-          <div onClick={toggleDropdown}>
-            <a className={styles.link} href="#">
-              Products
-            </a>
-            {isOpen && <DropdownMenu />}
-          </div>
-          <a className={styles.link} href="#">
-            Collections
+          <a className={styles.link} href="/">
+            Home
+          </a>
+          <a className={styles.link} href="/products">
+            Products
           </a>
           <a className={styles.link} href={`${SERVER_URL}/privacy-and-term`}>
             Privacy & Term
@@ -212,17 +204,37 @@ export default function Header() {
           </a>
         </div>
         <div className={styles.icons}>
-          <FavoriteBorderRoundedIcon onClick={handleWishlistClick} />
-          <PlaceOutlinedIcon className={styles.icon} />
-          <ReceiptLongOutlinedIcon
-            className={styles.icon}
-            onClick={handleOrder}
-          />
-          <NotificationsOutlinedIcon
-            className={styles.icon}
-            aria-describedby={notificationId}
-            onClick={handleNotificationClick}
-          />
+        <Tooltip
+            title="Danh sách yêu thích"
+            classes={{ tooltip: styles.customTooltip, arrow: styles.customTooltipArrow }}
+            placement="bottom"
+            arrow
+          >
+            <FavoriteBorderRoundedIcon onClick={handleWishlistClick} />
+          </Tooltip>
+          <Tooltip
+            title="Đơn hàng của tôi"
+            classes={{ tooltip: styles.customTooltip, arrow: styles.customTooltipArrow }}
+            placement="bottom"
+            arrow
+          >
+            <ReceiptLongOutlinedIcon
+              className={styles.icon}
+              onClick={handleOrder}
+            />
+          </Tooltip>
+          <Tooltip
+            title="Thông báo"
+            classes={{ tooltip: styles.customTooltip, arrow: styles.customTooltipArrow }}
+            placement="bottom"
+            arrow
+          >
+            <NotificationsOutlinedIcon
+              className={styles.icon}
+              aria-describedby={notificationId}
+              onClick={handleNotificationClick}
+            />
+          </Tooltip>
           <Popover
             id={notificationId}
             open={isNotificationOpen}
@@ -288,7 +300,14 @@ export default function Header() {
               )}
             </div>
           </Popover>
-          <PermIdentityOutlinedIcon onClick={handleClick} />
+          <Tooltip
+            title="Thông tin cá nhân"
+            classes={{ tooltip: styles.customTooltip, arrow: styles.customTooltipArrow }}
+            placement="bottom"
+            arrow
+          >
+            <PermIdentityOutlinedIcon onClick={handleClick} />
+          </Tooltip>
           <Menu
             id="user-menu"
             anchorEl={anchorEl}
@@ -321,7 +340,14 @@ export default function Header() {
                   </MenuItem>,
                 ]}
           </Menu>
-          <ShoppingBagOutlinedIcon onClick={handleGoToCart} />
+          <Tooltip
+            title="Giỏ hàng"
+            classes={{ tooltip: styles.customTooltip, arrow: styles.customTooltipArrow }}
+            placement="bottom"
+            arrow
+          >
+            <ShoppingBagOutlinedIcon onClick={handleGoToCart} />
+          </Tooltip>
         </div>
       </div>
     </nav>

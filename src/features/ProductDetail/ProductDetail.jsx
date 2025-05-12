@@ -17,6 +17,7 @@ const ProductDetail = () => {
   const [product, setProduct] = useState(null);
   const user = useSelector((state) => state.user.current);
   const isLoggedIn = !!(user && user.email);
+  const [categoryId,setCategoryId] = useState([]);
 
     // Lấy thông tin sản phẩm từ API
     useEffect(() => {
@@ -24,6 +25,7 @@ const ProductDetail = () => {
         try {
           const response = await productApi.getProductById(productId); 
           setProduct(response.data);  // Lưu dữ liệu sản phẩm vào state
+          setCategoryId(response.data.category.id); // Lưu categoryId vào state
         } catch (error) {
           console.error("Lỗi khi tải thông tin sản phẩm:", error);
         }
@@ -98,7 +100,7 @@ const ProductDetail = () => {
       />
       <ProductImages images={product.images} />
       <ProductReviews productId={product.id} />
-      <SimilarProducts />
+      <SimilarProducts categoryId={categoryId}/>
       <ScrollToTopButton />
     </div>
   );

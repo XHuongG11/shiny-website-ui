@@ -10,7 +10,7 @@ const MyOrders = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [underlineStyle, setUnderlineStyle] = useState({ width: 0, left: 0 });
   const tabRefs = useRef([]);
-  const tabList = ["ALL", "PENDING", "CONFIRMED", "SHIPPING", "DELIVERED", "CANCELLED", "RETURNED"];
+  const tabList = ["ALL", "PENDING", "CONFIRMED", "SHIPPING", "DELIVERED", "CANCELLED", "RETURNED", "COMPLETED"];
   const navigate = useNavigate();
 
   // Fetch all orders when component mounts
@@ -85,7 +85,12 @@ const MyOrders = () => {
         </div>
 
         {filteredOrders.map((order, index) => {
-          // Select the first item as the representative product
+          // Tính tổng giá trị đơn hàng
+          const totalOrderPrice = order.orderItems.reduce((total, item) => {
+            return total + (item.price || 0) * (item.quantity || 0);
+          }, 0);
+
+          // Lấy sản phẩm đại diện (sản phẩm đầu tiên)
           const representativeItem = order.orderItems[0] || {};
 
           return (
@@ -99,12 +104,32 @@ const MyOrders = () => {
                 <div className={styles.itemDetails}>
                   <p>{representativeItem.product?.title || "Không có tên sản phẩm"}</p>
                   <p>x{representativeItem.quantity || 0}</p>
+                  
+                  {/* Hiển thị hình ảnh thu nhỏ của các sản phẩm khác */}
+                  {order.orderItems.length > 1 && (
+                    <div className={styles.otherItems}>
+                      {order.orderItems.slice(1).map((item, idx) => (
+                        <div key={idx} className={styles.thumbnailContainer}>
+                          <img
+                            className={styles.thumbnailImage}
+                            src={item.product?.images?.[0]?.url || "/earring-placeholder.png"}
+                            alt={item.product?.title || "Sản phẩm"}
+                          />
+                          {idx === 0 && order.orderItems.length > 2 && (
+                            <div className={styles.moreItems}>
+                              +{order.orderItems.length - 2}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div className={styles.orderStatus}>
                   {order.status}
                 </div>
                 <div className={styles.price}>
-                  {((representativeItem.price || 0) * (representativeItem.quantity || 0)).toLocaleString('vi-VN')}đ
+                  {totalOrderPrice.toLocaleString('vi-VN')}đ
                 </div>
               </div>
               <div className={styles.actions}>
