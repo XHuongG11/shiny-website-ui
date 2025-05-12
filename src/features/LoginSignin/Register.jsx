@@ -47,7 +47,6 @@ function Register() {
     }
     if (sendEmailRegister.fulfilled.match(resultAction)) {
       setExpireAt(resultAction.payload?.expiredAt);
-      console.log("rèkfkfkf");
       console.log("op", openModal);
       setOpenVerifyModal(true);
       setOpenModal(true);
@@ -125,11 +124,15 @@ function Register() {
           setMessage(responseRegister.message);
           setSeverity("error");
           setOpenNotification(true);
+          setOpenVerifyModal(false);
+          setOpenModal(false);
         } else {
           // notify register successfully
           setMessage("Đăng ký thành công.");
           setSeverity("success");
           setOpenNotification(true);
+          setOpenVerifyModal(false);
+          setOpenModal(false);
         }
       } else {
         // notify verify failed
@@ -142,9 +145,9 @@ function Register() {
       setMessage("Đăng ký thất bại");
       setSeverity("error");
       setOpenNotification(true);
+      setOpenVerifyModal(false);
+      setOpenModal(false);
     }
-    setOpenVerifyModal(false);
-    setOpenModal(false);
   };
 
   useEffect(() => {
