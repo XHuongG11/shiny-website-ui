@@ -46,16 +46,18 @@ function LoginRegister() {
       };
       const action = await dispatch(login(data));
       unwrapResult(action);
-
       setShouldRedirect(true);
     } catch (error) {
       setError(true);
 
-      if (error.code === "ERR_BAD_REQUEST") {
+      if (error?.type === "RESOURCE_NOT_FOUND") {
         setErrorMessage("Tên đăng nhập hoặc mật khẩu không đúng");
+      } else if (error?.type === "ACCOUNT_BANED") {
+        setErrorMessage("Tài khoản đã bị khóa.");
       } else {
-        setErrorMessage(error.message);
+        setErrorMessage(error.message || "Lỗi không xác định");
       }
+
       console.log(error);
     }
   };
