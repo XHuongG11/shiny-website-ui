@@ -6,7 +6,6 @@ import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import React, { useState } from "react";
-import DropdownMenu from "./components/DropdownMenu";
 import styles from "./Header.module.css";
 import { Menu, MenuItem } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,7 +26,6 @@ export default function Header() {
   const dispatch = useDispatch();
   const userInfo = useSelector((state) => state.user.current);
 
-  const [isOpen, setIsOpen] = useState(false);
   const [notificationAnchor, setNotificationAnchor] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -37,9 +35,6 @@ export default function Header() {
     severity: "success",
   });
 
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -195,14 +190,11 @@ export default function Header() {
       <div className={styles.duongke}></div>
       <div className={styles.below}>
         <div className={styles.items}>
-          <div onClick={toggleDropdown}>
-            <a className={styles.link} href="#">
-              Products
-            </a>
-            {isOpen && <DropdownMenu />}
-          </div>
-          <a className={styles.link} href="#">
-            Collections
+          <a className={styles.link} href="/">
+            Home
+          </a>
+          <a className={styles.link} href="/products">
+            Products
           </a>
           <a className={styles.link} href={`${SERVER_URL}/privacy-and-term`}>
             Privacy & Term
