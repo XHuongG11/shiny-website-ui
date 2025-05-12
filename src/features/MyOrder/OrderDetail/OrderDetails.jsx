@@ -55,6 +55,19 @@ const OrderDetail = () => {
     }
   };
 
+  const getPaymentStatusText = (status) => {
+    switch (status) {
+      case "PROCESSING":
+        return "Đang xử lý thanh toán";
+      case "PAID":
+        return "Đã thanh toán";
+      case "REFUNDED":
+        return "Đã hoàn tiền";
+      default:
+        return "Không xác định";
+    }
+  };
+
   // Render loading state
   if (loading) {
     return (
@@ -195,6 +208,10 @@ const OrderDetail = () => {
             <div className={styles.detailRow}>
               <span>Phương thức thanh toán</span>
               <span>{order.paymentMethod}</span>
+            </div>
+            <div className={styles.detailRow}>
+              <span>Trạng thái thanh toán</span>
+              <span>{getPaymentStatusText(order.payment?.status || 'PROCESSING')}</span>
             </div>
           </div>
         </div>
