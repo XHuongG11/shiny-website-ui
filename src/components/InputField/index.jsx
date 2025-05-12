@@ -11,6 +11,7 @@ function InputField({
   width,
   variant = "outlined",
   type = "text",
+  InputProps,
 }) {
   return (
     <div style={{ width: "100%" }}>
@@ -26,6 +27,7 @@ function InputField({
             disabled={disabled}
             label={label}
             helperText={fieldState?.error?.message}
+            InputProps={InputProps} // Pass InputProps to TextField
             sx={{
               "& .MuiInputBase-root": { height: height, width: width },
               width: "100%",
@@ -46,5 +48,6 @@ InputField.propTypes = {
   width: PropTypes.string,
   variant: PropTypes.string,
   type: PropTypes.string,
+  InputProps: PropTypes.object,
 };
 export default InputField;

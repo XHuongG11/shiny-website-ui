@@ -1,6 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Box, Button, Grid2, Paper, IconButton } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Box, Button, Grid2, IconButton, Paper } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,8 +27,17 @@ function Register() {
   const loading = useSelector((state) => state.email.loading);
   const location = useLocation();
   const state = location.state;
-  const [showPassword, setShowPassword] = useState(false);
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const handleTogglePassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleToggleConfirmPassword = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
   const sendEmail = async () => {
     const resultAction = await dispatch(sendEmailRegister(customer.email));
     if (sendEmailRegister.rejected.match(resultAction)) {
@@ -38,9 +47,13 @@ function Register() {
     }
     if (sendEmailRegister.fulfilled.match(resultAction)) {
       setExpireAt(resultAction.payload?.expiredAt);
+      console.log("rèkfkfkf");
+      console.log("op", openModal);
+      setOpenVerifyModal(true);
       setOpenModal(true);
     }
   };
+
   const handleFormRegisterSubmit = async (value) => {
     console.log("value", value);
     try {
@@ -103,16 +116,21 @@ function Register() {
         email: customer.email,
         code: code.join(""),
       });
-      console.log(responseVerify.data);
       if (responseVerify.code === "200") {
         // đăng ký tài khoản dưới database
         const responseRegister = await authApi.createUser(customer);
-        console.log(responseRegister.data);
-        // notify register successfully
-        setMessage("Đăng ký thành công.");
-        setSeverity("success");
-        setOpenNotification(true);
-        setOpenVerifyModal(false);
+        console.log("Response: ", responseRegister);
+        if (responseRegister.code === "409") {
+          // Lỗi trùng dữ liệu
+          setMessage(responseRegister.message);
+          setSeverity("error");
+          setOpenNotification(true);
+        } else {
+          // notify register successfully
+          setMessage("Đăng ký thành công.");
+          setSeverity("success");
+          setOpenNotification(true);
+        }
       } else {
         // notify verify failed
         setMessage("Xác thực thất bại.");
@@ -124,18 +142,20 @@ function Register() {
       setMessage("Đăng ký thất bại");
       setSeverity("error");
       setOpenNotification(true);
-      setOpenVerifyModal(false);
     }
+    setOpenVerifyModal(false);
+    setOpenModal(false);
   };
+
   useEffect(() => {
     const fetchData = async () => {
       if (customer != null) {
         await sendEmail(customer.email);
-        setOpenModal(true);
       }
     };
     fetchData();
   }, [customer]);
+
   useEffect(() => {
     if (state?.email) {
       setMessage(state?.message);
@@ -191,6 +211,7 @@ function Register() {
               <InputField control={control} name="username" label="Username" />
               <InputField control={control} name="email" label="Email" />
               <InputField control={control} name="phone" label="Phone" />
+
               <InputField
                 control={control}
                 name="password"
@@ -198,27 +219,25 @@ function Register() {
                 type={showPassword ? "text" : "password"}
                 InputProps={{
                   endAdornment: (
-                    <IconButton
-                      onClick={() => setShowPassword(!showPassword)}
-                      edge="end"
-                    >
+                    <IconButton onClick={handleTogglePassword} edge="end">
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   ),
                 }}
               />
+
               <InputField
                 control={control}
                 name="confirmPassword"
                 label="Confirm password"
-                type={showPassword ? "text" : "password"}
+                type={showConfirmPassword ? "text" : "password"}
                 InputProps={{
                   endAdornment: (
                     <IconButton
-                      onClick={() => setShowPassword(!showPassword)}
+                      onClick={handleToggleConfirmPassword}
                       edge="end"
                     >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   ),
                 }}
