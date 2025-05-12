@@ -349,7 +349,6 @@ const CartItemlist = () => {
                                     <button onClick={() => increaseQuantity(item.id)}>+</button>
                                 </div>
                                 <div className={styles.icons}>
-                                    <FavoriteBorder className={styles.icon} />
                                     <Delete 
                                         className={styles.icon} 
                                         onClick={() => removeItem(item.id, item.productSize?.id)}
