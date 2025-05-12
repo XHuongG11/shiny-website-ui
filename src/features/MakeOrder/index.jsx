@@ -19,7 +19,7 @@ function MakeOrder() {
     const [addresses, setAddresses] = useState([]);
     const [userData, setUserData] = useState(null);
     const [shouldRedirect, setShouldRedirect] = useState(false);
-    const [paymentMethod, setPaymentMethod] = useState('MOMO');
+    const [paymentMethod, setPaymentMethod] = useState('COD');
     const [momoQrUrl, setMomoQrUrl] = useState(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const [orderId, setOrderId] = useState(null);
@@ -169,11 +169,9 @@ function MakeOrder() {
                 setPromotionDiscountFee(
                     Math.min(subtotal * (promotionDiscount / 100), applyLimitPromotion)
                 );
-
                 setFreeShipDiscountFee(
                     Math.min(shippingFee * (freeShipDiscount / 100), applyLimitFreeShip)
                 );
-
                 const discountedSubtotal = subtotal - applyLimitPromotion;
                 console.log("Giá trị giảm giá:", discountedSubtotal);
                 const discountedShippingFee = shippingFee - applyLimitFreeShip;
@@ -268,6 +266,14 @@ function MakeOrder() {
                 setIsProcessing(false);
                 return;
             }
+            
+            // Kiểm tra xem selectedAddress có tồn tại không
+            if (!selectedAddress) {
+                alert('Vui lòng chọn và xác nhận địa chỉ giao hàng');
+                setIsProcessing(false);
+                return;
+            }
+
             const orderRequest = {
                 shippingAddress: { id: selectedAddress.id },
                 shippingMethod: deliveryMethod.toUpperCase(),
@@ -282,7 +288,6 @@ function MakeOrder() {
                 note: value.note || "",
             };
             console.log("📦 Thông tin đơn hàng gửi lên:", orderRequest);
-
             console.log("🔄 Đang gửi yêu cầu đặt hàng...");
             const orderResponse = await orderApi.placeOrder(orderRequest);
             console.log("✅ Kết quả đặt hàng:", orderResponse);

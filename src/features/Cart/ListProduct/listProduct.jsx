@@ -192,11 +192,25 @@ const CartItemlist = () => {
 
     // Tính tổng tiền - đảm bảo quantity và price tồn tại
     // Add this function to toggle item selection
+    // Thêm hàm kiểm tra sản phẩm có hết hàng không
+    const isOutOfStock = (item) => {
+        // Kiểm tra nếu sản phẩm có productSize có stock bằng 0
+        return item.productSize?.stock === 0;
+    };
+
     const toggleSelectItem = (id) => {
+        // Tìm sản phẩm theo id
+        const item = cartItems.find(item => item.id === id);
+        
+        // Nếu sản phẩm hết hàng, không cho phép chọn
+        if (item && isOutOfStock(item)) {
+            return;
+        }
+        
         setSelectedItems((prevSelected) =>
             prevSelected.includes(id)
-                ? prevSelected.filter((itemId) => itemId !== id) // Unselect
-                : [...prevSelected, id] // Select
+                ? prevSelected.filter((itemId) => itemId !== id) // Bỏ chọn
+                : [...prevSelected, id] // Chọn
         );
     };
 
@@ -261,6 +275,8 @@ const CartItemlist = () => {
                                     className={styles.checkbox}
                                     checked={selectedItems.includes(item.id)}
                                     onChange={() => toggleSelectItem(item.id)}
+                                    disabled={isOutOfStock(item)} // Vô hiệu hóa checkbox nếu sản phẩm hết hàng
+                                    style={isOutOfStock(item) ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
                                 />
                                 <img
                                     src={item.product?.images && item.product.images.length > 0

@@ -333,3 +333,8 @@
   gap: 10px;
   margin-top: 20px;
 }
+
+.checkbox[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
