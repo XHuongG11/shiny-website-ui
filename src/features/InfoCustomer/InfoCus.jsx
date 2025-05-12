@@ -1,6 +1,6 @@
 import { Button, Grid2 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import userApi from "../../api/userApi";
 import Breadcrumb from "../../components/Breadcrumb/breadcrum";
 import styles from "./InfoCus.module.css";
@@ -19,6 +19,7 @@ import DeleteAccount from "./components/DeleteAccount";
 
 const InfoCustomer = () => {
   const [infocus, setInfoCus] = useState();
+  const currentInfocus = useSelector((state) => state.user.current);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -62,6 +63,9 @@ const InfoCustomer = () => {
   };
   useEffect(() => {
     fetchInfoCus();
+  }, [currentInfocus]);
+
+  useEffect(() => {
     fetchAddress();
     fetchWishlist();
   }, []);
