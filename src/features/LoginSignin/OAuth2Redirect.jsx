@@ -60,6 +60,9 @@ const OAuth2RedirectHandler = () => {
             "Login failed:",
             res.payload?.message || "Không xác định"
           );
+          setError("Tài khoản đã bị khóa.");
+          setLoading(false);
+          return;
         }
       });
     };
