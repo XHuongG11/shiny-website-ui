@@ -23,7 +23,7 @@ function PaymentMethod({ onChange }) {
     ];
 
     // State lưu trữ phương thức thanh toán được chọn
-    const [paymentOption, setPaymentOption] = useState(paymentMethods[2].value);  // Mặc định chọn MOMO
+    const [paymentOption, setPaymentOption] = useState(paymentMethods[2].value);
 
     // Hàm xử lý khi người dùng thay đổi phương thức thanh toán
     const handlePaymentOptionChange = (event) => {

@@ -126,7 +126,12 @@ const CartItemlist = () => {
         const newQuantity = (item.quantity || 1) + 1;
     
         try {
-            await cartApi.updateItemQuantity(item.productSize?.id, newQuantity);
+            const resp = await cartApi.updateItemQuantity(item.productSize?.id, newQuantity);
+            if (resp.code === "1000") {
+                setErrorMessage(resp.message);
+                toast.error(resp.message, { autoClose: 2000 });
+                return;
+            }
             setCartItems((prevItems) =>
                 prevItems.map((item) =>
                     item.id === id ? { ...item, quantity: newQuantity } : item
@@ -186,11 +191,16 @@ const CartItemlist = () => {
         );
 
         try {
-            await cartApi.updateItemQuantity(productSizeId, newQuantity);
-            toast.success("Cập nhật số lượng thành công ✅", { autoClose: 5000 });
+            const resp = await cartApi.updateItemQuantity(productSizeId, newQuantity);
+            if (resp.code === "1000") {
+                setErrorMessage(resp.message);
+                toast.error(resp.message, { autoClose: 2000 });
+                return;
+            }
+            toast.success("Cập nhật số lượng thành công ✅", { autoClose: 2000 });
         } catch (error) {
             const message = error?.response?.data?.message || "Lỗi khi cập nhật số lượng ❌";
-            toast.error(message, { autoClose: 5000 });
+            toast.error(message, { autoClose: 2000 });
         }
     };
 
@@ -321,7 +331,7 @@ const CartItemlist = () => {
                             </Grid2>
 
                             <Grid2 container direction="row" spacing={0} sx={{ alignItems: "center" }}>
-                                <div className={styles.quantity}>
+                                {!isOutOfStock(item) && (<div className={styles.quantity}>
                                     <button onClick={() => decreaseQuantity(item.id)}>-</button>
                                     <input
                                         type="text"
@@ -347,7 +357,7 @@ const CartItemlist = () => {
                                         }}
                                     />
                                     <button onClick={() => increaseQuantity(item.id)}>+</button>
-                                </div>
+                                </div>)}
                                 <div className={styles.icons}>
                                     <Delete 
                                         className={styles.icon} 

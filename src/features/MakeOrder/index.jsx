@@ -26,6 +26,9 @@ function MakeOrder() {
     const [isProcessing, setIsProcessing] = useState(false);
     const [orderId, setOrderId] = useState(null);
     const [deliveryMethod, setDeliveryMethod] = useState('standard');
+    const [verifiedPromotionCode, setVerifiedPromotionCode] = useState('');
+    const [verifiedFreeshipCode, setVerifiedFreeshipCode] = useState('');
+    const [voucherVerified, setVoucherVerified] = useState(false);
     const [voucherOptions, setVoucherOptions] = useState([]);
     const [promotionInput, setPromotionInput] = useState('');
     const [freeshipInput, setFreeshipInput] = useState('');
@@ -34,7 +37,6 @@ function MakeOrder() {
     const [freeShipDiscount, setFreeShipDiscount] = useState(0);
     const [freeShipDiscountFee, setFreeShipDiscountFee] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
-    const [discount, setDiscount] = useState(0);
     const [shippingFee, setShippingFee] = useState(0);
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [applyLimitFreeShip, setApplyLimitFreeShip] = useState(0);
@@ -72,7 +74,7 @@ function MakeOrder() {
             const calculatedSubTotal = items.reduce((total, item) => {
                 const price = item.productSize?.price || item.product?.price || 0;
                 return total + price * (item.quantity || 1);
-            }, 0);
+            }, 0);  
             setSubTotal(calculatedSubTotal);
         }
     }, []);
@@ -115,13 +117,10 @@ function MakeOrder() {
         }
 
         const shippingMethod = method.toUpperCase();
-        console.log("Phương thức vận chuyển:", shippingMethod);
 
         try {
             const res = await orderApi.getEstimateShippingFee(address, shippingMethod);
-            console.log("Kết quả trả về từ API:", res.data);
             const newShippingFee = res.data?.fee || res.data || 0;
-            console.log("Phí ship mới:", newShippingFee);
 
             setShippingFee(newShippingFee);
             updateTotalPrice(newShippingFee);
@@ -133,28 +132,19 @@ function MakeOrder() {
     };
 
     const updateTotalPrice = (newShippingFee) => {
-        const discountedSubtotal = subtotal * (1 - promotionDiscount / 100);
-        const discountedShippingFee = newShippingFee * (1 - freeShipDiscount / 100);
-        const calculatedDiscount = subtotal * promotionDiscount / 100 + newShippingFee * freeShipDiscount / 100;
+        const discountedSubtotal = subtotal - promotionDiscountFee;
+        const discountedShippingFee = newShippingFee - freeShipDiscountFee;
         const total = discountedSubtotal + discountedShippingFee;
-        setDiscount(calculatedDiscount);
         setTotalPrice(total);
     };
 
     const handleDeliveryMethodChange = (method) => {
         setDeliveryMethod(method);
-        if (selectedAddress) {
-            fetchShippingFee(selectedAddress, method);
-        }
     };
 
     const handleAddressChange = (address) => {
         console.log("Địa chỉ đã thay đổi:", address);
         setSelectedAddress(address);
-        if (address && deliveryMethod) {
-            console.log("Gọi API tính phí ship với địa chỉ mặc định");
-            fetchShippingFee(address, deliveryMethod);
-        }
     };
 
     useEffect(() => {
@@ -166,19 +156,18 @@ function MakeOrder() {
     const applyVoucher = async () => {
         try {
             const voucherCodes = [promotionInput, freeshipInput].filter(Boolean);
-            if (voucherCodes.length === 0) {
-                setPromotionDiscount(0);
-                setFreeShipDiscount(0);
-                setPromotionDiscountFee(0);
-                setFreeShipDiscountFee(0);
-                setApplyLimitPromotion(0);
-                setApplyLimitFreeShip(0);
-                
-                const total = subtotal + shippingFee;
-                setTotalPrice(total);
-                setDiscount(0);
-                return;
-            }
+            const promoVoucher = voucherOptions.find(v => v.code === promotionInput) || null
+            const freeShipVoucher = voucherOptions.find(v => v.code === freeshipInput) || null
+
+            setPromotionDiscount(promoVoucher != null ? promoVoucher.discountRate : 0);
+            setFreeShipDiscount(freeShipVoucher != null ? freeShipVoucher.discountRate : 0);
+            setApplyLimitPromotion(promoVoucher != null ? promoVoucher.applyLimit : 0);
+            setApplyLimitFreeShip(freeShipVoucher != null ? freeShipVoucher.applyLimit : 0);
+
+            const promoDis = promoVoucher != null ? promoVoucher.discountRate : 0;
+            const freeShipDis = freeShipVoucher != null ? freeShipVoucher.discountRate : 0;
+            const promoLimit = promoVoucher != null ? promoVoucher.applyLimit : 0;
+            const freeShipLimit = freeShipVoucher != null ? freeShipVoucher.applyLimit : 0;
 
             const cartItems = checkoutItems.map(item => ({
                 product: { id: item.product?.id },
@@ -193,19 +182,21 @@ function MakeOrder() {
             });
 
             if (res.code === '200') {
-                console.log("✅ Voucher hợp lệ");
                 setPromotionDiscountFee(
-                    Math.min(subtotal * (promotionDiscount / 100), applyLimitPromotion)
+                    Math.min(subtotal * (promoDis / 100), promoLimit)
                 );
+                const promoValue = Math.min(subtotal * (promoDis / 100), promoLimit);
                 setFreeShipDiscountFee(
-                    Math.min(shippingFee * (freeShipDiscount / 100), applyLimitFreeShip)
+                    Math.min(shippingFee * (freeShipDis / 100), freeShipLimit)
                 );
-                const discountedSubtotal = subtotal - applyLimitPromotion;
-                const discountedShippingFee = shippingFee - applyLimitFreeShip;
+                const freeshipValue = Math.min(shippingFee * (freeShipDis / 100), freeShipLimit);
+                const discountedSubtotal = subtotal - promoValue;
+                const discountedShippingFee = shippingFee - freeshipValue;
                 const total = discountedSubtotal + discountedShippingFee;
-
+                setVerifiedPromotionCode(promotionInput);
+                setVerifiedFreeshipCode(freeshipInput);
+                setVoucherVerified(true);
                 setTotalPrice(total);
-                setDiscount(applyLimitPromotion + applyLimitFreeShip);
             } else {
                 console.log("❌ API trả về lỗi:", res.data?.message);
                 resetVoucherValues();
@@ -223,7 +214,6 @@ function MakeOrder() {
         setFreeShipDiscount(0);
         setPromotionDiscountFee(0);
         setFreeShipDiscountFee(0);
-        setDiscount(0);
         setTotalPrice(subtotal + shippingFee);
     };
 
@@ -261,6 +251,10 @@ function MakeOrder() {
                 return;
             }
 
+            const verifiedVoucherCodes = [];
+            if (verifiedPromotionCode) verifiedVoucherCodes.push(verifiedPromotionCode);
+            if (verifiedFreeshipCode) verifiedVoucherCodes.push(verifiedFreeshipCode);
+
             const orderRequest = {
                 shippingAddress: { id: selectedAddress.id },
                 shippingMethod: deliveryMethod.toUpperCase(),
@@ -269,18 +263,14 @@ function MakeOrder() {
                 totalProductPrice: subtotal,
                 shippingFee: shippingFee,
                 totalPrice,
-                voucherCodes: [promotionInput, freeshipInput].filter(Boolean),
-                freeShipDiscount: freeShipDiscountFee,
-                promotionDiscount: Math.round(promotionDiscountFee),
+                voucherCodes: voucherVerified ? verifiedVoucherCodes : [],
+                freeShipDiscount: voucherVerified ? freeShipDiscountFee : 0,
+                promotionDiscount: voucherVerified ? Math.round(promotionDiscountFee) : 0,
                 note: value.note || "",
             };
 
-            console.log("📦 Thông tin đơn hàng gửi lên:", orderRequest);
             const orderResponse = await orderApi.placeOrder(orderRequest);
-            console.log("✅ Kết quả đặt hàng:", orderResponse);
-
             const newOrderId = orderResponse?.data?.id;
-            console.log("🆔 ID đơn hàng mới:", newOrderId);
 
             if (!newOrderId) {
                 throw new Error('Không nhận được ID đơn hàng');
@@ -420,11 +410,12 @@ function MakeOrder() {
                                             onChange={(event, newValue) => {
                                                 if (newValue && newValue.code) {
                                                     setPromotionInput(newValue.code);
-                                                    setApplyLimitPromotion(newValue.applyLimit || 0);
-                                                    setPromotionDiscount(newValue.discountRate || 0);
-                                                } else {
+                                                } 
+                                                else if (newValue) {
+                                                    setPromotionInput(newValue);
+                                                }
+                                                else {
                                                     setPromotionInput('');
-                                                    setPromotionDiscount(0);
                                                 }
                                             }}
                                             renderOption={(props, option, { index }) => (
@@ -462,11 +453,12 @@ function MakeOrder() {
                                             onChange={(event, newValue) => {
                                                 if (newValue && newValue.code) {
                                                     setFreeshipInput(newValue.code);
-                                                    setApplyLimitFreeShip(newValue.applyLimit || 0);
-                                                    setFreeShipDiscount(newValue.discountRate || 0);
-                                                } else {
+                                                } 
+                                                else if (newValue) {
+                                                    setFreeshipInput(newValue);
+                                                }
+                                                else {
                                                     setFreeshipInput('');
-                                                    setFreeShipDiscount(0);
                                                 }
                                             }}
                                             renderOption={(props, option, { index }) => (
