@@ -11,7 +11,7 @@ const Banner = () => {
                 const response = await bannerApi.getBannersByPosition('product');
                 const data = response.data;
                 if (Array.isArray(data) && data.length > 0 && data[0].url) {
-                    setBannerUrl(data[0].url);
+                    setBannerUrl("https://api.shinyjewelry.shop" + data[0].url);
                 }
             } catch (error) {
                 console.error('Failed to load banner:', error);

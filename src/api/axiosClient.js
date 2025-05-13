@@ -3,7 +3,7 @@ import axios from "axios";
 import StorageKeys from "../constants/storage-key";
 
 const axiosClient = axios.create({
-  baseURL: "http://localhost:8080/api/v1/",
+  baseURL: "https://api.shinyjewelry.shop/api/v1/",
   headers: {
     "Content-Type": "application/json",
   },

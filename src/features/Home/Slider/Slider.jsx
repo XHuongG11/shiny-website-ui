@@ -32,7 +32,7 @@ const Slider = () => {
                     setSlides(DEFAULT_SLIDES);
                 } else {
                     const formatted = banners.map((banner, index) => ({
-                        img: banner.url || 'https://via.placeholder.com/1200x600?text=No+Image',
+                        img: "https://api.shinyjewelry.shop" + banner.url || 'https://via.placeholder.com/1200x600?text=No+Image',
                         title: titles[index % titles.length],
                         desc: 'Explore our exclusive collection',
                     }));

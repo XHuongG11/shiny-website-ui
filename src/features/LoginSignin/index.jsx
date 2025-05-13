@@ -112,7 +112,7 @@ function LoginRegister() {
             <span>or use your account</span>
             <div className={styles["social-container"]}>
               <Link
-                to="https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?response_type=code&client_id=704590983800-2nahpu6ac7oura3nv2ajo2suruahrr11.apps.googleusercontent.com&scope=profile%20email&state=-lRQDRwUy7N4eye0o8p1ArJ_vlA_t0oPAHQyJJOPvZY%3D&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fauth%2Foauth2%2Fredirect&service=lso&o2v=2&ddm=1&flowName=GeneralOAuthFlow"
+                to="https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?response_type=code&client_id=704590983800-2nahpu6ac7oura3nv2ajo2suruahrr11.apps.googleusercontent.com&scope=profile email&state=-lRQDRwUy7N4eye0o8p1ArJ_vlA_t0oPAHQyJJOPvZY=&redirect_uri=https://shinyjewelry.shop/auth/oauth2/redirect&service=lso&o2v=2&ddm=1&flowName=GeneralOAuthFlow"
                 className={styles.social}
               >
                 <FontAwesomeIcon icon={faGoogle} />
